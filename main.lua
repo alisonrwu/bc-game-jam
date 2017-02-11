@@ -24,6 +24,12 @@ function love.load()
 	TEsound.playLooping("Sounds/Music/Paper Cutter.ogg")
 	indexToRemoveTo = 0
 	isDrawing = true
+
+	font = love.graphics.newImageFont("Graphics/UI/Imagefont.png",
+		" abcdefghijklmnopqrstuvwxyz" ..
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ0" ..
+		"123456789.,!?-+/():;%&`'*#=[]\"")
+	love.graphics.setFont(font)
 end
 
 function love.update(dt)
@@ -39,19 +45,19 @@ function love.update(dt)
 	lastMouseY = mouseY
 	mouseX = love.mouse.getX()
 	mouseY = love.mouse.getY()
-    
+
 	if mouseDown and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY)) then
 		if (isDrawing) then
 			table.insert(drawing, {x = mouseX, y = mouseY, lastX = lastMouseX, lastY = lastMouseY})
 		end
-            
+
 		for i = 1, #drawing - 10 do
 			if drawing[i].x and drawing[i].y and drawing[i].lastX and drawing[i].lastY then
 				if isIntersect(drawing[i].x, drawing[i].y, drawing[i].lastX, drawing[i].lastY, mouseX, mouseY, lastMouseX, lastMouseY, true, true) then
 					print(i)
 					isDrawing = false
-                    mouseDown = false
-                    TEsound.stop("cutting", false)
+					mouseDown = false
+					TEsound.stop("cutting", false)
 					for j = 1, i do
 						table.insert(toBeRemoved, i)
 					end
@@ -90,7 +96,6 @@ function love.draw()
 		love.graphics.setColor(0, 0, 0, 255)
 	end
 
-	love.graphics.draw(scale, 50, height - 100)
 	for i,v in ipairs(drawing) do
 		love.graphics.line(v.x, v.y, v.lastX, v.lastY)
 	end
@@ -117,10 +122,15 @@ function love.draw()
 				end
 			end
 		end
+
+		--Draw UI elements
+		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.print("Score: " .. player.score, width - 200, height - 50)
+		love.graphics.draw(scale, 25, height - 75)
 	end
 
-	function math.angle(x1,y1, x2,y2) 
-		return math.atan2(y2-y1, x2-x1) 
+function math.angle(x1,y1, x2,y2) 
+	return math.atan2(y2-y1, x2-x1) 
 	end
 
 -- Checks if two lines intersect (or line segments if seg is true)
@@ -145,9 +155,9 @@ end
 
 function love.mousepressed(x, y, button, istouch)
 	if (button == 1) then 
-        mouseDown = true
-        isDrawing = true
-        drawing = {}
+		mouseDown = true
+		isDrawing = true
+		drawing = {}
 		TEsound.playLooping("Sounds/SFX/Cutting.ogg", "cutting")
 	end
 end
