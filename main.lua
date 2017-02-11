@@ -56,6 +56,12 @@ function love.update(dt)
             print("to be removed index: ", i)
         table.remove(drawing, 1)
          end
+        table.remove(drawing, #drawing)
+        if (drawing[#drawing] and intersectionX and intersectionY) then
+            intersectionPoint2 = {x = intersectionX, y = intersectionY, lastX = drawing[#drawing].x, lastY = drawing[#drawing].y}
+            table.insert(drawing, intersectionPoint2)
+            end
+            
         if (drawing[1] and intersectionX and intersectionY) then
                 intersectionPoint1 = {x = drawing[1].lastX, y = drawing[1].lastY, lastX = intersectionX, lastY = intersectionY}
                 table.insert(drawing, 1, intersectionPoint1)
