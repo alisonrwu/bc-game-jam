@@ -42,6 +42,7 @@ function love.update(dt)
     
     if love.mouse.isDown(1) then
         mouseDown = true
+        drawing = {}
     end
 	
 	if mouseDown and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY)) then
