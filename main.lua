@@ -1,3 +1,5 @@
+require"TEsound"
+
 function love.load()
 	love.graphics.setBackgroundColor(255,255,255)
 	love.graphics.setPointSize( 5 )
@@ -16,9 +18,13 @@ function love.load()
 	lastMouseX = 0
 	lastMouseY = 0
     frameCounter = 0;
+    TEsound.playLooping("Sounds/Music/Paper Cutter.ogg")
 end
 
 function love.update(dt)
+
+	TEsound.cleanup()
+
 	-- exit game
 	if love.keyboard.isDown('escape') then
 		love.event.push('quit')
@@ -42,14 +48,20 @@ function love.update(dt)
 end
 
 function love.draw()	
+
+	--Draw all the lines the user has drawn already
 	love.graphics.setColor(0, 0, 0, 255)
 	love.graphics.draw(scale, 50, height - 100)
 	for i,v in ipairs(drawing) do
 		love.graphics.line(v.x, v.y, v.lastX, v.lastY)
 	end
+
+	-- Determining angle for the scissors
 	if ((lastMouseY ~= mouseY or lastMouseX ~= mouseX) and drawing[#drawing - 10] ~= nil and love.mouse.isDown(1)) then
 		angle = math.angle(mouseX, mouseY, drawing[#drawing - 5].x, drawing[#drawing - 5].y)
 	end
+
+	-- Draw the scissors
     love.graphics.setColor(255, 255, 255, 255)
     if (frameCounter < 10) then
 	love.graphics.draw(scissors1, love.mouse.getX(), love.mouse.getY(), 
@@ -71,15 +83,6 @@ end
 function math.angle(x1,y1, x2,y2) 
 	return math.atan2(y2-y1, x2-x1) 
 end
-
--- function hasValue(table, val)
---     for i,v in ipairs (table) do
---         if v == val then
---             return true
---         end
---     end
---     return false
--- end
 
 -- Checks if two lines intersect (or line segments if seg is true)
 -- Lines are given as four numbers (two coordinates)
