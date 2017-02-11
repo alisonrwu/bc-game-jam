@@ -65,7 +65,11 @@ local function rectangleScoring(drawing, x, y)
 		end
 	end
 
-	local score = 0.25*(100-closestTL) + 0.25*(100-closestTR) + 0.25*(100-closestBL) + 0.25*(100-closestBR)
+	if math.abs(rect.width - prevBox.w) > inch then
+		return -50
+	end
+
+	local score = 0.25*(inch-closestTL) + 0.25*(inch-closestTR) + 0.25*(inch-closestBL) + 0.25*(inch-closestBR)
 	-- only print positive score (starts negative)
 	if score >= 0 then
 		print('Score is ', score)
