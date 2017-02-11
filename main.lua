@@ -1,5 +1,6 @@
 require"TEsound"
-ScoreManager = require('ScoreManager')
+local ScoreManager = require('ScoreManager')
+local MenuManager = require('MenuManager')
 
 function love.load()
 	love.graphics.setBackgroundColor(255,255,255)
@@ -21,22 +22,85 @@ function love.load()
 	lastMouseX = 0
 	lastMouseY = 0
 	frameCounter = 0
-	TEsound.playLooping("Sounds/Music/Paper Cutter.ogg")
 	indexToRemoveTo = 0
 	isDrawing = true
 	scored = true
 	scoreTable = {}
-
 	font = love.graphics.newImageFont("Graphics/UI/Imagefont.png",
 		" abcdefghijklmnopqrstuvwxyz" ..
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ0" ..
 		"123456789.,!?-+/():;%&`'*#=[]\"")
 	love.graphics.setFont(font)
+    isMenu = true
+    isPressed = false
 end
 
 function love.update(dt)
-	TEsound.cleanup()
+    if (isMenu) then
+        menuUpdate()
+    else 
+        gameUpdate()
+    end
+end
 
+function love.draw()	
+    if (isMenu) then
+        menuDraw()
+    else 
+        gameDraw()
+    end
+end
+
+------------------------------------------------------------------- Called on every frame to draw the game
+function gameDraw()
+    ScoreManager.drawBox()
+	ScoreManager.drawRectangle()
+
+	--Draw all the lines the user has drawn already
+	if (isDrawing) then
+		love.graphics.setColor(126, 126, 126, 255)
+	else
+		love.graphics.setColor(0, 0, 0, 255)
+	end
+
+	for i,v in ipairs(drawing) do
+		love.graphics.line(v.x, v.y, v.lastX, v.lastY)
+	end
+
+	-- Determining angle for the scissors
+	if ((lastMouseY ~= mouseY or lastMouseX ~= mouseX) and drawing[#drawing - 10] ~= nil and mouseDown) then
+		angle = math.angle(mouseX, mouseY, drawing[#drawing - 5].x, drawing[#drawing - 5].y)
+	end
+
+	-- Draw the scissors
+	love.graphics.setColor(255, 255, 255, 255)
+	if (frameCounter < 9) then
+		love.graphics.draw(scissors1, love.mouse.getX(), love.mouse.getY(), 
+			angle, 1, 1, scissors1:getWidth()/2, scissors1:getHeight()/2) 
+		if (mouseDown) and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY))  then
+			frameCounter = frameCounter + 1
+			end else
+			love.graphics.draw(scissors2, love.mouse.getX(), love.mouse.getY(), 
+				angle, 1, 1, scissors2:getWidth()/2, scissors2:getHeight()/2)
+			if (mouseDown) and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY))  then
+				frameCounter = frameCounter + 1
+				if (frameCounter == 19) then
+					frameCounter = 0
+				end
+			end
+		end
+
+		--Draw UI elements
+		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.print("Score: " .. player.score, width - 200, height - 50)
+		love.graphics.draw(scale, 25, height - 75)
+		love.graphics.draw(textBubble, 10, 10)
+		displayScore()
+	end
+
+------------------------------------------------------------------- Called on every frame to update the game
+function gameUpdate()
+    TEsound.cleanup()
 	-- exit game
 	if love.keyboard.isDown('escape') then
 		love.event.push('quit')
@@ -95,58 +159,40 @@ function love.update(dt)
 	end
 end
 
-function love.draw()
-	ScoreManager.drawBox()
-	ScoreManager.drawRectangle()
 
-	--Draw all the lines the user has drawn already
-	if (isDrawing) then
-		love.graphics.setColor(126, 126, 126, 255)
-	else
-		love.graphics.setColor(0, 0, 0, 255)
-	end
+------------------------------------------------------------------- Called on every frame to draw the menu
+function menuDraw()
+    for i, button in ipairs(MenuManager) do
+    love.graphics.draw(button.image, button.x, button.y)
+        end
+    isPressed = false
+end
 
-	for i,v in ipairs(drawing) do
-		love.graphics.line(v.x, v.y, v.lastX, v.lastY)
-	end
+------------------------------------------------------------------- Called on every frame to update the menu
+function menuUpdate()
+    for i, button in ipairs(MenuManager) do
+        mouseX = love.mouse.getX()
+        mouseY = love.mouse.getY()
+        buttonWidth = button.image:getWidth()
+        buttonHeight = button.image:getHeight()
+    
+        if ((pointInRectangle(mouseX, mouseY, button.x, button.y, buttonWidth, buttonHeight)) and isPressed) then
+            button.press()
+            end
+    end
+end    
+            
+function pointInRectangle(pointx, pointy, rectx, recty, rectwidth, rectheight)
+    return pointx > rectx and pointy > recty and pointx < rectx + rectwidth and pointy < recty + rectheight
+end            
 
-	-- Determining angle for the scissors
-	if ((lastMouseY ~= mouseY or lastMouseX ~= mouseX) and drawing[#drawing - 10] ~= nil and mouseDown) then
-		angle = math.angle(mouseX, mouseY, drawing[#drawing - 5].x, drawing[#drawing - 5].y)
-	end
-
-	-- Draw the scissors
-	love.graphics.setColor(255, 255, 255, 255)
-	if (frameCounter < 9) then
-		love.graphics.draw(scissors1, love.mouse.getX(), love.mouse.getY(), 
-			angle, 1, 1, scissors1:getWidth()/2, scissors1:getHeight()/2) 
-		if (mouseDown) and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY))  then
-			frameCounter = frameCounter + 1
-			end else
-			love.graphics.draw(scissors2, love.mouse.getX(), love.mouse.getY(), 
-				angle, 1, 1, scissors2:getWidth()/2, scissors2:getHeight()/2)
-			if (mouseDown) and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY))  then
-				frameCounter = frameCounter + 1
-				if (frameCounter == 19) then
-					frameCounter = 0
-				end
-			end
-		end
-
-		--Draw UI elements
-		love.graphics.setColor(255, 255, 255, 255)
-		love.graphics.print("Score: " .. player.score, width - 200, height - 50)
-		love.graphics.draw(scale, 25, height - 75)
-		love.graphics.draw(textBubble, 10, 10)
-		displayScore()
-	end
-
+------------------------------------------------------------------- Angle calculator for scissors
 function math.angle(x1,y1, x2,y2) 
-	return math.atan2(y2-y1, x2-x1) 
+		return math.atan2(y2-y1, x2-x1) 
 	end
 
--- Checks if two lines intersect (or line segments if seg is true)
--- Lines are given as four numbers (two coordinates)
+------------------------------------------------------------------- Checks if two lines intersect (or line segments if seg is true)
+------------------------------------------------------------------- Lines are given as four numbers (two coordinates)
 function isIntersect(l1p1x,l1p1y, l1p2x,l1p2y, l2p1x,l2p1y, l2p2x,l2p2y, seg1, seg2)
 	local a1,b1,a2,b2 = l1p2y-l1p1y, l1p1x-l1p2x, l2p2y-l2p1y, l2p1x-l2p2x
 	local c1,c2 = a1*l1p1x+b1*l1p1y, a2*l2p1x+b2*l2p1y
@@ -162,10 +208,11 @@ function isIntersect(l1p1x,l1p1y, l1p2x,l1p2y, l2p1x,l2p1y, l2p2x,l2p2y, seg1, s
 	end
 	intersectionX = x
 	intersectionY = y
-	return true --x,y
+	return true
 end
 
 function love.mousepressed(x, y, button, istouch)
+if (not isMenu) then    
 	if (button == 1) then 
 		mouseDown = true
 		isDrawing = true
@@ -173,12 +220,10 @@ function love.mousepressed(x, y, button, istouch)
 		TEsound.playLooping("Sounds/SFX/Cutting.ogg", "cutting")
 		ScoreManager.reset()
 		scored = false
-	end
-end
+	   end
+    end
+end    
 
-function love.mousereleased(x, y, button, istouch)
-	-- ScoreManager.squareScoring(drawing)
-end
 
 function displayScore()
 	for i,v in ipairs(scoreTable) do
@@ -190,4 +235,9 @@ function displayScore()
 			table.remove(v)
 		end
 	end
+end        
+     
+            
+function love.mousereleased(x, y, button, istouch)
+    isPressed = true
 end
