@@ -58,11 +58,11 @@ function love.update(dt)
 					isDrawing = false
 					mouseDown = false
 					TEsound.stop("cutting", false)
+                    frameCounter = 18
 					for j = 1, i do
 						table.insert(toBeRemoved, i)
 					end
 					print('CUT')
-					ScoreManager.squareScoring(drawing)
 				end
 			end
 		end
@@ -83,11 +83,14 @@ function love.update(dt)
 			intersectionPoint1 = {x = drawing[1].lastX, y = drawing[1].lastY, lastX = intersectionX, lastY = intersectionY}
 			table.insert(drawing, 1, intersectionPoint1)
 		end
+
+		ScoreManager.squareScoring(drawing)
 		toBeRemoved = {}
 	end
 end
 
-function love.draw()	
+function love.draw()
+	ScoreManager.drawBox()
 
 	--Draw all the lines the user has drawn already
 	if (isDrawing) then
@@ -107,17 +110,17 @@ function love.draw()
 
 	-- Draw the scissors
 	love.graphics.setColor(255, 255, 255, 255)
-	if (frameCounter < 10) then
+	if (frameCounter < 9) then
 		love.graphics.draw(scissors1, love.mouse.getX(), love.mouse.getY(), 
 			angle, 1, 1, scissors1:getWidth()/2, scissors1:getHeight()/2) 
-		if (mouseDown) then
+		if (mouseDown) and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY))  then
 			frameCounter = frameCounter + 1
 			end else
 			love.graphics.draw(scissors2, love.mouse.getX(), love.mouse.getY(), 
 				angle, 1, 1, scissors2:getWidth()/2, scissors2:getHeight()/2)
-			if (mouseDown) then
+			if (mouseDown) and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY))  then
 				frameCounter = frameCounter + 1
-				if (frameCounter == 20) then
+				if (frameCounter == 19) then
 					frameCounter = 0
 				end
 			end
@@ -159,5 +162,6 @@ function love.mousepressed(x, y, button, istouch)
 		isDrawing = true
 		drawing = {}
 		TEsound.playLooping("Sounds/SFX/Cutting.ogg", "cutting")
+		ScoreManager.reset()
 	end
 end
