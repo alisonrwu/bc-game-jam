@@ -1,5 +1,7 @@
 local ScoreManager = {}
 
+inch = 40
+
 local minX = 9999
 local maxX = 0
 local minY = 9999
@@ -13,70 +15,56 @@ prevBox.y = 0
 prevBox.w = 0
 prevBox.h = 0
 
-local square = {}
-square.length = 0
-square.topL = {}
-square.topR = {}
-square.botL = {}
-square.botR = {}
-
 local rect = {}
-rect.length = 0
+rect.width = 0
+rect.height = 0
 rect.topL = {}
 rect.topR = {}
 rect.botL = {}
 rect.botR = {}
 
--- Scores a square by calculating the 4 corner points of a
--- estimated square shape based off user 'drawing' input,
+-- Scores a rectangle by calculating the 4 corner points of a
+-- estimated rectangular shape based off user 'drawing' input,
 -- comparing the distance of the closest drawing points.
-local function squareScoring(drawing)
-	-- print('how is my square')
+local function rectangleScoring(drawing, x, y)
+	-- print('how is my rectangle, is it ', x, 'by', y)
 	updateCacheValues(drawing)
 
-	width = maxX-minX
-	height = maxY-minY
-	prevBox.x = minX
-	prevBox.y = minY
-	prevBox.w = width
-	prevBox.h = height
+	rect.width = x*inch
+	rect.height = y*inch
+	rect.topL.x = minX
+	rect.topL.y = minY
 
-	square.length = (width+height)/2 
-	square.topL.x = minX
-	square.topL.y = minY
-	square.topR.x = minX+square.length
-	square.topR.y = minY
-	square.botL.x = minX
-	square.botL.y = minY+square.length
-	square.botR.x = minX+square.length
-	square.botR.y = minY+square.length
+	rect.topR.x = minX+rect.width
+	rect.topR.y = minY
+	rect.botL.x = minX
+	rect.botL.y = minY+rect.height
+	rect.botR.x = minX+rect.width
+	rect.botR.y = minY+rect.height
 
 	local closestTL = 9999
 	local closestTR = 9999
 	local closestBL = 9999
 	local closestBR = 9999
 	for i,v in ipairs(drawing) do
-		local l = lengthOf(v.x,v.y, square.topL.x, square.topL.y)
+		local l = lengthOf(v.x,v.y, rect.topL.x, rect.topL.y)
 		if l < closestTL then
 			closestTL = l
 		end
-		l = lengthOf(v.x,v.y, square.topR.x, square.topR.y)
+		l = lengthOf(v.x,v.y, rect.topR.x, rect.topR.y)
 		if l < closestTR then
 			closestTR = l
 		end
-		l = lengthOf(v.x,v.y, square.botL.x, square.botL.y)
+		l = lengthOf(v.x,v.y, rect.botL.x, rect.botL.y)
 		if l < closestBL then
 			closestBL = l
 		end
-		l = lengthOf(v.x,v.y, square.botR.x, square.botR.y)
+		l = lengthOf(v.x,v.y, rect.botR.x, rect.botR.y)
 		if l < closestBR then
 			closestBR = l
 		end
 	end
-	-- print(closestTL)
-	-- print(closestTR)
-	-- print(closestBL)
-	-- print(closestBR)
+
 	local score = 0.25*(100-closestTL) + 0.25*(100-closestTR) + 0.25*(100-closestBL) + 0.25*(100-closestBR)
 	-- only print positive score (starts negative)
 	if score >= 0 then
@@ -87,13 +75,9 @@ local function squareScoring(drawing)
 	end
 end
 
-local function rectangleScoring(drawing, x, y)
-	print('how is my rectangle, is it ', x, 'by', y)
-end
-
-local function drawSquare()
+local function drawRectangle()
 	love.graphics.setColor(100, 230, 100, 125)
-	love.graphics.rectangle('line', prevBox.x, prevBox.y, square.length, square.length)
+	love.graphics.rectangle('line', prevBox.x, prevBox.y, rect.width, rect.height)
 end
 
 local function drawBox()
@@ -125,6 +109,12 @@ function updateCacheValues(drawing)
 			maxY = v.y
 		end
 	end
+	width = maxX-minX
+	height = maxY-minY
+	prevBox.x = minX
+	prevBox.y = minY
+	prevBox.w = width
+	prevBox.h = height
 end
 
 -- helper function, returns length of 2 points
@@ -140,9 +130,8 @@ end
 -- 	return height
 -- end
 
-ScoreManager.squareScoring = squareScoring
 ScoreManager.rectangleScoring = rectangleScoring
-ScoreManager.drawSquare = drawSquare
+ScoreManager.drawRectangle = drawRectangle
 ScoreManager.drawBox = drawBox
 ScoreManager.reset = reset
 -- ScoreManager.getWidth = getWidth

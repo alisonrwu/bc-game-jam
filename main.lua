@@ -80,8 +80,8 @@ function love.update(dt)
 			intersectionPoint2 = {x = intersectionX, y = intersectionY, lastX = drawing[#drawing].x, lastY = drawing[#drawing].y}
 			table.insert(drawing, intersectionPoint2)
 			if scored == false then
-				player.score = player.score + math.floor(ScoreManager.squareScoring(drawing))
-				table.insert(scoreTable, {x = mouseX, y = mouseY, score = ScoreManager.squareScoring(drawing), alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
+				player.score = player.score + math.floor(ScoreManager.rectangleScoring(drawing, 10, 6))
+				table.insert(scoreTable, {x = mouseX, y = mouseY, score = ScoreManager.rectangleScoring(drawing, 10, 6), alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
 				displayScore()
 				scored = true
 			end
@@ -90,14 +90,14 @@ function love.update(dt)
 			intersectionPoint1 = {x = drawing[1].lastX, y = drawing[1].lastY, lastX = intersectionX, lastY = intersectionY}
 			table.insert(drawing, 1, intersectionPoint1)
 		end
-		ScoreManager.squareScoring(drawing)
+		ScoreManager.rectangleScoring(drawing, 10, 6)
 		toBeRemoved = {}
 	end
 end
 
 function love.draw()
 	ScoreManager.drawBox()
-	ScoreManager.drawSquare()
+	ScoreManager.drawRectangle()
 
 	--Draw all the lines the user has drawn already
 	if (isDrawing) then
