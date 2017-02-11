@@ -51,6 +51,7 @@ function love.update(dt)
 					print(i)
 					isDrawing = false
                     mouseDown = false
+                    TEsound.stop("cutting", false)
 					for j = 1, i do
 						table.insert(toBeRemoved, i)
 					end
@@ -83,7 +84,12 @@ end
 function love.draw()	
 
 	--Draw all the lines the user has drawn already
-	love.graphics.setColor(0, 0, 0, 255)
+	if (isDrawing) then
+		love.graphics.setColor(126, 126, 126, 255)
+	else
+		love.graphics.setColor(0, 0, 0, 255)
+	end
+
 	love.graphics.draw(scale, 50, height - 100)
 	for i,v in ipairs(drawing) do
 		love.graphics.line(v.x, v.y, v.lastX, v.lastY)
@@ -143,11 +149,5 @@ function love.mousepressed(x, y, button, istouch)
         isDrawing = true
         drawing = {}
 		TEsound.playLooping("Sounds/SFX/Cutting.ogg", "cutting")
-	end
-end
-
-function love.mousereleased(x, y, button, istouch)
-	if (button == 1) then
-		TEsound.stop("cutting", false)
 	end
 end
