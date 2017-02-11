@@ -1,8 +1,8 @@
 local ScoreManager = {}
 
-local minX = 999
+local minX = 9999
 local maxX = 0
-local minY = 999
+local minY = 9999
 local maxY = 0
 local width = 0
 local height = 0
@@ -15,7 +15,14 @@ prevBox.h = 0
 
 local square = {}
 square.length = 0
+square.topL = {}
+square.topR = {}
+square.botL = {}
+square.botR = {}
 
+-- Scores a square by calculating the 4 corner points of a
+-- estimated square shape based off user 'drawing' input,
+-- comparing the distance of the closest drawing points.
 local function squareScoring(drawing)
 	-- print('how is my square')
 
@@ -42,12 +49,50 @@ local function squareScoring(drawing)
 	prevBox.w = width
 	prevBox.h = height
 
-	-- print(#drawing)
 	square.length = (width+height)/2
-	print('Score is ', 100 - math.abs(width - square.length))
 
+	square.topL.x = minX
+	square.topL.y = minY
+	square.topR.x = minX+square.length
+	square.topR.y = minY
+	square.botL.x = minX
+	square.botL.y = minY+square.length
+	square.botR.x = minX+square.length
+	square.botR.y = minY+square.length
+
+	local closestTL = 9999
+	local closestTR = 9999
+	local closestBL = 9999
+	local closestBR = 9999
 	for i,v in ipairs(drawing) do
-		-- table.insert(square, {fx, fy, lx, ly})
+		local l = lengthOf(v.x,v.y, square.topL.x, square.topL.y)
+		if l < closestTL then
+			closestTL = l
+		end
+		l = lengthOf(v.x,v.y, square.topR.x, square.topR.y)
+		if l < closestTR then
+			closestTR = l
+		end
+		l = lengthOf(v.x,v.y, square.botL.x, square.botL.y)
+		if l < closestBL then
+			closestBL = l
+		end
+		l = lengthOf(v.x,v.y, square.botR.x, square.botR.y)
+		if l < closestBR then
+			closestBR = l
+		end
+	end
+	-- print(closestTL)
+	-- print(closestTR)
+	-- print(closestBL)
+	-- print(closestBR)
+	local score = 25*(100-closestTL) + 25*(100-closestTR) + 25*(100-closestBL) + 25*(100-closestBR)
+	-- only print positive score (starts negative)
+	if score >= 0 then
+		print('Score is ', score)
+		return score
+	else
+		return 0
 	end
 end
 
@@ -62,12 +107,17 @@ local function drawBox()
 end
 
 local function reset()
-	minX = 999
+	minX = 9999
 	maxX = 0
-	minY = 999
+	minY = 9999
 	maxY = 0
 	width = 0
 	height = 0
+end
+
+-- helper function, returns length of 2 points
+function lengthOf(x1,y1,x2,y2)
+	return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
 end
 
 -- local function getWidth()
