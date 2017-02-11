@@ -1,5 +1,4 @@
 local ScoreManager = {}
-local square = {}
 
 local minX = 999
 local maxX = 0
@@ -14,11 +13,13 @@ prevBox.y = 0
 prevBox.w = 0
 prevBox.h = 0
 
+local square = {}
+square.length = 0
+
 local function squareScoring(drawing)
 	-- print('how is my square')
 
 	for i,v in ipairs(drawing) do
-		-- print(v.x)
 		if v.x < minX then
 			minX = v.x
 		end
@@ -31,28 +32,28 @@ local function squareScoring(drawing)
 		if v.y > maxY then
 			maxY = v.y
 		end
-		-- table.insert(box, {x = mouseX, y = mouseY, lastX = lastMouseX, lastY = lastMouseY})
 	end
 
 	width = maxX-minX
-	-- print('width: ', width)
 	height = maxY-minY
-	-- print('height: ', height)
-
-	-- print('minX: ', minX)
-	-- print('maxX: ', maxX)
-	-- print('minY: ', minY)
-	-- print('maxY: ', maxY)
 
 	prevBox.x = minX
 	prevBox.y = minY
 	prevBox.w = width
 	prevBox.h = height
-	-- print(prevBox.x)
 
-	-- for i = 1, #drawing do
-	-- 	print(drawing[i].x)
-	-- end
+	-- print(#drawing)
+	square.length = (width+height)/2
+	print('Score is ', 100 - math.abs(width - square.length))
+
+	for i,v in ipairs(drawing) do
+		-- table.insert(square, {fx, fy, lx, ly})
+	end
+end
+
+local function drawSquare()
+	love.graphics.setColor(100, 230, 100, 125)
+	love.graphics.rectangle('line', prevBox.x, prevBox.y, square.length, square.length)
 end
 
 local function drawBox()
@@ -78,6 +79,7 @@ end
 -- end
 
 ScoreManager.squareScoring = squareScoring
+ScoreManager.drawSquare = drawSquare
 ScoreManager.drawBox = drawBox
 ScoreManager.reset = reset
 -- ScoreManager.getWidth = getWidth

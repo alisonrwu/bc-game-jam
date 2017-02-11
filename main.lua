@@ -1,6 +1,5 @@
 require"TEsound"
-
-local ScoreManager = require('ScoreManager')
+ScoreManager = require('ScoreManager')
 
 function love.load()
 	love.graphics.setBackgroundColor(255,255,255)
@@ -34,7 +33,6 @@ function love.load()
 end
 
 function love.update(dt)
-
 	TEsound.cleanup()
 
 	-- exit game
@@ -75,11 +73,11 @@ function love.update(dt)
 			table.remove(drawing, 1)
 		end
 		table.remove(drawing, #drawing)
+
 		if (drawing[#drawing] and intersectionX and intersectionY) then
 			intersectionPoint2 = {x = intersectionX, y = intersectionY, lastX = drawing[#drawing].x, lastY = drawing[#drawing].y}
 			table.insert(drawing, intersectionPoint2)
 		end
-
 		if (drawing[1] and intersectionX and intersectionY) then
 			intersectionPoint1 = {x = drawing[1].lastX, y = drawing[1].lastY, lastX = intersectionX, lastY = intersectionY}
 			table.insert(drawing, 1, intersectionPoint1)
@@ -92,6 +90,7 @@ end
 
 function love.draw()
 	ScoreManager.drawBox()
+	ScoreManager.drawSquare()
 
 	--Draw all the lines the user has drawn already
 	if (isDrawing) then
@@ -166,4 +165,8 @@ function love.mousepressed(x, y, button, istouch)
 		TEsound.playLooping("Sounds/SFX/Cutting.ogg", "cutting")
 		ScoreManager.reset()
 	end
+end
+
+function love.mousereleased(x, y, button, istouch)
+	-- ScoreManager.squareScoring(drawing)
 end
