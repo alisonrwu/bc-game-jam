@@ -32,7 +32,7 @@ rect.botR = {}
 -- comparing the distance of the closest drawing points.
 local function squareScoring(drawing)
 	-- print('how is my square')
-	updateBoxValues(drawing)
+	updateCacheValues(drawing)
 
 	width = maxX-minX
 	height = maxY-minY
@@ -110,7 +110,7 @@ local function reset()
 	height = 0
 end
 
-function updateBoxValues(drawing)
+function updateCacheValues(drawing)
 	for i,v in ipairs(drawing) do
 		if v.x < minX then
 			minX = v.x
