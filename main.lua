@@ -9,11 +9,13 @@ function love.load()
 	love.graphics.setLineWidth(3)
 	angle = 0
 	scale = love.graphics.newImage("Graphics/UI/Scale.png")
-	scissors = love.graphics.newImage("Graphics/UI/Scissors.png")
+	scissors1 = love.graphics.newImage("Graphics/UI/Scissors.png")
+    scissors2 = love.graphics.newImage("Graphics/UI/Scissors2.png")
 	player = {}
 	player.score = 0
 	lastMouseX = 0
 	lastMouseY = 0
+    frameCounter = 0;
 end
 
 function love.update(dt)
@@ -48,8 +50,22 @@ function love.draw()
 	if ((lastMouseY ~= mouseY or lastMouseX ~= mouseX) and drawing[#drawing - 10] ~= nil and love.mouse.isDown(1)) then
 		angle = math.angle(mouseX, mouseY, drawing[#drawing - 5].x, drawing[#drawing - 5].y)
 	end
-	love.graphics.draw(scissors, love.mouse.getX(), love.mouse.getY(), 
-		angle, 1, 1, scissors:getWidth()/2, scissors:getHeight()/2)
+    love.graphics.setColor(255, 255, 255, 255)
+    if (frameCounter < 10) then
+	love.graphics.draw(scissors1, love.mouse.getX(), love.mouse.getY(), 
+		angle, 1, 1, scissors1:getWidth()/2, scissors1:getHeight()/2) 
+        if (love.mouse.isDown(1)) then
+        frameCounter = frameCounter + 1
+        end else
+        love.graphics.draw(scissors2, love.mouse.getX(), love.mouse.getY(), 
+		angle, 1, 1, scissors2:getWidth()/2, scissors2:getHeight()/2)
+        if (love.mouse.isDown(1)) then
+        frameCounter = frameCounter + 1
+        if (frameCounter == 20) then
+            frameCounter = 0
+             end
+         end
+    end
 end
 
 function math.angle(x1,y1, x2,y2) 
@@ -80,5 +96,6 @@ function isIntersect(l1p1x,l1p1y, l1p2x,l1p2y, l2p1x,l2p1y, l2p2x,l2p2y, seg1, s
 			return false, "The lines don't intersect."
 		end
 	end
+    intersection = {x, y}
 	return true --x,y
 end
