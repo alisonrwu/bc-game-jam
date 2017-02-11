@@ -51,6 +51,7 @@ function love.update(dt)
 					print(i)
 					isDrawing = false
                     mouseDown = false
+                    frameCounter = 19
 					for j = 1, i do
 						table.insert(toBeRemoved, i)
 					end
