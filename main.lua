@@ -24,6 +24,8 @@ function love.load()
 	TEsound.playLooping("Sounds/Music/Paper Cutter.ogg")
 	indexToRemoveTo = 0
 	isDrawing = true
+	scored = true
+	scoreTable = {}
 
 	font = love.graphics.newImageFont("Graphics/UI/Imagefont.png",
 		" abcdefghijklmnopqrstuvwxyz" ..
@@ -77,13 +79,18 @@ function love.update(dt)
 		if (drawing[#drawing] and intersectionX and intersectionY) then
 			intersectionPoint2 = {x = intersectionX, y = intersectionY, lastX = drawing[#drawing].x, lastY = drawing[#drawing].y}
 			table.insert(drawing, intersectionPoint2)
+			if scored == false then
+				player.score = player.score + math.floor(ScoreManager.squareScoring(drawing))
+				table.insert(scoreTable, {x = mouseX, y = mouseY, score = ScoreManager.squareScoring(drawing), alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
+				displayScore()
+				scored = true
+			end
 		end
 		if (drawing[1] and intersectionX and intersectionY) then
 			intersectionPoint1 = {x = drawing[1].lastX, y = drawing[1].lastY, lastX = intersectionX, lastY = intersectionY}
 			table.insert(drawing, 1, intersectionPoint1)
 		end
 
-		ScoreManager.squareScoring(drawing)
 		toBeRemoved = {}
 	end
 end
@@ -131,6 +138,7 @@ function love.draw()
 		love.graphics.print("Score: " .. player.score, width - 200, height - 50)
 		love.graphics.draw(scale, 25, height - 75)
 		love.graphics.draw(textBubble, 10, 10)
+		displayScore()
 	end
 
 function math.angle(x1,y1, x2,y2) 
@@ -164,9 +172,22 @@ function love.mousepressed(x, y, button, istouch)
 		drawing = {}
 		TEsound.playLooping("Sounds/SFX/Cutting.ogg", "cutting")
 		ScoreManager.reset()
+		scored = false
 	end
 end
 
 function love.mousereleased(x, y, button, istouch)
 	-- ScoreManager.squareScoring(drawing)
+end
+
+function displayScore()
+	for i,v in ipairs(scoreTable) do
+		love.graphics.setColor(255, 255, 255, v.alpha)
+		love.graphics.print("+" .. math.floor(v.score), v.boxWidth, v.boxHeight)
+		v.alpha = v.alpha - 2
+		v.boxHeight = v.boxHeight - 2
+		if (v.alpha < 0) then
+			table.remove(v)
+		end
+	end
 end

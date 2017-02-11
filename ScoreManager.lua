@@ -44,11 +44,7 @@ local function squareScoring(drawing)
 
 	-- print(#drawing)
 	square.length = (width+height)/2
-	print('Score is ', 100 - math.abs(width - square.length))
-
-	for i,v in ipairs(drawing) do
-		-- table.insert(square, {fx, fy, lx, ly})
-	end
+	return 100 - math.abs(width - square.length) 
 end
 
 local function drawSquare()
