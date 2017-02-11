@@ -90,7 +90,7 @@ function love.update(dt)
 			intersectionPoint1 = {x = drawing[1].lastX, y = drawing[1].lastY, lastX = intersectionX, lastY = intersectionY}
 			table.insert(drawing, 1, intersectionPoint1)
 		end
-
+		ScoreManager.squareScoring(drawing)
 		toBeRemoved = {}
 	end
 end
