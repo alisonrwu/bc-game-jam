@@ -16,6 +16,7 @@ function love.load()
 	scale = love.graphics.newImage("Graphics/UI/Scale.png")
 	scissors1 = love.graphics.newImage("Graphics/UI/Scissors.png")
 	scissors2 = love.graphics.newImage("Graphics/UI/Scissors2.png")
+	textBubble = love.graphics.newImage("Graphics/UI/TextBubble.png")
 	player = {}
 	player.score = 0
 	lastMouseX = 0
@@ -130,6 +131,7 @@ function love.draw()
 		love.graphics.setColor(255, 255, 255, 255)
 		love.graphics.print("Score: " .. player.score, width - 200, height - 50)
 		love.graphics.draw(scale, 25, height - 75)
+		love.graphics.draw(textBubble, 10, 10)
 	end
 
 function math.angle(x1,y1, x2,y2) 
