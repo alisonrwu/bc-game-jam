@@ -4,6 +4,7 @@ function love.load()
 	love.graphics.setBackgroundColor(255,255,255)
 	love.graphics.setPointSize( 5 )
 	drawing = {}
+    toBeRemoved = {}
 	mouseX = 0
 	mouseY = 0
 	width = love.graphics.getWidth()
@@ -17,8 +18,10 @@ function love.load()
 	player.score = 0
 	lastMouseX = 0
 	lastMouseY = 0
-    frameCounter = 0;
+    frameCounter = 0
     TEsound.playLooping("Sounds/Music/Paper Cutter.ogg")
+    indexToRemoveTo = 0
+    isDrawing = true
 end
 
 function love.update(dt)
@@ -26,6 +29,7 @@ function love.update(dt)
 	TEsound.cleanup()
 
 	-- exit game
+
 	if love.keyboard.isDown('escape') then
 		love.event.push('quit')
 	end
@@ -33,18 +37,44 @@ function love.update(dt)
 	lastMouseY = mouseY
 	mouseX = love.mouse.getX()
 	mouseY = love.mouse.getY()
-	if love.mouse.isDown(1) and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY)) then
+	
+    if love.mouse.isDown(1) and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY)) then
+        if (isDrawing) then
 		table.insert(drawing, {x = mouseX, y = mouseY, lastX = lastMouseX, lastY = lastMouseY})
-		-- print('inserted')
-
-		for i = 1, #drawing-20 do
+            end
+    
+		for i = 1, #drawing - 2 do
 			if drawing[i].x and drawing[i].y and drawing[i].lastX and drawing[i].lastY then
 				if isIntersect(drawing[i].x, drawing[i].y, drawing[i].lastX, drawing[i].lastY, mouseX, mouseY, lastMouseX, lastMouseY, true, true) then
+                    print(i)
+                    isDrawing = false
+                    for j = 1, i do
+                            table.insert(toBeRemoved, i)
+                            end
 					print('CUT')
-				end
+				    end
+                end
 			end
-		end
-	end
+        end
+
+    if (love.mouse.isDown(1) == false) then
+        for i = 1, #toBeRemoved do 
+            print("to be removed index: ", i)
+        table.remove(drawing, 1)
+         end
+        table.remove(drawing, #drawing)
+        if (drawing[#drawing] and intersectionX and intersectionY) then
+            intersectionPoint2 = {x = intersectionX, y = intersectionY, lastX = drawing[#drawing].x, lastY = drawing[#drawing].y}
+            table.insert(drawing, intersectionPoint2)
+            end
+            
+        if (drawing[1] and intersectionX and intersectionY) then
+                intersectionPoint1 = {x = drawing[1].lastX, y = drawing[1].lastY, lastX = intersectionX, lastY = intersectionY}
+                table.insert(drawing, 1, intersectionPoint1)
+            end
+        isDrawing = true
+        toBeRemoved = {}
+     end
 end
 
 function love.draw()	
@@ -99,6 +129,7 @@ function isIntersect(l1p1x,l1p1y, l1p2x,l1p2y, l2p1x,l2p1y, l2p2x,l2p2y, seg1, s
 			return false, "The lines don't intersect."
 		end
 	end
-    intersection = {x, y}
+    intersectionX = x
+    intersectionY = y
 	return true --x,y
 end
