@@ -20,9 +20,7 @@ function love.update(dt)
 	lastMouseY = mouseY
 end
 
-function love.draw()
-	love.graphics.print("Hello World", 400, 300)
-	
+function love.draw()	
 	love.graphics.setColor(0, 0, 0, 255)
 	for i,v in ipairs(drawing) do
    		love.graphics.line(v.x, v.y, v.lastX, v.lastY)
