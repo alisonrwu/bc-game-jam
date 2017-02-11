@@ -1,5 +1,7 @@
 require"TEsound"
 
+local ScoreManager = require('ScoreManager')
+
 function love.load()
 	love.graphics.setBackgroundColor(255,255,255)
 	love.graphics.setPointSize( 5 )
@@ -29,10 +31,10 @@ function love.update(dt)
 	TEsound.cleanup()
 
 	-- exit game
-
 	if love.keyboard.isDown('escape') then
 		love.event.push('quit')
 	end
+
 	lastMouseX = mouseX
 	lastMouseY = mouseY
 	mouseX = love.mouse.getX()
@@ -42,7 +44,7 @@ function love.update(dt)
 		if (isDrawing) then
 			table.insert(drawing, {x = mouseX, y = mouseY, lastX = lastMouseX, lastY = lastMouseY})
 		end
-		
+
 		for i = 1, #drawing - 10 do
 			if drawing[i].x and drawing[i].y and drawing[i].lastX and drawing[i].lastY then
 				if isIntersect(drawing[i].x, drawing[i].y, drawing[i].lastX, drawing[i].lastY, mouseX, mouseY, lastMouseX, lastMouseY, true, true) then
@@ -52,6 +54,7 @@ function love.update(dt)
 						table.insert(toBeRemoved, i)
 					end
 					print('CUT')
+					ScoreManager.squareScoring(drawing)
 				end
 			end
 		end
@@ -59,7 +62,7 @@ function love.update(dt)
 
 	if (love.mouse.isDown(1) == false) then
 		for i = 1, #toBeRemoved do 
-			print("to be removed index: ", i)
+			-- print("to be removed index: ", i)
 			table.remove(drawing, 1)
 		end
 		table.remove(drawing, #drawing)
@@ -67,7 +70,7 @@ function love.update(dt)
 			intersectionPoint2 = {x = intersectionX, y = intersectionY, lastX = drawing[#drawing].x, lastY = drawing[#drawing].y}
 			table.insert(drawing, intersectionPoint2)
 		end
-		
+
 		if (drawing[1] and intersectionX and intersectionY) then
 			intersectionPoint1 = {x = drawing[1].lastX, y = drawing[1].lastY, lastX = intersectionX, lastY = intersectionY}
 			table.insert(drawing, 1, intersectionPoint1)

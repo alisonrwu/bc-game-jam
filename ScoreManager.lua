@@ -5,11 +5,11 @@ local box = {}
 
 local function squareScoring(drawing)
 	print('how is my square')
-	print(drawing)
+	-- print(drawing)
 	-- box = ScoreManager.getBox(drawing)
-	for i = 1, #drawing do
+	-- for i = 1, #drawing do
 		
-	end
+	-- end
 end
 
 local function getBox(drawing)
