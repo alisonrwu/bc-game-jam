@@ -57,7 +57,6 @@ function love.update(dt)
 						table.insert(toBeRemoved, i)
 					end
 					print('CUT')
-					ScoreManager.squareScoring(drawing)
 				end
 			end
 		end
@@ -78,11 +77,14 @@ function love.update(dt)
 			intersectionPoint1 = {x = drawing[1].lastX, y = drawing[1].lastY, lastX = intersectionX, lastY = intersectionY}
 			table.insert(drawing, 1, intersectionPoint1)
 		end
+
+		ScoreManager.squareScoring(drawing)
 		toBeRemoved = {}
 	end
 end
 
-function love.draw()	
+function love.draw()
+	ScoreManager.drawBox()
 
 	--Draw all the lines the user has drawn already
 	if (isDrawing) then
@@ -150,5 +152,6 @@ function love.mousepressed(x, y, button, istouch)
         isDrawing = true
         drawing = {}
 		TEsound.playLooping("Sounds/SFX/Cutting.ogg", "cutting")
+		ScoreManager.reset()
 	end
 end
