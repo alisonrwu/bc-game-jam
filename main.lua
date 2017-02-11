@@ -37,7 +37,7 @@ function love.update(dt)
 	lastMouseY = mouseY
 	mouseX = love.mouse.getX()
 	mouseY = love.mouse.getY()
-	
+
     if love.mouse.isDown(1) and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY)) then
         if (isDrawing) then
 		table.insert(drawing, {x = mouseX, y = mouseY, lastX = lastMouseX, lastY = lastMouseY})
@@ -132,4 +132,16 @@ function isIntersect(l1p1x,l1p1y, l1p2x,l1p2y, l2p1x,l2p1y, l2p2x,l2p2y, seg1, s
     intersectionX = x
     intersectionY = y
 	return true --x,y
+end
+
+function love.mousepressed(x, y, button, istouch)
+	if (button == 1) then 
+		TEsound.playLooping("Sounds/SFX/Cutting.ogg", "cutting")
+	end
+end
+
+function love.mousereleased(x, y, button, istouch)
+	if (button == 1) then
+		TEsound.stop("cutting", false)
+	end
 end
