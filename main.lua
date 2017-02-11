@@ -1,10 +1,12 @@
 require"TEsound"
 
+local ScoreManager = require('ScoreManager')
+
 function love.load()
 	love.graphics.setBackgroundColor(255,255,255)
 	love.graphics.setPointSize( 5 )
 	drawing = {}
-    toBeRemoved = {}
+	toBeRemoved = {}
 	mouseX = 0
 	mouseY = 0
 	width = love.graphics.getWidth()
@@ -13,15 +15,15 @@ function love.load()
 	angle = 0
 	scale = love.graphics.newImage("Graphics/UI/Scale.png")
 	scissors1 = love.graphics.newImage("Graphics/UI/Scissors.png")
-    scissors2 = love.graphics.newImage("Graphics/UI/Scissors2.png")
+	scissors2 = love.graphics.newImage("Graphics/UI/Scissors2.png")
 	player = {}
 	player.score = 0
 	lastMouseX = 0
 	lastMouseY = 0
-    frameCounter = 0
-    TEsound.playLooping("Sounds/Music/Paper Cutter.ogg")
-    indexToRemoveTo = 0
-    isDrawing = true
+	frameCounter = 0
+	TEsound.playLooping("Sounds/Music/Paper Cutter.ogg")
+	indexToRemoveTo = 0
+	isDrawing = true
 end
 
 function love.update(dt)
@@ -29,52 +31,54 @@ function love.update(dt)
 	TEsound.cleanup()
 
 	-- exit game
-
 	if love.keyboard.isDown('escape') then
 		love.event.push('quit')
 	end
+
 	lastMouseX = mouseX
 	lastMouseY = mouseY
 	mouseX = love.mouse.getX()
 	mouseY = love.mouse.getY()
 
+
     if love.mouse.isDown(1) and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY)) then
         if (isDrawing) then
 		table.insert(drawing, {x = mouseX, y = mouseY, lastX = lastMouseX, lastY = lastMouseY})
             end
-    
-		for i = 1, #drawing - 2 do
+		for i = 1, #drawing - 10 do
+
 			if drawing[i].x and drawing[i].y and drawing[i].lastX and drawing[i].lastY then
 				if isIntersect(drawing[i].x, drawing[i].y, drawing[i].lastX, drawing[i].lastY, mouseX, mouseY, lastMouseX, lastMouseY, true, true) then
-                    print(i)
-                    isDrawing = false
-                    for j = 1, i do
-                            table.insert(toBeRemoved, i)
-                            end
+					print(i)
+					isDrawing = false
+					for j = 1, i do
+						table.insert(toBeRemoved, i)
+					end
 					print('CUT')
-				    end
-                end
+					ScoreManager.squareScoring(drawing)
+				end
 			end
-        end
+		end
+	end
 
-    if (love.mouse.isDown(1) == false) then
-        for i = 1, #toBeRemoved do 
-            print("to be removed index: ", i)
-        table.remove(drawing, 1)
-         end
-        table.remove(drawing, #drawing)
-        if (drawing[#drawing] and intersectionX and intersectionY) then
-            intersectionPoint2 = {x = intersectionX, y = intersectionY, lastX = drawing[#drawing].x, lastY = drawing[#drawing].y}
-            table.insert(drawing, intersectionPoint2)
-            end
-            
-        if (drawing[1] and intersectionX and intersectionY) then
-                intersectionPoint1 = {x = drawing[1].lastX, y = drawing[1].lastY, lastX = intersectionX, lastY = intersectionY}
-                table.insert(drawing, 1, intersectionPoint1)
-            end
-        isDrawing = true
-        toBeRemoved = {}
-     end
+	if (love.mouse.isDown(1) == false) then
+		for i = 1, #toBeRemoved do 
+			-- print("to be removed index: ", i)
+			table.remove(drawing, 1)
+		end
+		table.remove(drawing, #drawing)
+		if (drawing[#drawing] and intersectionX and intersectionY) then
+			intersectionPoint2 = {x = intersectionX, y = intersectionY, lastX = drawing[#drawing].x, lastY = drawing[#drawing].y}
+			table.insert(drawing, intersectionPoint2)
+		end
+
+		if (drawing[1] and intersectionX and intersectionY) then
+			intersectionPoint1 = {x = drawing[1].lastX, y = drawing[1].lastY, lastX = intersectionX, lastY = intersectionY}
+			table.insert(drawing, 1, intersectionPoint1)
+		end
+		isDrawing = true
+		toBeRemoved = {}
+	end
 end
 
 function love.draw()	
@@ -92,27 +96,27 @@ function love.draw()
 	end
 
 	-- Draw the scissors
-    love.graphics.setColor(255, 255, 255, 255)
-    if (frameCounter < 10) then
-	love.graphics.draw(scissors1, love.mouse.getX(), love.mouse.getY(), 
-		angle, 1, 1, scissors1:getWidth()/2, scissors1:getHeight()/2) 
-        if (love.mouse.isDown(1)) then
-        frameCounter = frameCounter + 1
-        end else
-        love.graphics.draw(scissors2, love.mouse.getX(), love.mouse.getY(), 
-		angle, 1, 1, scissors2:getWidth()/2, scissors2:getHeight()/2)
-        if (love.mouse.isDown(1)) then
-        frameCounter = frameCounter + 1
-        if (frameCounter == 20) then
-            frameCounter = 0
-             end
-         end
-    end
-end
+	love.graphics.setColor(255, 255, 255, 255)
+	if (frameCounter < 10) then
+		love.graphics.draw(scissors1, love.mouse.getX(), love.mouse.getY(), 
+			angle, 1, 1, scissors1:getWidth()/2, scissors1:getHeight()/2) 
+		if (love.mouse.isDown(1)) then
+			frameCounter = frameCounter + 1
+			end else
+			love.graphics.draw(scissors2, love.mouse.getX(), love.mouse.getY(), 
+				angle, 1, 1, scissors2:getWidth()/2, scissors2:getHeight()/2)
+			if (love.mouse.isDown(1)) then
+				frameCounter = frameCounter + 1
+				if (frameCounter == 20) then
+					frameCounter = 0
+				end
+			end
+		end
+	end
 
-function math.angle(x1,y1, x2,y2) 
-	return math.atan2(y2-y1, x2-x1) 
-end
+	function math.angle(x1,y1, x2,y2) 
+		return math.atan2(y2-y1, x2-x1) 
+	end
 
 -- Checks if two lines intersect (or line segments if seg is true)
 -- Lines are given as four numbers (two coordinates)
@@ -129,8 +133,8 @@ function isIntersect(l1p1x,l1p1y, l1p2x,l1p2y, l2p1x,l2p1y, l2p2x,l2p2y, seg1, s
 			return false, "The lines don't intersect."
 		end
 	end
-    intersectionX = x
-    intersectionY = y
+	intersectionX = x
+	intersectionY = y
 	return true --x,y
 end
 
