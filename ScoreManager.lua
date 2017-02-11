@@ -20,37 +20,28 @@ square.topR = {}
 square.botL = {}
 square.botR = {}
 
+local rect = {}
+rect.length = 0
+rect.topL = {}
+rect.topR = {}
+rect.botL = {}
+rect.botR = {}
+
 -- Scores a square by calculating the 4 corner points of a
 -- estimated square shape based off user 'drawing' input,
 -- comparing the distance of the closest drawing points.
 local function squareScoring(drawing)
 	-- print('how is my square')
-
-	for i,v in ipairs(drawing) do
-		if v.x < minX then
-			minX = v.x
-		end
-		if v.x > maxX then
-			maxX = v.x
-		end
-		if v.y < minY then
-			minY = v.y
-		end
-		if v.y > maxY then
-			maxY = v.y
-		end
-	end
+	updateBoxValues(drawing)
 
 	width = maxX-minX
 	height = maxY-minY
-
 	prevBox.x = minX
 	prevBox.y = minY
 	prevBox.w = width
 	prevBox.h = height
 
 	square.length = (width+height)/2
-
 	square.topL.x = minX
 	square.topL.y = minY
 	square.topR.x = minX+square.length
@@ -86,7 +77,7 @@ local function squareScoring(drawing)
 	-- print(closestTR)
 	-- print(closestBL)
 	-- print(closestBR)
-	local score = 25*(100-closestTL) + 25*(100-closestTR) + 25*(100-closestBL) + 25*(100-closestBR)
+	local score = 0.25*(100-closestTL) + 0.25*(100-closestTR) + 0.25*(100-closestBL) + 0.25*(100-closestBR)
 	-- only print positive score (starts negative)
 	if score >= 0 then
 		print('Score is ', score)
@@ -94,6 +85,10 @@ local function squareScoring(drawing)
 	else
 		return 0
 	end
+end
+
+local function rectangleScoring(drawing, x, y)
+	print('how is my rectangle, is it ', x, 'by', y)
 end
 
 local function drawSquare()
@@ -115,6 +110,23 @@ local function reset()
 	height = 0
 end
 
+function updateBoxValues(drawing)
+	for i,v in ipairs(drawing) do
+		if v.x < minX then
+			minX = v.x
+		end
+		if v.x > maxX then
+			maxX = v.x
+		end
+		if v.y < minY then
+			minY = v.y
+		end
+		if v.y > maxY then
+			maxY = v.y
+		end
+	end
+end
+
 -- helper function, returns length of 2 points
 function lengthOf(x1,y1,x2,y2)
 	return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
@@ -129,6 +141,7 @@ end
 -- end
 
 ScoreManager.squareScoring = squareScoring
+ScoreManager.rectangleScoring = rectangleScoring
 ScoreManager.drawSquare = drawSquare
 ScoreManager.drawBox = drawBox
 ScoreManager.reset = reset

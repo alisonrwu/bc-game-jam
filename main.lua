@@ -84,6 +84,7 @@ function love.update(dt)
 		end
 
 		ScoreManager.squareScoring(drawing)
+		-- ScoreManager.rectangleScoring(drawing, 10, 10)
 		toBeRemoved = {}
 	end
 end
