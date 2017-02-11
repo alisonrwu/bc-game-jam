@@ -43,7 +43,7 @@ function love.update(dt)
 		table.insert(drawing, {x = mouseX, y = mouseY, lastX = lastMouseX, lastY = lastMouseY})
             end
     
-		for i = 1, #drawing - 2 do
+		for i = 1, #drawing - 10 do
 			if drawing[i].x and drawing[i].y and drawing[i].lastX and drawing[i].lastY then
 				if isIntersect(drawing[i].x, drawing[i].y, drawing[i].lastX, drawing[i].lastY, mouseX, mouseY, lastMouseX, lastMouseY, true, true) then
                     print(i)
