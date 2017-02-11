@@ -39,8 +39,12 @@ function love.update(dt)
 	lastMouseY = mouseY
 	mouseX = love.mouse.getX()
 	mouseY = love.mouse.getY()
+    
+    if love.mouse.isDown(1) then
+        mouseDown = true
+    end
 	
-	if love.mouse.isDown(1) and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY)) then
+	if mouseDown and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY)) then
 		if (isDrawing) then
 			table.insert(drawing, {x = mouseX, y = mouseY, lastX = lastMouseX, lastY = lastMouseY})
 		end
@@ -50,6 +54,7 @@ function love.update(dt)
 				if isIntersect(drawing[i].x, drawing[i].y, drawing[i].lastX, drawing[i].lastY, mouseX, mouseY, lastMouseX, lastMouseY, true, true) then
 					print(i)
 					isDrawing = false
+                    mouseDown = false
 					for j = 1, i do
 						table.insert(toBeRemoved, i)
 					end
@@ -60,7 +65,7 @@ function love.update(dt)
 		end
 	end
 
-	if (love.mouse.isDown(1) == false) then
+	if (not mouseDown) then
 		for i = 1, #toBeRemoved do 
 			-- print("to be removed index: ", i)
 			table.remove(drawing, 1)
@@ -90,7 +95,7 @@ function love.draw()
 	end
 
 	-- Determining angle for the scissors
-	if ((lastMouseY ~= mouseY or lastMouseX ~= mouseX) and drawing[#drawing - 10] ~= nil and love.mouse.isDown(1)) then
+	if ((lastMouseY ~= mouseY or lastMouseX ~= mouseX) and drawing[#drawing - 10] ~= nil and mouseDown) then
 		angle = math.angle(mouseX, mouseY, drawing[#drawing - 5].x, drawing[#drawing - 5].y)
 	end
 
@@ -99,12 +104,12 @@ function love.draw()
 	if (frameCounter < 10) then
 		love.graphics.draw(scissors1, love.mouse.getX(), love.mouse.getY(), 
 			angle, 1, 1, scissors1:getWidth()/2, scissors1:getHeight()/2) 
-		if (love.mouse.isDown(1)) then
+		if (mouseDown) then
 			frameCounter = frameCounter + 1
 			end else
 			love.graphics.draw(scissors2, love.mouse.getX(), love.mouse.getY(), 
 				angle, 1, 1, scissors2:getWidth()/2, scissors2:getHeight()/2)
-			if (love.mouse.isDown(1)) then
+			if (mouseDown) then
 				frameCounter = frameCounter + 1
 				if (frameCounter == 20) then
 					frameCounter = 0
