@@ -65,7 +65,7 @@ local function rectangleScoring(drawing, x, y)
 		end
 	end
 
-	if (math.abs(rect.width - prevBox.w) > inch*1.5 or math.abs(rect.height - prevBox.h) > inch*1.5) then
+	if (math.abs(rect.width - prevBox.w) > inch or math.abs(rect.height - prevBox.h) > inch) then
 		return -50
 	end
 

@@ -24,7 +24,6 @@ function love.load()
 	lastMouseX = 0
 	lastMouseY = 0
 	frameCounter = 0
-	TEsound.playLooping("Sounds/Music/Paper Cutter.ogg")
 	indexToRemoveTo = 0
 	isDrawing = true
 	scored = true
@@ -42,6 +41,7 @@ function love.load()
     isPressed = false
     isTransitioning = false
     properties = {r = 255, b = 255, g = 255, a = 0}
+    music = false
 end
 
 
@@ -62,6 +62,10 @@ function love.draw()
 end
 
 function gameUpdate()
+	if (not music) then
+		TEsound.playLooping("Sounds/Music/Paper Cutter.ogg")
+		music = true
+	end
     TEsound.cleanup()
     
     --setup RNG for current problem
@@ -133,8 +137,10 @@ end
 
 ------------------------------------------------------------------- Called on every frame to draw the game
 function gameDraw()
-    ScoreManager.drawBox()
-	ScoreManager.drawRectangle()	
+    --ScoreManager.drawBox()
+    if (scored == true) then
+		ScoreManager.drawRectangle()
+		end	
 
     --Draw all the lines the user has drawn already
 	if (isDrawing) then
@@ -172,7 +178,7 @@ function gameDraw()
 
 		--Draw UI elements
 		love.graphics.setColor(255, 255, 255, 255)
-		love.graphics.print("Score: " .. player.score, width - 200, height - 50)
+		love.graphics.print("Score: " .. player.score, width - 225, height - 50)
 		love.graphics.draw(scale, 25, height - 75)
 		love.graphics.draw(textBubble, 10, 10)
 		drawTextBubble(currentScore)
@@ -249,7 +255,7 @@ function isIntersect(l1p1x,l1p1y, l1p2x,l1p2y, l2p1x,l2p1y, l2p2x,l2p2y, seg1, s
 end
 
 function love.mousepressed(x, y, button, istouch)
-	if (button == 1 and scored == true) then 
+	if (button == 1 and scored == true and isMenu == false) then 
 		mouseDown = true
 		isDrawing = true
 		drawing = {}
@@ -263,7 +269,11 @@ end
 function displayScore()
 	for i,v in ipairs(scoreTable) do
 		love.graphics.setColor(255, 255, 255, v.alpha)
-		love.graphics.print("+" .. math.floor(v.score), v.boxWidth, v.boxHeight)
+		if v.score < 0 then
+ 			love.graphics.print(math.floor(v.score), v.boxWidth, v.boxHeight)
+ 		else
+ 			love.graphics.print("+" .. math.floor(v.score), v.boxWidth, v.boxHeight)
+ 		end
 		v.alpha = v.alpha - 2
 		v.boxHeight = v.boxHeight - 2
 		if (v.alpha < 0) then
