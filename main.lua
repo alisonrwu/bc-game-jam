@@ -264,10 +264,10 @@ function displayScore()
 	for i,v in ipairs(scoreTable) do
 		love.graphics.setColor(255, 255, 255, v.alpha)
 		if v.score < 0 then
-+			love.graphics.print(math.floor(v.score), v.boxWidth, v.boxHeight)
-+		else
-+			love.graphics.print("+" .. math.floor(v.score), v.boxWidth, v.boxHeight)
-+		end
+			love.graphics.print(math.floor(v.score), v.boxWidth, v.boxHeight)
+		else
+			love.graphics.print("+" .. math.floor(v.score), v.boxWidth, v.boxHeight)
+		end
 		v.alpha = v.alpha - 2
 		v.boxHeight = v.boxHeight - 2
 		if (v.alpha < 0) then
