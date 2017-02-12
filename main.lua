@@ -27,6 +27,10 @@ function love.load()
 	scored = true
 	scoreTable = {}
 
+	generated = false
+	rand1 = 0
+	rand2 = 0
+
 	font = love.graphics.newImageFont("Graphics/UI/Imagefont.png",
 		" abcdefghijklmnopqrstuvwxyz" ..
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ0" ..
@@ -36,6 +40,13 @@ end
 
 function love.update(dt)
 	TEsound.cleanup()
+
+	--setup RNG for current problem
+	if (generated == false) then
+		rand1 = love.math.random(12) / 2
+		rand2 = love.math.random(12) / 2
+		generated = true
+	end
 
 	-- exit game
 	if love.keyboard.isDown('escape') then
@@ -59,7 +70,7 @@ function love.update(dt)
 					isDrawing = false
 					mouseDown = false
 					TEsound.stop("cutting", false)
-                    frameCounter = 18
+					frameCounter = 18
 					for j = 1, i do
 						table.insert(toBeRemoved, i)
 					end
@@ -80,8 +91,8 @@ function love.update(dt)
 			intersectionPoint2 = {x = intersectionX, y = intersectionY, lastX = drawing[#drawing].x, lastY = drawing[#drawing].y}
 			table.insert(drawing, intersectionPoint2)
 			if scored == false then
-				player.score = player.score + math.floor(ScoreManager.rectangleScoring(drawing, 10, 6))
-				table.insert(scoreTable, {x = mouseX, y = mouseY, score = ScoreManager.rectangleScoring(drawing, 10, 6), alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
+				player.score = player.score + math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2))
+				table.insert(scoreTable, {x = mouseX, y = mouseY, score = ScoreManager.rectangleScoring(drawing, rand1, rand2), alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
 				displayScore()
 				scored = true
 			end
@@ -90,7 +101,7 @@ function love.update(dt)
 			intersectionPoint1 = {x = drawing[1].lastX, y = drawing[1].lastY, lastX = intersectionX, lastY = intersectionY}
 			table.insert(drawing, 1, intersectionPoint1)
 		end
-		ScoreManager.rectangleScoring(drawing, 10, 6)
+		ScoreManager.rectangleScoring(drawing, rand1, rand2)
 		toBeRemoved = {}
 	end
 end
@@ -138,11 +149,27 @@ function love.draw()
 		love.graphics.print("Score: " .. player.score, width - 200, height - 50)
 		love.graphics.draw(scale, 25, height - 75)
 		love.graphics.draw(textBubble, 10, 10)
+		if (not scored) then
+			love.graphics.print("Give me a, uh, ".. rand1 .. " x " .. rand2 .. ", pronto!", 20, 20)
+		else
+			if (ScoreManager.rectangleScoring(drawing, rand1, rand2) > 90) then
+				love.graphics.print("Don't get cocky, kid.", 20, 20)
+			elseif (ScoreManager.rectangleScoring(drawing, rand1, rand2) > 70) then
+				love.graphics.print("I'll use it, but I won't like it", 20, 20)
+			elseif (ScoreManager.rectangleScoring(drawing, rand1, rand2) > 40) then
+				love.graphics.print("What are you doing?!", 20, 20)
+			elseif (ScoreManager.rectangleScoring(drawing, rand1, rand2) > 0) then
+				love.graphics.print("Are you even trying?", 20, 20)
+			else
+				love.graphics.print("That's coming out of your paycheck.", 20, 20)
+			end
+		end
+
 		displayScore()
 	end
 
-function math.angle(x1,y1, x2,y2) 
-	return math.atan2(y2-y1, x2-x1) 
+	function math.angle(x1,y1, x2,y2) 
+		return math.atan2(y2-y1, x2-x1) 
 	end
 
 -- Checks if two lines intersect (or line segments if seg is true)
@@ -173,6 +200,7 @@ function love.mousepressed(x, y, button, istouch)
 		TEsound.playLooping("Sounds/SFX/Cutting.ogg", "cutting")
 		ScoreManager.reset()
 		scored = false
+		generated = false
 	end
 end
 

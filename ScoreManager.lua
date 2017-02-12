@@ -68,7 +68,7 @@ local function rectangleScoring(drawing, x, y)
 	local score = 0.25*(100-closestTL) + 0.25*(100-closestTR) + 0.25*(100-closestBL) + 0.25*(100-closestBR)
 	-- only print positive score (starts negative)
 	if score >= 0 then
-		print('Score is ', score)
+		--print('Score is ', score)
 		return score
 	else
 		return 0
