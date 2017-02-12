@@ -62,6 +62,7 @@ function love.load()
    TEsound.volume("menuTheme", 0.8)
    gameOver = false
    comboBonus = 1
+   heartbeat = false
 end
 
 
@@ -165,7 +166,7 @@ function gameUpdate(dt)
 
 	if (not music) then
 		TEsound.stop("menuTheme")
-		TEsound.playLooping("Sounds/Music/Paper Cutter.ogg")
+		TEsound.playLooping("Sounds/Music/Paper Cutter.ogg", "music")
 		music = true
 	end
     TEsound.cleanup()
@@ -235,6 +236,11 @@ function gameUpdate(dt)
 		end
 		ScoreManager.rectangleScoring(drawing, rand1, rand2)
 		toBeRemoved = {}
+	end
+
+	if (gameOver) then
+		TEsound.pitch("music", 0.9)
+		TEsound.stop("heartbeat")
 	end
 end    
 
@@ -421,7 +427,7 @@ function drawTextBubble(score)
 end
    
 function drawTimer(currentScore)
-	if (currentScore > scoreThreshold) then
+	if (currentScore >= scoreThreshold) then
 		remainingTime = resetTime
 		extraScore = extraScore + 50
 		scoreThreshold = scoreThreshold + extraScore
@@ -431,8 +437,20 @@ function drawTimer(currentScore)
 	if (remainingTime > 0) then
 		love.graphics.setColor(255, 255, 255, 255)
 		if (remainingTime < 10) then
+			if (heartbeat == false) then
+				TEsound.pitch("music", 1.05)
+				TEsound.play("Sounds/SFX/heartbeat.mp3", "heartbeat")
+				heartbeat = true
+			end
 			love.graphics.setColor(255, 127, 127, 255)
+		else
+			if (heartbeat == true) then
+				TEsound.pitch("music", 1)
+			end
+			TEsound.stop("heartbeat")
+			heartbeat = false
 		end
+
 		love.graphics.print("Time: " .. math.ceil(remainingTime, 1), 25, 55)
 	else 
 		gameOver = true
