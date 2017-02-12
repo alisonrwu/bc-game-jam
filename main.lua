@@ -319,7 +319,7 @@ function gameDraw()
 		displayScore()
 		if (not gameOver) then
 			love.graphics.setColor(255, 255, 255, 255)
-			love.graphics.print("Score: " .. player.score, width - 250, height - 50)
+			love.graphics.print("Paycheck: " .. player.score, width - 275, height - 50)
 			love.graphics.print("Target: " .. scoreThreshold, width - 220, 55)
 			love.graphics.draw(scale, 30, height - 125)
 		else
@@ -345,6 +345,10 @@ function menuDraw()
 	if (isTransitioningInstructions or isTransitioningGame) then
 		love.graphics.setColor(0, 0, 0, alpha*255)
 		love.graphics.rectangle("fill", 0, 0, width, height)
+	else
+		love.graphics.scale(0.5)
+		love.graphics.printf("Made by: Trevin \"terb\" Wong, Alison \"awu\" Wu, and Sean \"sdace\" Allen", 10, height * 2 - 40, width * 2)
+		love.graphics.scale(2)
 	end
 
 	isPressed = false
