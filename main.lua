@@ -2,7 +2,6 @@ require"TEsound"
 ScoreManager = require('ScoreManager')
 local ScoreManager = require('ScoreManager')
 local MenuManager = require('MenuManager')
-remainingTime = 30
 
 function love.load()
 	love.graphics.setBackgroundColor(255,255,255)
@@ -57,10 +56,12 @@ function love.load()
    display = 1.1
    fadein = 1.5
    blinkingCounter = 0
-   remainingTime = 10
+   remainingTime = 30
    gameOver = false
    TEsound.play("Sounds/Music/Paper Cut Title.ogg", "menuTheme")
    TEsound.volume("menuTheme", 0.8)
+   gameOver = false
+   comboBonus = 1
 end
 
 
@@ -221,7 +222,8 @@ function gameUpdate(dt)
 			table.insert(drawing, intersectionPoint2)
 			if scored == false then
 				player.score = player.score + math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2))
-                currentScore = math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2))
+                currentScore = math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2)) * comboBonus
+                comboBonus = comboBonus + 0.1
 				table.insert(scoreTable, {x = mouseX, y = mouseY, score = ScoreManager.rectangleScoring(drawing, rand1, rand2), alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
 				displayScore()
 				scored = true
@@ -389,20 +391,30 @@ end
 function drawTextBubble(score)
 	if (not scored) then
 		love.graphics.print("Give me a, uh, ".. rand1 .. " x " .. rand2 .. ", pronto!", 20, 20)
-	else 
+	elseif (gameOver) then
+		love.graphics.print("You're fired!", 20, 20)
+	else
 		if (score < 0)  then
+			comboBonus = 1
+			love.graphics.setColor(255, 75, 75, 255)
 			love.graphics.print("That's coming out your paycheck", 20, 20)
 		end
 		if (score >= 0 and score < 20) then
+			comboBonus = 1
+			love.graphics.setColor(255, 127, 127, 255)
 			love.graphics.print("What are you doing?!", 20, 20)
 		end
 		if (score >= 20 and score < 70) then
+			comboBonus = 1
+			love.graphics.setColor(255, 127, 127, 255)
 			love.graphics.print("Are you a monkey?", 20, 20)
 		end
 		if (score >= 70 and score < 100) then
+			love.graphics.setColor(255, 255, 255, 255)
 			love.graphics.print("Close but not really.", 20, 20)
 		end
 		if (score >= 100) then
+			love.graphics.setColor(255, 255, 255, 255)
 			love.graphics.print("Don't get cocky.", 20, 20)
 		end
 	end
@@ -417,9 +429,14 @@ function drawTimer(currentScore)
 
 	--Draw timer
 	if (remainingTime > 0) then
+		love.graphics.setColor(255, 255, 255, 255)
+		if (remainingTime < 10) then
+			love.graphics.setColor(255, 127, 127, 255)
+		end
 		love.graphics.print("Time: " .. math.ceil(remainingTime, 1), 25, 55)
 	else 
-		love.graphics.print("GAME OVER", width - 600, height - 50)
+		gameOver = true
+		love.graphics.printf("GAME OVER", 0, height / 2 - 50, width, 'center')
 		love.graphics.print("Play again?", width-300, height - 100)
 	end
 end     
