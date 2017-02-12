@@ -4,6 +4,8 @@ local ScoreManager = require('ScoreManager')
 local MenuManager = require('MenuManager')
 
 function love.load()
+	icon = love.graphics.newImage("Graphics/UI/Icon.png")
+	love.window.setIcon(icon:getData())	
 	love.graphics.setBackgroundColor(255,255,255)
 	love.graphics.setPointSize( 5 )
 	drawing = {}
@@ -112,7 +114,7 @@ function fadeToGame(dt)
         end
 end    
 
-function love.draw()	
+function love.draw()
     if (isMenu) then
         menuDraw()
     elseif (isInstructions) then
@@ -239,8 +241,8 @@ end
 			if scored == false then
 				player.score = player.score + math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2))
                 currentScore = math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2)) * comboBonus
-                comboBonus = comboBonus + 0.1
-				table.insert(scoreTable, {x = mouseX, y = mouseY, score = ScoreManager.rectangleScoring(drawing, rand1, rand2), alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
+                comboBonus = comboBonus + 0.05
+				table.insert(scoreTable, {x = mouseX, y = mouseY, score = currentScore, alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
 				displayScore()
 				scored = true
 			end
@@ -451,9 +453,13 @@ function drawTextBubble(score)
 			love.graphics.setColor(255, 255, 255, 255)
 			love.graphics.print("Close but not really.", 20, 20)
 		end
-		if (score >= 100) then
+		if (score >= 100 and score < 150) then
 			love.graphics.setColor(255, 255, 255, 255)
 			love.graphics.print("Don't get cocky.", 20, 20)
+		end
+		if (score >= 150) then
+			love.graphics.setColor(127, 255, 127, 255)
+			love.graphics.print("OwO what's this?", 20, 20)
 		end
 	end
 end
