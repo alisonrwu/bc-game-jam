@@ -22,7 +22,6 @@ function love.load()
 	textBubble = love.graphics.newImage("Graphics/UI/TextBubble.png")
 	background = love.graphics.newImage("Graphics/UI/Background.png")
 	menuBackground = love.graphics.newImage("Graphics/Menu/Background.png")
-    combo = love.graphics.newImage("Graphics/UI/combo.png")
 	player = {}
 	player.score = 0
 	lastMouseX = 0
@@ -259,6 +258,10 @@ end
 	if (gameOver) then
 		TEsound.pitch("music", 0.9)
 		TEsound.stop("heartbeat")
+		drawing = {}
+		ScoreManager.reset()
+		mouseDown = false
+		TEsound.stop("cutting")
 	end
 end    
 
