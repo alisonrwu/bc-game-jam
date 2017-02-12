@@ -66,6 +66,10 @@ function love.load()
 	TEsound.volume("menuTheme", 0.8)
 	comboBonus = 1
 	heartbeat = false
+    isWrongSound = false
+    isCorrectSound = false
+    isNewTimerSound = false
+    isFailSound = false
 end
 
 
@@ -163,6 +167,20 @@ function love.update(dt)
         			end            
 
         			function gameUpdate(dt)
+    
+    print(mouseDown)
+    print(isDrawing)
+    
+    -- debug
+    if (love.keyboard.isDown("a")) then
+        remainingTime = remainingTime + 999
+        end
+    
+    if (love.keyboard.isDown("b")) then
+        love.load()
+		ScoreManager.reset()
+        end
+    
 
 	-- decrement Timer
 	remainingTime = remainingTime - dt
@@ -206,14 +224,23 @@ function love.update(dt)
     for i = 1, #drawing - 10 do
     	if drawing[i].x and drawing[i].y and drawing[i].lastX and drawing[i].lastY then
     		if isIntersect(drawing[i].x, drawing[i].y, drawing[i].lastX, drawing[i].lastY, mouseX, mouseY, lastMouseX, lastMouseY, true, true) then
-    			print(i)
+    			print("I am running")
     			isDrawing = false
     			mouseDown = false
     			TEsound.stop("cutting", false)
     			frameCounter = 20
     			for j = 1, i do
     				table.insert(toBeRemoved, i)
+                            
+                if scored == false then
+				player.score = player.score + math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2))
+				currentScore = math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2)) * comboBonus
+				comboBonus = comboBonus + 0.05
+				table.insert(scoreTable, {x = mouseX, y = mouseY, score = currentScore, alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
+				displayScore()
+                scored = true
     			end
+                            
     			print('CUT')
     		end
     	end
@@ -249,12 +276,14 @@ end
 				scored = true
 			end
 		end
+            
 		if (drawing[1] and intersectionX and intersectionY) then
 			intersectionPoint1 = {x = drawing[1].lastX, y = drawing[1].lastY, lastX = intersectionX, lastY = intersectionY}
 			table.insert(drawing, 1, intersectionPoint1)
 		end
 		toBeRemoved = {}
-	end        
+	end    
+end        
 
 	if (gameOver) then
 		TEsound.pitch("music", 0.9)
@@ -304,7 +333,7 @@ function gameDraw()
 				angle, 1, 1, scissors2:getWidth()/2, scissors2:getHeight()/2)
 			if (mouseDown) and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY))  then
 				frameCounter = frameCounter + 1
-				if (frameCounter == 21) then
+				if (frameCounter >= 21) then
 					frameCounter = 0
 				end
 			end
@@ -523,3 +552,4 @@ end
 function love.mousereleased(x, y, button, istouch) 
 	isPressed = true
 end
+
