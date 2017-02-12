@@ -22,6 +22,7 @@ function love.load()
 	textBubble = love.graphics.newImage("Graphics/UI/TextBubble.png")
 	background = love.graphics.newImage("Graphics/UI/Background.png")
 	menuBackground = love.graphics.newImage("Graphics/Menu/Background.png")
+    combo = love.graphics.newImage("Graphics/UI/combo.png")
 	player = {}
 	player.score = 0
 	lastMouseX = 0
@@ -423,12 +424,11 @@ function displayScore()
 		else
 			love.graphics.setColor(127, 255, 127, v.alpha)
 			love.graphics.print("+" .. math.floor(v.score), v.boxWidth, v.boxHeight)
-			love.graphics.setColor(255, 255, 255, v.alpha)
-			if (math.floor(v.score) < 100) then
-				love.graphics.print("x" .. comboBonus, v.boxWidth + 3.75, v.boxHeight + 30, 0, 0.5, 0.5)    
-			else
-				love.graphics.print("x" .. comboBonus, v.boxWidth + 3.75, v.boxHeight + 30, 0, 0.5, 0.5)        
-			end
+            love.graphics.setColor(255, 255, 255, v.alpha)
+            love.graphics.print("x" .. comboBonus, v.boxWidth + 1, v.boxHeight + 27, 0, 0.9, 0.9)  
+            if (comboBonus >= 1.15) then
+            love.graphics.draw(combo, v.boxWidth - 25, v.boxHeight + 24, 0, 0.175, 0.175) 
+                end
 		end
 		v.alpha = v.alpha - 2
 		v.boxHeight = v.boxHeight - 2
