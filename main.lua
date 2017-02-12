@@ -56,11 +56,11 @@ function love.load()
    display = 1.1
    fadein = 1.5
    blinkingCounter = 0
-   remainingTime = 30
+   blinkingCounter2 = 0
+   remainingTime = 5
    gameOver = false
    TEsound.play("Sounds/Music/Paper Cut Title.ogg", "menuTheme")
    TEsound.volume("menuTheme", 0.8)
-   gameOver = false
    comboBonus = 1
    heartbeat = false
 end
@@ -108,6 +108,7 @@ function fadeToGame(dt)
         else alpha=0 
         isMenu = false
         isInstructions = false
+        timer = 0
         end
 end    
 
@@ -122,13 +123,15 @@ function love.draw()
 end
         
 function instructionsUpdate()
-     if (isPressed) then
+     if (isPressed and not isTransitioningInstructions and not isTransitioningGame) then
+        TEsound.play("Sounds/SFX/Click.mp3", "click")
         isTransitioningGame = true
         end        
 end
         
 function instructionsDraw()
      love.graphics.setColor(255,255,255,255)
+     love.graphics.draw(menuBackground, 0, 0)
      love.graphics.printf("The boss wants you to cut some paper...", 0, 50, width, 'center')
      love.graphics.setColor(200, 80, 80, 255)
      love.graphics.printf("Better do what he says, fast!", 0, 150, width, 'center')
@@ -189,11 +192,14 @@ function gameUpdate(dt)
 	mouseX = love.mouse.getX()
 	mouseY = love.mouse.getY()
 
+    if (not(gameOver)) then
+    -- main drawing mechanic
 	if mouseDown and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY)) then
 		if (isDrawing) then
 			table.insert(drawing, {x = mouseX, y = mouseY, lastX = lastMouseX, lastY = lastMouseY})
 		end
 
+    -- main intersection mechanic
 		for i = 1, #drawing - 10 do
 			if drawing[i].x and drawing[i].y and drawing[i].lastX and drawing[i].lastY then
 				if isIntersect(drawing[i].x, drawing[i].y, drawing[i].lastX, drawing[i].lastY, mouseX, mouseY, lastMouseX, lastMouseY, true, true) then
@@ -201,7 +207,7 @@ function gameUpdate(dt)
 					isDrawing = false
 					mouseDown = false
 					TEsound.stop("cutting", false)
-                    frameCounter = 18
+                    frameCounter = 20
 					for j = 1, i do
 						table.insert(toBeRemoved, i)
 					end
@@ -210,7 +216,16 @@ function gameUpdate(dt)
 			end
 		end
 	end
+end        
+    
+    -- handle sound
+       if (not((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY))) then
+        TEsound.pause("cutting")
+        else
+        TEsound.resume("cutting")
+    end    
 
+    -- remove the beginning part of the shape
 	if (not mouseDown) then
 		for i = 1, #toBeRemoved do 
 			-- print("to be removed index: ", i)
@@ -236,7 +251,7 @@ function gameUpdate(dt)
 		end
 		ScoreManager.rectangleScoring(drawing, rand1, rand2)
 		toBeRemoved = {}
-	end
+    end        
 
 	if (gameOver) then
 		TEsound.pitch("music", 0.9)
@@ -272,7 +287,7 @@ function gameDraw()
 
 	-- Draw the scissors
 	love.graphics.setColor(255, 255, 255, 255)
-	if (frameCounter < 9) then
+	if (frameCounter < 11) then
 		love.graphics.draw(scissors1, love.mouse.getX(), love.mouse.getY(), 
 			angle, 1, 1, scissors1:getWidth()/2, scissors1:getHeight()/2) 
 		if (mouseDown) and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY))  then
@@ -282,21 +297,32 @@ function gameDraw()
 				angle, 1, 1, scissors2:getWidth()/2, scissors2:getHeight()/2)
 			if (mouseDown) and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY))  then
 				frameCounter = frameCounter + 1
-				if (frameCounter == 19) then
+				if (frameCounter == 21) then
 					frameCounter = 0
 				end
 			end
 		end
 
 		--Draw UI elements
+        love.graphics.setColor(255, 255, 255, 255)
+        love.graphics.draw(textBubble, 10, 10)
+        drawTextBubble(currentScore)
+        drawTimer(player.score, scoreThreshold)
+        displayScore()
+        if (not gameOver) then
 		love.graphics.setColor(255, 255, 255, 255)
 		love.graphics.print("Score: " .. player.score, width - 250, height - 50)
 		love.graphics.print("Target: " .. scoreThreshold, width - 220, 55)
 		love.graphics.draw(scale, 30, height - 125)
-		love.graphics.draw(textBubble, 10, 10)
-		drawTextBubble(currentScore)
-		drawTimer(player.score, scoreThreshold)
-		displayScore()
+        else
+            love.graphics.setColor(0, 0, 0, 255)
+            love.graphics.rectangle("fill", 0, 0, width, height)
+        love.graphics.setColor(255, 255, 255, 255)
+        love.graphics.draw(textBubble, 10, 10)
+        drawTextBubble(currentScore)
+        drawTimer(player.score, scoreThreshold)
+        displayScore()
+       end         
 end    
 
 ------------------------------------------------------------------- Called on every frame to draw the menu
@@ -318,14 +344,16 @@ end
 
 ------------------------------------------------------------------- Called on every frame to update the menu
 function menuUpdate(dt)
-
+    TEsound.stop("music")
+    
     for i, button in ipairs(MenuManager) do
         mouseX = love.mouse.getX()
         mouseY = love.mouse.getY()
         buttonWidth = button.image:getWidth()
         buttonHeight = button.image:getHeight()
     
-        if ((pointInRectangle(mouseX, mouseY, button.x, button.y, buttonWidth, buttonHeight)) and isPressed) then
+        if ((pointInRectangle(mouseX, mouseY, button.x, button.y, buttonWidth, buttonHeight)) and isPressed
+            and not isTransitioningInstructions and not isTransitioningGame) then
             button.press()
             TEsound.play("Sounds/SFX/Click.mp3", "click")
             print("Pressed a button")
@@ -365,15 +393,20 @@ function isIntersect(l1p1x,l1p1y, l1p2x,l1p2y, l2p1x,l2p1y, l2p2x,l2p2y, seg1, s
 end
 
 function love.mousepressed(x, y, button, istouch)    
-	if (button == 1 and scored == true and isMenu == false and isInstructions == false) then 
+	if (button == 1 and scored == true and isMenu == false and isInstructions == false and not gameOver) then 
 		mouseDown = true
 		isDrawing = true
 		drawing = {}
-		TEsound.playLooping("Sounds/SFX/Cutting.ogg", "cutting")
+        TEsound.playLooping("Sounds/SFX/Cutting.ogg", "cutting")
 		ScoreManager.reset()
 		scored = false
 		generated = false
 	end
+    
+    if (gameOver) then
+        love.load()
+        ScoreManager.reset()
+    end    
 end
 
 function displayScore()
@@ -395,14 +428,15 @@ function displayScore()
 end
 
 function drawTextBubble(score)
-	if (not scored) then
+	if (not scored and not gameOver) then
 		love.graphics.print("Give me a, uh, ".. rand1 .. " x " .. rand2 .. ", pronto!", 20, 20)
 	elseif (gameOver) then
+        love.graphics.setColor(230, 80, 80, 240)
 		love.graphics.print("You're fired!", 20, 20)
 	else
 		if (score < 0)  then
 			comboBonus = 1
-			love.graphics.setColor(255, 75, 75, 255)
+			love.graphics.setColor(255, 100, 100, 255)
 			love.graphics.print("That's coming out your paycheck", 20, 20)
 		end
 		if (score >= 0 and score < 20) then
@@ -453,12 +487,24 @@ function drawTimer(currentScore)
 
 		love.graphics.print("Time: " .. math.ceil(remainingTime, 1), 25, 55)
 	else 
-		gameOver = true
-		love.graphics.printf("GAME OVER", 0, height / 2 - 50, width, 'center')
-		love.graphics.print("Play again?", width-300, height - 100)
+        love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.printf("GAME OVER", 0, height / 2, width, 'center')
+        if (blinkingCounter2 < 25) then
+     love.graphics.print("Play again?", width - 300, height - 90)  
+     blinkingCounter2 = blinkingCounter2 + 1
+     else
+     love.graphics.setColor(255,255,255,100)
+     love.graphics.print("Play again?", width - 300, height - 90)
+     blinkingCounter2 = blinkingCounter2 + 1
+        
+        if (blinkingCounter2 == 50) then
+            blinkingCounter2 = 0
+        end    
+    end    
+		
 	end
 end     
             
-function love.mousereleased(x, y, button, istouch)
-    isPressed = true
+function love.mousereleased(x, y, button, istouch) 
+            isPressed = true
 end
