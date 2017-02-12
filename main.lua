@@ -11,8 +11,8 @@ function love.load()
 	toBeRemoved = {}
 	mouseX = 0
 	mouseY = 0
-	screenWidth = love.graphics.getWidth()
-	screenHeight = love.graphics.getHeight()
+	width = love.graphics.getWidth()
+	height = love.graphics.getHeight()
 	love.graphics.setLineWidth(3)
 	angle = 0
 	scale = love.graphics.newImage("Graphics/UI/Scale.png")
@@ -40,8 +40,10 @@ function love.load()
 		"123456789.,!?-+/():;%&`'*#=[]\"")
 	love.graphics.setFont(font)
     isMenu = true
+    isInstructions = false
     isPressed = false
-    isTransitioning = false
+    isTransitioningGame = false
+    isTransitioningInstructions = false
     music = false
     timer = 0
     alpha = 0
@@ -51,34 +53,104 @@ function love.load()
    resetTime = 30
    scoreThreshold = 100
    extraScore = 0
+   fadeout  = 1
+   display = 1.1
+   fadein = 1.5
+   blinkingCounter = 0
+   remainingTime = 10
    gameOver = false
 end
 
 
 function love.update(dt)
-    if(isTransitioning) then
-            timer=timer+dt
-  if timer<fadein then alpha=timer*3 print("Fade in: ", alpha) -- still fading in
-  elseif timer<display then alpha=1 print("Display: ", alpha)
-  elseif timer<fadeout then alpha=1-((timer-display)/(fadeout-display)) print("Fade out: ", alpha)
-            isMenu = false
-  else alpha=0 end
+    if(isTransitioningGame) then
+        fadeToGame(dt)    
+            end
+    
+    if(isTransitioningInstructions) then
+        fadeToInstructions(dt)
             end
 
     if (isMenu) then
         menuUpdate(dt)
-    else 
+    elseif (isInstructions) then
+        isTransitioningInstructions = false
+        instructionsUpdate()
+    else
+        isTransitioningGame = false
         gameUpdate(dt)
     end
 end
 
+function fadeToInstructions(dt)
+    timer=timer+dt
+        if timer<fadeout then alpha=timer*3 print("Fade out: ", alpha)
+        elseif timer<display then alpha=1 print("Display: ", alpha)
+        elseif timer<fadein then 
+        alpha=(1-((timer-display)/(fadeout-display)))*2 print("Fade in: ", alpha)
+        else alpha=0 
+        isMenu = false
+        isInstructions = true
+        timer = 0
+        end
+end    
+
+function fadeToGame(dt)
+    timer=timer+dt
+        if timer<fadeout then alpha=timer*3 print("Fade out: ", alpha) -- still fading in
+        elseif timer<display then alpha=1 print("Display: ", alpha)
+        elseif timer<fadein then 
+        alpha=(1-((timer-display)/(fadeout-display)))*2 print("Fade in: ", alpha)
+        else alpha=0 
+        isMenu = false
+        isInstructions = false
+        end
+end    
+
 function love.draw()	
     if (isMenu) then
         menuDraw()
-    else 
+    elseif (isInstructions) then
+        instructionsDraw()    
+    else    
         gameDraw()
     end
 end
+        
+function instructionsUpdate()
+     if (isPressed) then
+        isTransitioningGame = true
+        end        
+end
+        
+function instructionsDraw()
+     love.graphics.setColor(255,255,255,255)
+     love.graphics.printf("The boss wants you to cut some paper...", 0, 50, width, 'center')
+     love.graphics.setColor(200, 80, 80, 255)
+     love.graphics.printf("Better do what he says, fast!", 0, 150, width, 'center')
+     love.graphics.setColor(255,255,255,255)
+     love.graphics.printf("Use the left mouse button to cut\n the proper size sheets of paper.", 0, 230, width, 'center')    
+    
+     if (blinkingCounter < 20) then
+     love.graphics.printf("Left click to start!", 0, 390, width, 'center')  
+     blinkingCounter = blinkingCounter + 1
+     else
+     love.graphics.setColor(255,255,255,100)
+     love.graphics.printf("Left click to start!", 0, 390, width, 'center')
+     blinkingCounter = blinkingCounter + 1
+        
+        if (blinkingCounter == 40) then
+            blinkingCounter = 0
+        end    
+    end    
+    
+    if (isTransitioningInstructions or isTransitioningGame) then
+        love.graphics.setColor(0, 0, 0, alpha*255)
+        love.graphics.rectangle("fill", 0, 0, width, height)
+    end
+    
+    isPressed = false
+end            
 
 function gameUpdate(dt)
 
@@ -225,9 +297,9 @@ function menuDraw()
     love.graphics.draw(button.image, button.x, button.y)
         end
     
-    if (isTransitioning) then
-    love.graphics.setColor(255, 255, 255, alpha*255)
-    love.graphics.rectangle("fill", 0, 0, screenWidth, screenHeight)
+    if (isTransitioningInstructions or isTransitioningGame) then
+    love.graphics.setColor(0, 0, 0, alpha*255)
+    love.graphics.rectangle("fill", 0, 0, width, height)
     end
 
     isPressed = false
@@ -260,8 +332,8 @@ function math.angle(x1,y1, x2,y2)
 	return math.atan2(y2-y1, x2-x1) 
 	end
 
--- Checks if two lines intersect (or line segments if seg is true)
--- Lines are given as four numbers (two coordinates)
+-------------------------------------------------------------------Checks if two lines intersect (or line segments if seg is true)
+------------------------------------------------------------------- Lines are given as four numbers (two coordinates)
 function isIntersect(l1p1x,l1p1y, l1p2x,l1p2y, l2p1x,l2p1y, l2p2x,l2p2y, seg1, seg2)
 	local a1,b1,a2,b2 = l1p2y-l1p1y, l1p1x-l1p2x, l2p2y-l2p1y, l2p1x-l2p2x
 	local c1,c2 = a1*l1p1x+b1*l1p1y, a2*l2p1x+b2*l2p1y
@@ -277,11 +349,11 @@ function isIntersect(l1p1x,l1p1y, l1p2x,l1p2y, l2p1x,l2p1y, l2p2x,l2p2y, seg1, s
 	end
 	intersectionX = x
 	intersectionY = y
-	return true --x,y
+	return true
 end
 
-function love.mousepressed(x, y, button, istouch)
-	if (button == 1 and scored == true and isMenu == false) then 
+function love.mousepressed(x, y, button, istouch)    
+	if (button == 1 and scored == true and isMenu == false and isInstructions == false) then 
 		mouseDown = true
 		isDrawing = true
 		drawing = {}
@@ -299,7 +371,7 @@ function displayScore()
 			love.graphics.setColor(255, 127, 127, v.alpha)
 			love.graphics.print(math.floor(v.score), v.boxWidth, v.boxHeight)
 		else
-			love.graphics.setColor(255, 255, 255, v.alpha)
+			love.graphics.setColor(127, 255, 127, v.alpha)
 			love.graphics.print("+" .. math.floor(v.score), v.boxWidth, v.boxHeight)
 		end
 		v.alpha = v.alpha - 2
