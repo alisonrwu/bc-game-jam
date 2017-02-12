@@ -8,9 +8,11 @@ start = love.graphics.newImage("Graphics/Menu/startButton.png")
 
 function dummy()
 end
+
+
         
 function startGame()
-isMenu = false
+    isMenu = false
 end            
      
 startButton = {}

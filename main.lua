@@ -1,5 +1,8 @@
 require"TEsound"
 ScoreManager = require('ScoreManager')
+local ScoreManager = require('ScoreManager')
+local MenuManager = require('MenuManager')
+local tween = require 'tween'
 
 function love.load()
 	love.graphics.setBackgroundColor(255,255,255)
@@ -8,8 +11,8 @@ function love.load()
 	toBeRemoved = {}
 	mouseX = 0
 	mouseY = 0
-	width = love.graphics.getWidth()
-	height = love.graphics.getHeight()
+	screenWidth = love.graphics.getWidth()
+	screenHeight = love.graphics.getHeight()
 	love.graphics.setLineWidth(3)
 	angle = 0
 	scale = love.graphics.newImage("Graphics/UI/Scale.png")
@@ -26,34 +29,53 @@ function love.load()
 	isDrawing = true
 	scored = true
 	scoreTable = {}
-
 	generated = false
 	rand1 = 0
 	rand2 = 0
-
 	currentScore = 0
-
 	font = love.graphics.newImageFont("Graphics/UI/Imagefont.png",
 		" abcdefghijklmnopqrstuvwxyz" ..
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ0" ..
 		"123456789.,!?-+/():;%&`'*#=[]\"")
 	love.graphics.setFont(font)
+    isMenu = true
+    isPressed = false
+    isTransitioning = false
+    properties = {r = 255, b = 255, g = 255, a = 0}
 end
 
-function love.update(dt)
-	TEsound.cleanup()
 
-	--setup RNG for current problem
+function love.update(dt)
+    if (isMenu) then
+        menuUpdate(dt)
+    else 
+        gameUpdate()
+    end
+end
+
+function love.draw()	
+    if (isMenu) then
+        menuDraw()
+    else 
+        gameDraw()
+    end
+end
+
+function gameUpdate()
+    TEsound.cleanup()
+    
+    --setup RNG for current problem
 	if (generated == false) then
 		rand1 = love.math.random(12) / 2
 		rand2 = love.math.random(12) / 2
 		generated = true
 	end
-
-	-- exit game
+    
+    -- exit game
 	if love.keyboard.isDown('escape') then
 		love.event.push('quit')
 	end
+    
 
 	lastMouseX = mouseX
 	lastMouseY = mouseY
@@ -94,8 +116,8 @@ function love.update(dt)
 			table.insert(drawing, intersectionPoint2)
 			if scored == false then
 				player.score = player.score + math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2))
+                currentScore = math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2))
 				table.insert(scoreTable, {x = mouseX, y = mouseY, score = ScoreManager.rectangleScoring(drawing, rand1, rand2), alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
-				currentScore = ScoreManager.rectangleScoring(drawing, rand1, rand2)
 				displayScore()
 				scored = true
 			end
@@ -107,13 +129,14 @@ function love.update(dt)
 		ScoreManager.rectangleScoring(drawing, rand1, rand2)
 		toBeRemoved = {}
 	end
-end
+end    
 
-function love.draw()
-	ScoreManager.drawBox()
-	ScoreManager.drawRectangle()
+------------------------------------------------------------------- Called on every frame to draw the game
+function gameDraw()
+    ScoreManager.drawBox()
+	ScoreManager.drawRectangle()	
 
-	--Draw all the lines the user has drawn already
+    --Draw all the lines the user has drawn already
 	if (isDrawing) then
 		love.graphics.setColor(126, 126, 126, 255)
 	else
@@ -154,8 +177,53 @@ function love.draw()
 		love.graphics.draw(textBubble, 10, 10)
 		drawTextBubble(currentScore)
 		displayScore()
-	end
+end    
 
+------------------------------------------------------------------- Called on every frame to draw the menu
+function menuDraw()
+    for i, button in ipairs(MenuManager) do
+    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.draw(button.image, button.x, button.y)
+        end
+    
+    if (isTransitioning) then
+    love.graphics.setColor(properties.r, properties.g, properties.b, properties.a)
+    love.graphics.rectangle("fill", 0, 0, screenWidth, screenHeight)
+    end
+
+    isPressed = false
+end    
+
+------------------------------------------------------------------- Called on every frame to update the menu
+function menuUpdate(dt)
+    for i, button in ipairs(MenuManager) do
+        mouseX = love.mouse.getX()
+        mouseY = love.mouse.getY()
+        buttonWidth = button.image:getWidth()
+        buttonHeight = button.image:getHeight()
+    
+        if ((pointInRectangle(mouseX, mouseY, button.x, button.y, buttonWidth, buttonHeight)) and isPressed) then
+            button.press()
+            print("Pressed a button")
+            end
+        
+        if(isTransitioning) then
+            print("Actually transitioning")
+            local fadeTween = tween.new(1, properties, {r = 0, g = 0, b = 0, a = 255}, 'linear')
+            print(properties.r, properties.g, properties.b, properties.a)
+            local complete = fadeTween:update(dt)
+            if (complete) then
+                isMenu = false
+            end
+        end    
+    end
+end    
+            
+function pointInRectangle(pointx, pointy, rectx, recty, rectwidth, rectheight)
+    return pointx > rectx and pointy > recty and pointx < rectx + rectwidth and pointy < recty + rectheight
+end            
+
+------------------------------------------------------------------- Angle calculator for scissors
 function math.angle(x1,y1, x2,y2) 
 	return math.atan2(y2-y1, x2-x1) 
 	end
@@ -192,10 +260,6 @@ function love.mousepressed(x, y, button, istouch)
 	end
 end
 
-function love.mousereleased(x, y, button, istouch)
-	-- ScoreManager.squareScoring(drawing)
-end
-
 function displayScore()
 	for i,v in ipairs(scoreTable) do
 		love.graphics.setColor(255, 255, 255, v.alpha)
@@ -228,4 +292,10 @@ function drawTextBubble(score)
 			love.graphics.print("Don't get cocky.", 20, 20)
 		end
 	end
+end   
+     
+            
+function love.mousereleased(x, y, button, istouch)
+    isPressed = true
 end
+

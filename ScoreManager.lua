@@ -65,11 +65,11 @@ local function rectangleScoring(drawing, x, y)
 		end
 	end
 
-	if math.abs(rect.width - prevBox.w) > inch then
+	if (math.abs(rect.width - prevBox.w) > inch*1.5 or math.abs(rect.height - prevBox.h) > inch*1.5) then
 		return -50
 	end
 
-	local score = 0.25*(inch-closestTL) + 0.25*(inch-closestTR) + 0.25*(inch-closestBL) + 0.25*(inch-closestBR)
+	local score = (inch-closestTL) + (inch-closestTR) + (inch-closestBL) + (inch-closestBR)
 	-- only print positive score (starts negative)
 	if score >= 0 then
 		--print('Score is ', score)
