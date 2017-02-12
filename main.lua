@@ -233,13 +233,14 @@ function love.update(dt)
     				table.insert(toBeRemoved, i)
                             
                 if scored == false then
-				player.score = player.score + math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2))
-				currentScore = math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2)) * comboBonus
+				local score = math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2))
+				player.score = player.score + score
+				currentScore = score * comboBonus
 				comboBonus = comboBonus + 0.05
 				table.insert(scoreTable, {x = mouseX, y = mouseY, score = currentScore, alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
 				displayScore()
-                scored = true
-    			end
+				scored = true
+			     end
                             
     			print('CUT')
     		end
@@ -266,15 +267,6 @@ end
 		if (drawing[#drawing] and intersectionX and intersectionY) then
 			intersectionPoint2 = {x = intersectionX, y = intersectionY, lastX = drawing[#drawing].x, lastY = drawing[#drawing].y}
 			table.insert(drawing, intersectionPoint2)
-			if scored == false then
-				local score = math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2))
-				player.score = player.score + score
-				currentScore = score * comboBonus
-				comboBonus = comboBonus + 0.05
-				table.insert(scoreTable, {x = mouseX, y = mouseY, score = currentScore, alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
-				displayScore()
-				scored = true
-			end
 		end
             
 		if (drawing[1] and intersectionX and intersectionY) then
