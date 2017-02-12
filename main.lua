@@ -345,6 +345,7 @@ end
 ------------------------------------------------------------------- Called on every frame to update the menu
 function menuUpdate(dt)
     TEsound.stop("music")
+    TEsound.pitch("music", 1)
     
     for i, button in ipairs(MenuManager) do
         mouseX = love.mouse.getX()
@@ -355,11 +356,8 @@ function menuUpdate(dt)
         if ((pointInRectangle(mouseX, mouseY, button.x, button.y, buttonWidth, buttonHeight)) and isPressed
             and not isTransitioningInstructions and not isTransitioningGame) then
             button.press()
-            TEsound.play("Sounds/SFX/Click.mp3", "click")
             print("Pressed a button")
             end
-        
-        
         end    
     end
             
