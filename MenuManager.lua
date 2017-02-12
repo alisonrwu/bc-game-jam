@@ -12,6 +12,7 @@ end
 -- It causes the transition to start, which will eventually set isMenu = false
 function startGame()
     isTransitioningInstructions = true
+    TEsound.play("Sounds/SFX/Click.mp3", "click")
 end            
 
 titleButton = {}
