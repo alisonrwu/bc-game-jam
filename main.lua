@@ -67,6 +67,7 @@ function love.load()
 	comboBonus = 1
 	heartbeat = false
     canPlaySound = false
+    targetUp = false
 end
 
 
@@ -165,9 +166,7 @@ function love.update(dt)
 
         			function gameUpdate(dt)
     
-    print(mouseDown)
-    print(isDrawing)
-    
+   
     -- debug
     if (love.keyboard.isDown("a")) then
         remainingTime = remainingTime + 999
@@ -453,6 +452,11 @@ function displayScore()
             if (comboBonus >= 1.15) then
             love.graphics.draw(combo, v.boxWidth - 25, v.boxHeight + 24, 0, 0.175, 0.175) 
                 end
+            if (targetUp == true) then
+            love.graphics.setColor(230, 230, 130, v.alpha)    
+            love.graphics.print("Target Up!", v.boxWidth, v.boxHeight - 26, 0, 0.9, 0.9) 
+            love.graphics.setColor(255, 255, 255, v.alpha)    
+            end    
 		end
 		v.alpha = v.alpha - 2
 		v.boxHeight = v.boxHeight - 2
@@ -480,13 +484,21 @@ function drawTextBubble(score)
 			end
 			if (score >= 0 and score < 20) then
 				comboBonus = 1.00
-				love.graphics.setColor(255, 127, 127, 255)
+				love.graphics.setColor(255, 255, 255, 255)
 				love.graphics.print("What are you doing?!", 20, 20)
+            if (canPlaySound) then
+                TEsound.play("Sounds/SFX/Correct.wav", "correct")
+                canPlaySound = false
+                end
 			end
 			if (score >= 20 and score < 70) then
 				comboBonus = 1.00
-				love.graphics.setColor(255, 127, 127, 255)
+				love.graphics.setColor(255, 255, 255, 255)
 				love.graphics.print("Are you a monkey?", 20, 20)
+            if (canPlaySound) then
+                TEsound.play("Sounds/SFX/Correct.wav", "correct")
+                canPlaySound = false
+                end
 			end
 			if (score >= 70 and score < 100) then
 				love.graphics.setColor(255, 255, 255, 255)
@@ -520,8 +532,9 @@ function drawTextBubble(score)
 			remainingTime = resetTime
 			extraScore = extraScore + 50
 			scoreThreshold = scoreThreshold + extraScore
+            targetUp = true
         if (canPlaySound) then
-                TEsound.play("Sounds/SFX/newTarget.wav", "newTarget")
+                TEsound.play("Sounds/SFX/newTarget.ogg", "newTarget")
                 canPlaySound = false
                 end
 		end
