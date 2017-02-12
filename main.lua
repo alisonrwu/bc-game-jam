@@ -45,6 +45,9 @@ function love.load()
    fadein  = 1
    display = 1.2
    fadeout = 2.5
+   
+   remainingTime = 10
+   gameOver = false
 end
 
 
@@ -57,11 +60,11 @@ function love.update(dt)
             isMenu = false
   else alpha=0 end
             end
-    
+
     if (isMenu) then
         menuUpdate(dt)
     else 
-        gameUpdate()
+        gameUpdate(dt)
     end
 end
 
@@ -73,7 +76,14 @@ function love.draw()
     end
 end
 
-function gameUpdate()
+function gameUpdate(dt)
+
+	-- decrement Timer
+	remainingTime = remainingTime - dt
+	if remainingTime <= 0 then
+		gameOver = true
+	end
+
 	if (not music) then
 		TEsound.playLooping("Sounds/Music/Paper Cutter.ogg")
 		music = true
@@ -149,6 +159,13 @@ end
 
 ------------------------------------------------------------------- Called on every frame to draw the game
 function gameDraw()
+	--Draw timer
+	if (remainingTime > 0) then
+		love.graphics.print("Time: " .. math.ceil(remainingTime, 1), width - 400, height - 50)
+	else 
+		love.graphics.print("GAME OVER", width - 425, height - 50)
+	end
+
     --ScoreManager.drawBox()
     if (scored == true) then
 		ScoreManager.drawRectangle()
