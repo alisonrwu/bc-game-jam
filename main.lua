@@ -19,6 +19,8 @@ function love.load()
 	scissors1 = love.graphics.newImage("Graphics/UI/Scissors.png")
 	scissors2 = love.graphics.newImage("Graphics/UI/Scissors2.png")
 	textBubble = love.graphics.newImage("Graphics/UI/TextBubble.png")
+	background = love.graphics.newImage("Graphics/UI/Background.png")
+	menuBackground = love.graphics.newImage("Graphics/Menu/Background.png")
 	player = {}
 	player.score = 0
 	lastMouseX = 0
@@ -138,6 +140,9 @@ end
 ------------------------------------------------------------------- Called on every frame to draw the game
 function gameDraw()
     --ScoreManager.drawBox()
+    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.draw(background, 0, 0)
+
     if (scored == true) then
 		ScoreManager.drawRectangle()
 		end	
@@ -178,8 +183,8 @@ function gameDraw()
 
 		--Draw UI elements
 		love.graphics.setColor(255, 255, 255, 255)
-		love.graphics.print("Score: " .. player.score, width - 225, height - 50)
-		love.graphics.draw(scale, 25, height - 75)
+		love.graphics.print("Score: " .. player.score, width - 275, height - 50)
+		love.graphics.draw(scale, 30, height - 125)
 		love.graphics.draw(textBubble, 10, 10)
 		drawTextBubble(currentScore)
 		displayScore()
@@ -187,6 +192,8 @@ end
 
 ------------------------------------------------------------------- Called on every frame to draw the menu
 function menuDraw()
+	love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.draw(menuBackground, 0, 0)
     for i, button in ipairs(MenuManager) do
     love.graphics.setColor(255, 255, 255, 255)
     love.graphics.draw(button.image, button.x, button.y)
@@ -269,9 +276,11 @@ end
 function displayScore()
 	for i,v in ipairs(scoreTable) do
 		love.graphics.setColor(255, 255, 255, v.alpha)
-		if v.score < 0 then
+		if v.score <= 0 then
+			love.graphics.setColor(255, 127, 127, v.alpha)
 			love.graphics.print(math.floor(v.score), v.boxWidth, v.boxHeight)
 		else
+			love.graphics.setColor(255, 255, 255, v.alpha)
 			love.graphics.print("+" .. math.floor(v.score), v.boxWidth, v.boxHeight)
 		end
 		v.alpha = v.alpha - 2
