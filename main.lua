@@ -2,7 +2,6 @@ require"TEsound"
 ScoreManager = require('ScoreManager')
 local ScoreManager = require('ScoreManager')
 local MenuManager = require('MenuManager')
-local tween = require 'tween'
 
 function love.load()
 	love.graphics.setBackgroundColor(255,255,255)
@@ -40,12 +39,25 @@ function love.load()
     isMenu = true
     isPressed = false
     isTransitioning = false
-    properties = {r = 255, b = 255, g = 255, a = 0}
     music = false
+    timer = 0
+    alpha = 0
+   fadein  = 1
+   display = 1.2
+   fadeout = 2.5
 end
 
 
 function love.update(dt)
+    if(isTransitioning) then
+            timer=timer+dt
+  if timer<fadein then alpha=timer*3 print("Fade in: ", alpha) -- still fading in
+  elseif timer<display then alpha=1 print("Display: ", alpha)
+  elseif timer<fadeout then alpha=1-((timer-display)/(fadeout-display)) print("Fade out: ", alpha)
+            isMenu = false
+  else alpha=0 end
+            end
+    
     if (isMenu) then
         menuUpdate(dt)
     else 
@@ -193,7 +205,7 @@ function menuDraw()
         end
     
     if (isTransitioning) then
-    love.graphics.setColor(properties.r, properties.g, properties.b, properties.a)
+    love.graphics.setColor(255, 255, 255, alpha*255)
     love.graphics.rectangle("fill", 0, 0, screenWidth, screenHeight)
     end
 
@@ -213,17 +225,9 @@ function menuUpdate(dt)
             print("Pressed a button")
             end
         
-        if(isTransitioning) then
-            print("Actually transitioning")
-            local fadeTween = tween.new(1, properties, {r = 0, g = 0, b = 0, a = 255}, 'linear')
-            print(properties.r, properties.g, properties.b, properties.a)
-            local complete = fadeTween:update(dt)
-            if (complete) then
-                isMenu = false
-            end
+        
         end    
     end
-end    
             
 function pointInRectangle(pointx, pointy, rectx, recty, rectwidth, rectheight)
     return pointx > rectx and pointy > recty and pointx < rectx + rectwidth and pointy < recty + rectheight
@@ -272,8 +276,8 @@ function displayScore()
 		if v.score < 0 then
 			love.graphics.print(math.floor(v.score), v.boxWidth, v.boxHeight)
 		else
-			love.graphics.print("+" .. math.floor(v.score), v.boxWidth, v.boxHeight)
-		end
+		love.graphics.print("+" .. math.floor(v.score), v.boxWidth, v.boxHeight)
+	end
 		v.alpha = v.alpha - 2
 		v.boxHeight = v.boxHeight - 2
 		if (v.alpha < 0) then
