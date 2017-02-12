@@ -52,6 +52,8 @@ function love.load()
    scoreThreshold = 100
    extraScore = 0
    gameOver = false
+   TEsound.play("Sounds/Music/Paper Cut Title.ogg", "menuTheme")
+   TEsound.volume("menuTheme", 0.8)
 end
 
 
@@ -89,6 +91,7 @@ function gameUpdate(dt)
 	end
 
 	if (not music) then
+		TEsound.stop("menuTheme")
 		TEsound.playLooping("Sounds/Music/Paper Cutter.ogg")
 		music = true
 	end
@@ -207,7 +210,7 @@ function gameDraw()
 
 		--Draw UI elements
 		love.graphics.setColor(255, 255, 255, 255)
-		love.graphics.print("Score: " .. player.score, width - 200, height - 50)
+		love.graphics.print("Score: " .. player.score, width - 250, height - 50)
 		love.graphics.print("Target: " .. scoreThreshold, width - 220, 55)
 		love.graphics.draw(scale, 30, height - 125)
 		love.graphics.draw(textBubble, 10, 10)
@@ -235,6 +238,7 @@ end
 
 ------------------------------------------------------------------- Called on every frame to update the menu
 function menuUpdate(dt)
+
     for i, button in ipairs(MenuManager) do
         mouseX = love.mouse.getX()
         mouseY = love.mouse.getY()
@@ -315,7 +319,7 @@ function drawTextBubble(score)
 		love.graphics.print("Give me a, uh, ".. rand1 .. " x " .. rand2 .. ", pronto!", 20, 20)
 	else 
 		if (score < 0)  then
-			love.graphics.print("You're paying for that.", 20, 20)
+			love.graphics.print("That's coming out your paycheck", 20, 20)
 		end
 		if (score >= 0 and score < 20) then
 			love.graphics.print("What are you doing?!", 20, 20)
@@ -350,4 +354,3 @@ end
 function love.mousereleased(x, y, button, istouch)
     isPressed = true
 end
-
