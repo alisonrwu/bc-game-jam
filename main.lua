@@ -222,6 +222,7 @@ function menuUpdate(dt)
     
         if ((pointInRectangle(mouseX, mouseY, button.x, button.y, buttonWidth, buttonHeight)) and isPressed) then
             button.press()
+            TEsound.play("Sounds/SFX/Click.mp3", "click")
             print("Pressed a button")
             end
         
