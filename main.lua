@@ -22,6 +22,7 @@ function love.load()
 	textBubble = love.graphics.newImage("Graphics/UI/TextBubble.png")
 	background = love.graphics.newImage("Graphics/UI/Background.png")
 	menuBackground = love.graphics.newImage("Graphics/Menu/Background.png")
+    combo = love.graphics.newImage("Graphics/UI/combo.png")
 	player = {}
 	player.score = 0
 	lastMouseX = 0
@@ -307,9 +308,10 @@ function gameDraw()
 
 		--Draw UI elements
         love.graphics.setColor(255, 255, 255, 255)
+        drawTimer(player.score, scoreThreshold)
+        love.graphics.setColor(255, 255, 255, 255)
         love.graphics.draw(textBubble, 10, 10)
         drawTextBubble(currentScore)
-        drawTimer(player.score, scoreThreshold)
         displayScore()
         if (not gameOver) then
 		love.graphics.setColor(255, 255, 255, 255)
@@ -418,6 +420,12 @@ function displayScore()
 		else
 			love.graphics.setColor(127, 255, 127, v.alpha)
 			love.graphics.print("+" .. math.floor(v.score), v.boxWidth, v.boxHeight)
+            love.graphics.setColor(255, 255, 255, v.alpha)
+            if (math.floor(v.score) < 100) then
+            love.graphics.print("x" .. comboBonus, v.boxWidth + 3.75, v.boxHeight + 30, 0, 0.5, 0.5)    
+                else
+            love.graphics.print("x" .. comboBonus, v.boxWidth + 3.75, v.boxHeight + 30, 0, 0.5, 0.5)        
+                end
 		end
 		v.alpha = v.alpha - 2
 		v.boxHeight = v.boxHeight - 2
@@ -428,24 +436,24 @@ function displayScore()
 end
 
 function drawTextBubble(score)
-	if (not scored and not gameOver) then
+    if (not scored and not gameOver) then
 		love.graphics.print("Give me a, uh, ".. rand1 .. " x " .. rand2 .. ", pronto!", 20, 20)
 	elseif (gameOver) then
         love.graphics.setColor(230, 80, 80, 240)
 		love.graphics.print("You're fired!", 20, 20)
 	else
 		if (score < 0)  then
-			comboBonus = 1
+			comboBonus = 1.00
 			love.graphics.setColor(255, 100, 100, 255)
 			love.graphics.print("That's coming out your paycheck", 20, 20)
 		end
 		if (score >= 0 and score < 20) then
-			comboBonus = 1
+			comboBonus = 1.00
 			love.graphics.setColor(255, 127, 127, 255)
 			love.graphics.print("What are you doing?!", 20, 20)
 		end
 		if (score >= 20 and score < 70) then
-			comboBonus = 1
+			comboBonus = 1.00
 			love.graphics.setColor(255, 127, 127, 255)
 			love.graphics.print("Are you a monkey?", 20, 20)
 		end
