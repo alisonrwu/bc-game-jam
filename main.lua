@@ -66,6 +66,10 @@ function love.load()
 	TEsound.volume("menuTheme", 0.8)
 	comboBonus = 1
 	heartbeat = false
+    isWrongSound = false
+    isCorrectSound = false
+    isNewTimerSound = false
+    isFailSound = false
 end
 
 
@@ -163,6 +167,20 @@ function love.update(dt)
         			end            
 
         			function gameUpdate(dt)
+    
+    print(mouseDown)
+    print(isDrawing)
+    
+    -- debug
+    if (love.keyboard.isDown("a")) then
+        remainingTime = remainingTime + 999
+        end
+    
+    if (love.keyboard.isDown("b")) then
+        love.load()
+		ScoreManager.reset()
+        end
+    
 
 	-- decrement Timer
 	remainingTime = remainingTime - dt
@@ -206,14 +224,24 @@ function love.update(dt)
     for i = 1, #drawing - 10 do
     	if drawing[i].x and drawing[i].y and drawing[i].lastX and drawing[i].lastY then
     		if isIntersect(drawing[i].x, drawing[i].y, drawing[i].lastX, drawing[i].lastY, mouseX, mouseY, lastMouseX, lastMouseY, true, true) then
-    			print(i)
+    			print("I am running")
     			isDrawing = false
     			mouseDown = false
     			TEsound.stop("cutting", false)
     			frameCounter = 20
     			for j = 1, i do
     				table.insert(toBeRemoved, i)
-    			end
+                            
+                if scored == false then
+				local score = math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2))
+				player.score = player.score + score
+				currentScore = score * comboBonus
+				comboBonus = comboBonus + 0.05
+				table.insert(scoreTable, {x = mouseX, y = mouseY, score = currentScore, alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
+				displayScore()
+				scored = true
+			     end
+                            
     			print('CUT')
     		end
     	end
@@ -239,22 +267,15 @@ end
 		if (drawing[#drawing] and intersectionX and intersectionY) then
 			intersectionPoint2 = {x = intersectionX, y = intersectionY, lastX = drawing[#drawing].x, lastY = drawing[#drawing].y}
 			table.insert(drawing, intersectionPoint2)
-			if scored == false then
-				player.score = player.score + math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2))
-				currentScore = math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2)) * comboBonus
-				comboBonus = comboBonus + 0.05
-				table.insert(scoreTable, {x = mouseX, y = mouseY, score = currentScore, alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
-				displayScore()
-				scored = true
-			end
 		end
+            
 		if (drawing[1] and intersectionX and intersectionY) then
 			intersectionPoint1 = {x = drawing[1].lastX, y = drawing[1].lastY, lastX = intersectionX, lastY = intersectionY}
 			table.insert(drawing, 1, intersectionPoint1)
 		end
-		ScoreManager.rectangleScoring(drawing, rand1, rand2)
 		toBeRemoved = {}
-	end        
+	end    
+end        
 
 	if (gameOver) then
 		TEsound.pitch("music", 0.9)
@@ -304,7 +325,7 @@ function gameDraw()
 				angle, 1, 1, scissors2:getWidth()/2, scissors2:getHeight()/2)
 			if (mouseDown) and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY))  then
 				frameCounter = frameCounter + 1
-				if (frameCounter == 21) then
+				if (frameCounter >= 21) then
 					frameCounter = 0
 				end
 			end
@@ -382,7 +403,7 @@ function math.angle(x1,y1, x2,y2)
 	return math.atan2(y2-y1, x2-x1) 
 end
 
--------------------------------------------------------------------Checks if two lines intersect (or line segments if seg is true)
+------------------------------------------------------------------- Checks if two lines intersect (or line segments if seg is true)
 ------------------------------------------------------------------- Lines are given as four numbers (two coordinates)
 function isIntersect(l1p1x,l1p1y, l1p2x,l1p2y, l2p1x,l2p1y, l2p2x,l2p2y, seg1, seg2)
 	local a1,b1,a2,b2 = l1p2y-l1p1y, l1p1x-l1p2x, l2p2y-l2p1y, l2p1x-l2p2x
@@ -527,3 +548,4 @@ end
 function love.mousereleased(x, y, button, istouch) 
 	isPressed = true
 end
+
