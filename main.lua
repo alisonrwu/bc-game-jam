@@ -207,7 +207,7 @@ function gameDraw()
 		--Draw UI elements
 		love.graphics.setColor(255, 255, 255, 255)
 		love.graphics.print("Score: " .. player.score, width - 200, height - 50)
-		love.graphics.print("Target: " .. scoreThreshold, width - 425, height - 50)
+		love.graphics.print("Target: " .. scoreThreshold, width - 220, 55)
 		love.graphics.draw(scale, 30, height - 125)
 		love.graphics.draw(textBubble, 10, 10)
 		drawTextBubble(currentScore)
@@ -340,7 +340,7 @@ function drawTimer(currentScore)
 
 	--Draw timer
 	if (remainingTime > 0) then
-		love.graphics.print("Time: " .. math.ceil(remainingTime, 1), width - 600, height - 50)
+		love.graphics.print("Time: " .. math.ceil(remainingTime, 1), 25, 55)
 	else 
 		love.graphics.print("GAME OVER", width - 600, height - 50)
 	end
