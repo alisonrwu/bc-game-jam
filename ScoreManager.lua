@@ -23,6 +23,14 @@ rect.topR = {}
 rect.botL = {}
 rect.botR = {}
 
+local oval = {}
+oval.xRad = 0
+oval.yRad = 0
+oval.top = {}
+oval.left = {}
+oval.right = {}
+oval.bot = {}
+
 -- Scores a rectangle by calculating the 4 corner points of a
 -- estimated rectangular shape based off user 'drawing' input,
 -- comparing the distance of the closest drawing points.
@@ -79,9 +87,67 @@ local function rectangleScoring(drawing, x, y)
 	end
 end
 
+local function ovalScoring(drawing, x, y)
+	-- print('how is my oval')
+	updateCacheValues(drawing)
+
+	oval.xRad = (x/2)*inch
+	oval.yRad = (y/2)*inch
+
+	oval.top.x = minX+oval.xRad
+	oval.top.y = minY
+	oval.left.x = minX
+	oval.left.y = minY+oval.yRad
+	oval.right.x = minX+(oval.xRad*2)
+	oval.right.y = minY+oval.yRad
+	oval.bot.x = minX+oval.xRad
+	oval.bot.y = minY+(oval.yRad*2)
+
+	local closestTL = 9999
+	local closestTR = 9999
+	local closestBL = 9999
+	local closestBR = 9999
+	for i,v in ipairs(drawing) do
+		local l = lengthOf(v.x,v.y, oval.top.x, oval.top.y)
+		if l < closestTL then
+			closestTL = l
+		end
+		l = lengthOf(v.x,v.y, oval.right.x, oval.right.y)
+		if l < closestTR then
+			closestTR = l
+		end
+		l = lengthOf(v.x,v.y, oval.left.x, oval.left.y)
+		if l < closestBL then
+			closestBL = l
+		end
+		l = lengthOf(v.x,v.y, oval.bot.x, oval.bot.y)
+		if l < closestBR then
+			closestBR = l
+		end
+	end
+
+	if (math.abs(oval.xRad - prevBox.w) > (inch*3) or math.abs(oval.yRad - prevBox.h) > (inch*3)) then
+		return -50
+	end
+
+	local score = (inch-closestTL) + (inch-closestTR) + (inch-closestBL) + (inch-closestBR)
+	-- only print positive score (starts negative)
+	if score >= 0 then
+		print('Score is ', score)
+		return score
+	else
+		return 0
+	end
+end
+
 local function drawRectangle()
 	love.graphics.setColor(100, 230, 100, 125)
 	love.graphics.rectangle('line', prevBox.x, prevBox.y, rect.width, rect.height)
+end
+
+local function drawOval()
+	love.graphics.setColor(100, 230, 100, 125)
+	love.graphics.ellipse('line', (prevBox.x+prevBox.w/2), (prevBox.y+prevBox.h/2), oval.xRad, oval.yRad)
 end
 
 local function drawBox()
@@ -97,17 +163,24 @@ local function reset()
 	width = 0
 	height = 0
     
-prevBox.x = 0
-prevBox.y = 0
-prevBox.w = 0
-prevBox.h = 0
+	prevBox.x = 0
+	prevBox.y = 0
+	prevBox.w = 0
+	prevBox.h = 0
     
-    rect.width = 0
-rect.height = 0
-rect.topL = {}
-rect.topR = {}
-rect.botL = {}
-rect.botR = {}
+  rect.width = 0
+	rect.height = 0
+	rect.topL = {}
+	rect.topR = {}
+	rect.botL = {}
+	rect.botR = {}
+
+	oval.xRad = 0
+	oval.yRad = 0
+	oval.top = {}
+	oval.right = {}
+	oval.left = {}
+	oval.bot = {}
 end
 
 function updateCacheValues(drawing)
@@ -147,7 +220,9 @@ end
 -- end
 
 ScoreManager.rectangleScoring = rectangleScoring
+ScoreManager.ovalScoring = ovalScoring
 ScoreManager.drawRectangle = drawRectangle
+ScoreManager.drawOval = drawOval
 ScoreManager.drawBox = drawBox
 ScoreManager.reset = reset
 -- ScoreManager.getWidth = getWidth
