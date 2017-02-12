@@ -159,13 +159,6 @@ end
 
 ------------------------------------------------------------------- Called on every frame to draw the game
 function gameDraw()
-	--Draw timer
-	if (remainingTime > 0) then
-		love.graphics.print("Time: " .. math.ceil(remainingTime, 1), width - 400, height - 50)
-	else 
-		love.graphics.print("GAME OVER", width - 425, height - 50)
-	end
-
     --ScoreManager.drawBox()
     if (scored == true) then
 		ScoreManager.drawRectangle()
@@ -211,6 +204,7 @@ function gameDraw()
 		love.graphics.draw(scale, 25, height - 75)
 		love.graphics.draw(textBubble, 10, 10)
 		drawTextBubble(currentScore)
+		drawTimer(remainingTime)
 		displayScore()
 end    
 
@@ -324,8 +318,16 @@ function drawTextBubble(score)
 			love.graphics.print("Don't get cocky.", 20, 20)
 		end
 	end
-end   
-     
+end
+   
+function drawTimer(remainingTime)
+	--Draw timer
+	if (remainingTime > 0) then
+		love.graphics.print("Time: " .. math.ceil(remainingTime, 1), width - 400, height - 50)
+	else 
+		love.graphics.print("GAME OVER", width - 425, height - 50)
+	end
+end     
             
 function love.mousereleased(x, y, button, istouch)
     isPressed = true
