@@ -31,6 +31,8 @@ function love.load()
 	rand1 = 0
 	rand2 = 0
 
+	currentScore = 0
+
 	font = love.graphics.newImageFont("Graphics/UI/Imagefont.png",
 		" abcdefghijklmnopqrstuvwxyz" ..
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ0" ..
@@ -70,7 +72,7 @@ function love.update(dt)
 					isDrawing = false
 					mouseDown = false
 					TEsound.stop("cutting", false)
-					frameCounter = 18
+                    frameCounter = 18
 					for j = 1, i do
 						table.insert(toBeRemoved, i)
 					end
@@ -93,6 +95,7 @@ function love.update(dt)
 			if scored == false then
 				player.score = player.score + math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2))
 				table.insert(scoreTable, {x = mouseX, y = mouseY, score = ScoreManager.rectangleScoring(drawing, rand1, rand2), alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
+				currentScore = ScoreManager.rectangleScoring(drawing, rand1, rand2)
 				displayScore()
 				scored = true
 			end
@@ -149,27 +152,12 @@ function love.draw()
 		love.graphics.print("Score: " .. player.score, width - 200, height - 50)
 		love.graphics.draw(scale, 25, height - 75)
 		love.graphics.draw(textBubble, 10, 10)
-		if (not scored) then
-			love.graphics.print("Give me a, uh, ".. rand1 .. " x " .. rand2 .. ", pronto!", 20, 20)
-		else
-			if (ScoreManager.rectangleScoring(drawing, rand1, rand2) > 90) then
-				love.graphics.print("Don't get cocky, kid.", 20, 20)
-			elseif (ScoreManager.rectangleScoring(drawing, rand1, rand2) > 70) then
-				love.graphics.print("I'll use it, but I won't like it", 20, 20)
-			elseif (ScoreManager.rectangleScoring(drawing, rand1, rand2) > 40) then
-				love.graphics.print("What are you doing?!", 20, 20)
-			elseif (ScoreManager.rectangleScoring(drawing, rand1, rand2) > 0) then
-				love.graphics.print("Are you even trying?", 20, 20)
-			else
-				love.graphics.print("That's coming out of your paycheck.", 20, 20)
-			end
-		end
-
+		drawTextBubble(currentScore)
 		displayScore()
 	end
 
-	function math.angle(x1,y1, x2,y2) 
-		return math.atan2(y2-y1, x2-x1) 
+function math.angle(x1,y1, x2,y2) 
+	return math.atan2(y2-y1, x2-x1) 
 	end
 
 -- Checks if two lines intersect (or line segments if seg is true)
@@ -193,7 +181,7 @@ function isIntersect(l1p1x,l1p1y, l1p2x,l1p2y, l2p1x,l2p1y, l2p2x,l2p2y, seg1, s
 end
 
 function love.mousepressed(x, y, button, istouch)
-	if (button == 1) then 
+	if (button == 1 and scored == true) then 
 		mouseDown = true
 		isDrawing = true
 		drawing = {}
@@ -216,6 +204,28 @@ function displayScore()
 		v.boxHeight = v.boxHeight - 2
 		if (v.alpha < 0) then
 			table.remove(v)
+		end
+	end
+end
+
+function drawTextBubble(score)
+	if (not scored) then
+		love.graphics.print("Give me a, uh, ".. rand1 .. " x " .. rand2 .. ", pronto!", 20, 20)
+	else 
+		if (score < 0)  then
+			love.graphics.print("You're paying for that.", 20, 20)
+		end
+		if (score >= 0 and score < 20) then
+			love.graphics.print("What are you doing?!", 20, 20)
+		end
+		if (score >= 20 and score < 70) then
+			love.graphics.print("Are you a monkey?", 20, 20)
+		end
+		if (score >= 70 and score < 100) then
+			love.graphics.print("Close but not really.", 20, 20)
+		end
+		if (score >= 100) then
+			love.graphics.print("Don't get cocky.", 20, 20)
 		end
 	end
 end
