@@ -225,6 +225,7 @@ function love.update(dt)
     			isDrawing = false
     			mouseDown = false
                 canPlaySound = true
+                TEsound.play("Sounds/SFX/Snip.ogg", "snip")        
     			TEsound.stop("cutting", false)
     			frameCounter = 20
     			for j = 1, i do
