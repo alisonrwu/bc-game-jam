@@ -57,7 +57,7 @@ function love.load()
    fadein = 1.5
    blinkingCounter = 0
    blinkingCounter2 = 0
-   remainingTime = 5
+   remainingTime = 30
    gameOver = false
    TEsound.play("Sounds/Music/Paper Cut Title.ogg", "menuTheme")
    TEsound.volume("menuTheme", 0.8)
