@@ -66,10 +66,7 @@ function love.load()
 	TEsound.volume("menuTheme", 0.8)
 	comboBonus = 1
 	heartbeat = false
-    isWrongSound = false
-    isCorrectSound = false
-    isNewTimerSound = false
-    isFailSound = false
+    canPlaySound = false
 end
 
 
@@ -227,20 +224,11 @@ function love.update(dt)
     			print("I am running")
     			isDrawing = false
     			mouseDown = false
+                canPlaySound = true
     			TEsound.stop("cutting", false)
     			frameCounter = 20
     			for j = 1, i do
-    				table.insert(toBeRemoved, i)
-                            
-                if scored == false then
-				local score = math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2))
-				player.score = player.score + score
-				currentScore = score * comboBonus
-				comboBonus = comboBonus + 0.05
-				table.insert(scoreTable, {x = mouseX, y = mouseY, score = currentScore, alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
-				displayScore()
-				scored = true
-			     end
+    				table.insert(toBeRemoved, i)     
                             
     			print('CUT')
     		end
@@ -273,6 +261,16 @@ end
 			intersectionPoint1 = {x = drawing[1].lastX, y = drawing[1].lastY, lastX = intersectionX, lastY = intersectionY}
 			table.insert(drawing, 1, intersectionPoint1)
 		end
+            
+        if scored == false then
+				local score = math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2))
+				player.score = player.score + score
+				currentScore = score * comboBonus
+				comboBonus = comboBonus + 0.05
+				table.insert(scoreTable, {x = mouseX, y = mouseY, score = currentScore, alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
+				displayScore()
+				scored = true
+			     end           
 		toBeRemoved = {}
 	end    
 end        
@@ -377,6 +375,7 @@ end
 
 ------------------------------------------------------------------- Called on every frame to update the menu
 function menuUpdate(dt)
+    ScoreManager.reset()
 	TEsound.stop("music")
 	TEsound.pitch("music", 1)
 
@@ -474,6 +473,10 @@ function drawTextBubble(score)
 				comboBonus = 1.00
 				love.graphics.setColor(255, 100, 100, 255)
 				love.graphics.print("That's coming out your paycheck", 20, 20)
+                if (canPlaySound) then
+                TEsound.play("Sounds/SFX/Wrong.wav", "wrong")
+                canPlaySound = false
+                end
 			end
 			if (score >= 0 and score < 20) then
 				comboBonus = 1.00
@@ -488,14 +491,26 @@ function drawTextBubble(score)
 			if (score >= 70 and score < 100) then
 				love.graphics.setColor(255, 255, 255, 255)
 				love.graphics.print("Close but not really.", 20, 20)
+            if (canPlaySound) then
+                TEsound.play("Sounds/SFX/Correct.wav", "correct")
+                canPlaySound = false
+                end
 			end
 			if (score >= 100 and score < 150) then
 				love.graphics.setColor(255, 255, 255, 255)
 				love.graphics.print("Don't get cocky.", 20, 20)
+            if (canPlaySound) then
+                TEsound.play("Sounds/SFX/Correct.wav", "correct")
+                canPlaySound = false
+                end
 			end
 			if (score >= 150) then
 				love.graphics.setColor(127, 255, 127, 255)
 				love.graphics.print("OwO what's this?", 20, 20)
+            if (canPlaySound) then
+                TEsound.play("Sounds/SFX/Correct.wav", "correct")
+                canPlaySound = false
+                end
 			end
 		end
 	end
@@ -505,6 +520,10 @@ function drawTextBubble(score)
 			remainingTime = resetTime
 			extraScore = extraScore + 50
 			scoreThreshold = scoreThreshold + extraScore
+        if (canPlaySound) then
+                TEsound.play("Sounds/SFX/newTarget.wav", "newTarget")
+                canPlaySound = false
+                end
 		end
 
 	--Draw timer
