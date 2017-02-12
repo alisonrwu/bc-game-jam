@@ -3,7 +3,6 @@ ScoreManager = require('ScoreManager')
 local ScoreManager = require('ScoreManager')
 local MenuManager = require('MenuManager')
 remainingTime = 30
-handicapTime = 0
 
 function love.load()
 	love.graphics.setBackgroundColor(255,255,255)
@@ -49,7 +48,9 @@ function love.load()
    fadein  = 1
    display = 1.2
    fadeout = 2.5
+   resetTime = 30
    scoreThreshold = 100
+   extraScore = 0
    gameOver = false
 end
 
@@ -333,9 +334,9 @@ end
    
 function drawTimer(currentScore)
 	if (currentScore > scoreThreshold) then
-		handicapTime = handicapTime + 2
-		remainingTime = 30 - handicapTime
-		scoreThreshold = scoreThreshold + 100
+		remainingTime = resetTime
+		extraScore = extraScore + 50
+		scoreThreshold = scoreThreshold + extraScore
 	end
 
 	--Draw timer
