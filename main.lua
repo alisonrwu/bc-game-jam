@@ -165,6 +165,7 @@ function love.update(dt)
         			end            
 
         			function gameUpdate(dt)
+    love.mouse.setVisible(false)
     
    
     -- debug
@@ -275,6 +276,7 @@ end
 end        
 
 	if (gameOver) then
+		love.mouse.setVisible(true)
 		TEsound.pitch("music", 0.9)
 		TEsound.stop("heartbeat")
 		drawing = {}
@@ -374,6 +376,7 @@ end
 
 ------------------------------------------------------------------- Called on every frame to update the menu
 function menuUpdate(dt)
+	love.mouse.setVisible(true)
     ScoreManager.reset()
 	TEsound.stop("music")
 	TEsound.pitch("music", 1)
