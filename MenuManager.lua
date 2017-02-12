@@ -12,7 +12,7 @@ end
 
         
 function startGame()
-    isMenu = false
+    isTransitioning = true
 end            
      
 startButton = {}
