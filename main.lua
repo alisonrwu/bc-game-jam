@@ -240,8 +240,9 @@ end
 			intersectionPoint2 = {x = intersectionX, y = intersectionY, lastX = drawing[#drawing].x, lastY = drawing[#drawing].y}
 			table.insert(drawing, intersectionPoint2)
 			if scored == false then
-				player.score = player.score + math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2))
-				currentScore = math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2)) * comboBonus
+				local score = math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2))
+				player.score = player.score + score
+				currentScore = score * comboBonus
 				comboBonus = comboBonus + 0.05
 				table.insert(scoreTable, {x = mouseX, y = mouseY, score = currentScore, alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
 				displayScore()
@@ -252,7 +253,6 @@ end
 			intersectionPoint1 = {x = drawing[1].lastX, y = drawing[1].lastY, lastX = intersectionX, lastY = intersectionY}
 			table.insert(drawing, 1, intersectionPoint1)
 		end
-		ScoreManager.rectangleScoring(drawing, rand1, rand2)
 		toBeRemoved = {}
 	end        
 
@@ -378,7 +378,7 @@ function math.angle(x1,y1, x2,y2)
 	return math.atan2(y2-y1, x2-x1) 
 end
 
--------------------------------------------------------------------Checks if two lines intersect (or line segments if seg is true)
+------------------------------------------------------------------- Checks if two lines intersect (or line segments if seg is true)
 ------------------------------------------------------------------- Lines are given as four numbers (two coordinates)
 function isIntersect(l1p1x,l1p1y, l1p2x,l1p2y, l2p1x,l2p1y, l2p2x,l2p2y, seg1, seg2)
 	local a1,b1,a2,b2 = l1p2y-l1p1y, l1p1x-l1p2x, l2p2y-l2p1y, l2p1x-l2p2x
