@@ -2,6 +2,8 @@ require"TEsound"
 ScoreManager = require('ScoreManager')
 local ScoreManager = require('ScoreManager')
 local MenuManager = require('MenuManager')
+remainingTime = 30
+handicapTime = 0
 
 function love.load()
 	love.graphics.setBackgroundColor(255,255,255)
@@ -47,8 +49,7 @@ function love.load()
    fadein  = 1
    display = 1.2
    fadeout = 2.5
-   
-   remainingTime = 10
+   scoreThreshold = 100
    gameOver = false
 end
 
@@ -205,11 +206,12 @@ function gameDraw()
 
 		--Draw UI elements
 		love.graphics.setColor(255, 255, 255, 255)
-		love.graphics.print("Score: " .. player.score, width - 275, height - 50)
+		love.graphics.print("Score: " .. player.score, width - 200, height - 50)
+		love.graphics.print("Target: " .. scoreThreshold, width - 425, height - 50)
 		love.graphics.draw(scale, 30, height - 125)
 		love.graphics.draw(textBubble, 10, 10)
 		drawTextBubble(currentScore)
-		drawTimer(remainingTime)
+		drawTimer(player.score, scoreThreshold)
 		displayScore()
 end    
 
@@ -329,7 +331,13 @@ function drawTextBubble(score)
 	end
 end
    
-function drawTimer(remainingTime)
+function drawTimer(currentScore)
+	if (currentScore > scoreThreshold) then
+		handicapTime = handicapTime + 2
+		remainingTime = 30 - handicapTime
+		scoreThreshold = scoreThreshold + 100
+	end
+
 	--Draw timer
 	if (remainingTime > 0) then
 		love.graphics.print("Time: " .. math.ceil(remainingTime, 1), width - 600, height - 50)
