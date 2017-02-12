@@ -446,16 +446,16 @@ function displayScore()
 		else
 			love.graphics.setColor(127, 255, 127, v.alpha)
 			love.graphics.print("+" .. math.floor(v.score), v.boxWidth, v.boxHeight)
-            love.graphics.setColor(255, 255, 255, v.alpha)
-            love.graphics.print("x" .. comboBonus, v.boxWidth + 1, v.boxHeight + 27, 0, 0.9, 0.9)  
-            if (comboBonus >= 1.15) then
-            love.graphics.draw(combo, v.boxWidth - 25, v.boxHeight + 24, 0, 0.175, 0.175) 
-                end
-            if (targetUp == true) then
-            love.graphics.setColor(230, 230, 130, v.alpha)    
-            love.graphics.print("Target Up!", v.boxWidth, v.boxHeight - 26, 0, 0.9, 0.9) 
-            love.graphics.setColor(255, 255, 255, v.alpha)    
-            end    
+      love.graphics.setColor(255, 255, 255, v.alpha)
+      love.graphics.print("x" .. comboBonus, v.boxWidth + 1, v.boxHeight + 27, 0, 0.9, 0.9)  
+      if (comboBonus >= 1.15) then
+      	love.graphics.draw(combo, v.boxWidth - 25, v.boxHeight + 24, 0, 0.175, 0.175) 
+      end
+      if (targetUp == true) then
+        love.graphics.setColor(230, 230, 130, v.alpha)    
+        love.graphics.print("Target Up!", v.boxWidth, v.boxHeight - 26, 0, 0.9, 0.9) 
+        love.graphics.setColor(255, 255, 255, v.alpha)    
+      end    
 		end
 		v.alpha = v.alpha - 2
 		v.boxHeight = v.boxHeight - 2
@@ -476,10 +476,10 @@ function drawTextBubble(score)
 				comboBonus = 1.00
 				love.graphics.setColor(255, 100, 100, 255)
 				love.graphics.print("That's coming out your paycheck", 20, 20)
-          if (canPlaySound) then
-	          TEsound.play("Sounds/SFX/Wrong.wav", "wrong")
-	          canPlaySound = false
-          end
+        if (canPlaySound) then
+          TEsound.play("Sounds/SFX/Wrong.wav", "wrong")
+          canPlaySound = false
+        end
 			end
 			if (score >= 0 and score < 20) then
 				comboBonus = 1.00
