@@ -344,6 +344,7 @@ function drawTimer(currentScore)
 		love.graphics.print("Time: " .. math.ceil(remainingTime, 1), 25, 55)
 	else 
 		love.graphics.print("GAME OVER", width - 600, height - 50)
+		love.graphics.print("Play again?", width-300, height - 100)
 	end
 end     
             
