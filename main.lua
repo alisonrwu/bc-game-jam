@@ -387,7 +387,7 @@ function menuDraw()
 		love.graphics.setColor(0, 0, 0, alpha*255)
 		love.graphics.rectangle("fill", 0, 0, width, height)
 	else
-		love.graphics.printf("Made by: Trevin \"terb\" Wong, Alison \"awu\" Wu, and Sean \"sdace\" Allen", 10, height  - 80, width)
+		love.graphics.printf("Made by: Trevin \"terb\" Wong, Alison \"arwu\" Wu, and Sean \"sdace\" Allen", 10, height  - 80, width)
 	end
 
 	isPressed = false
