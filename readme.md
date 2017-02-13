@@ -9,8 +9,7 @@ Lua, Love2d, Paint.NET, OpenMPT, Synth1 and our brains.
 Trevin Wong, Sean Allen, Alison Wu
 
 At the [2017 BC Game Jam](http://www.hackathon.io/77095#)
-
-## Winner of the Volunteer's Choice Award - First Place
+### Winner of the Volunteer's Choice Award - First Place
 
 ### Instructions:
 1. Install [LOVE 0.10.2](https://love2d.org/)
