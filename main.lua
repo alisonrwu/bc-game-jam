@@ -67,7 +67,12 @@ function love.load()
 	comboBonus = 1
 	heartbeat = false
   canPlaySound = false
-  targetUp = false
+
+  targetUpOld = 0
+  targetUp = 0
+  addOvals = false
+  pickOval = false
+  pickRect = true
 end
 
 
@@ -196,6 +201,19 @@ function gameUpdate(dt)
   	rand2 = love.math.random(12) / 2
   	generated = true
   end
+
+  if targetUp > 2 then
+  	addOvals = true
+  end
+  if addOvals then
+  	if rand1 > 3 then
+  		pickRect = true
+  		pickOval = false
+  	else
+  		pickRect = false
+  		pickOval = true
+  	end
+  end
     
   -- exit game
   if love.keyboard.isDown('escape') then
@@ -259,7 +277,12 @@ function gameUpdate(dt)
 		end
             
     if scored == false then
-			local score = math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2))
+			local score = 0
+			if pickRect then
+				score = math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2))
+			elseif pickOval then
+				score = math.floor(ScoreManager.ovalScoring(drawing, rand1, rand2))
+			end
 			player.score = player.score + score
 			currentScore = score * comboBonus
 			comboBonus = comboBonus + 0.05
@@ -284,12 +307,15 @@ end
 
 ------------------------------------------------------------------- Called on every frame to draw the game
 function gameDraw()
-  --ScoreManager.drawBox()
   love.graphics.setColor(255, 255, 255, 255)
   love.graphics.draw(background, 0, 0)
 
   if (scored == true) then
-  	ScoreManager.drawRectangle()
+  	if pickRect then
+  		ScoreManager.drawRectangle()
+		elseif pickOval then
+  		ScoreManager.drawOval()
+  	end
   end	
 
   --Draw all the lines the user has drawn already
@@ -449,7 +475,7 @@ function displayScore()
       if (comboBonus >= 1.15) then
       	love.graphics.draw(combo, v.boxWidth - 25, v.boxHeight + 24, 0, 0.175, 0.175) 
       end
-      if (targetUp == true) then
+      if (targetUp == targetUpOld+1) then
         love.graphics.setColor(230, 230, 130, v.alpha)    
         love.graphics.print("Target Up!", v.boxWidth, v.boxHeight - 26, 0, 0.9, 0.9) 
         love.graphics.setColor(255, 255, 255, v.alpha)    
@@ -465,7 +491,11 @@ end
 
 function drawTextBubble(score)
 	if (not scored and not gameOver) then
-		love.graphics.print("Give me a, uh, ".. rand1 .. " x " .. rand2 .. ", pronto!", 20, 20)
+		if pickRect then
+			love.graphics.print("I need a ".. rand1 .. " x " .. rand2 .. " rectangle!", 20, 20)
+		elseif pickOval then
+			love.graphics.print("I need a ".. rand1 .. " x " .. rand2 .. " oval, pronto!", 20, 20)
+		end
 		elseif (gameOver) then
 			love.graphics.setColor(230, 80, 80, 240)
 			love.graphics.print("You're fired! Stop wasting paper!", 20, 20)
@@ -529,7 +559,8 @@ function drawTimer(currentScore)
 		remainingTime = resetTime
 		extraScore = extraScore + 50
 		scoreThreshold = scoreThreshold + extraScore
-    targetUp = true
+		targetUpOld = targetUp
+    targetUp = targetUp + 1
     if (canPlaySound) then
       TEsound.play("Sounds/SFX/newTarget.ogg", "newTarget")
       canPlaySound = false

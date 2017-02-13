@@ -1,6 +1,7 @@
 local ScoreManager = {}
 
 inch = 40
+marginOfError = inch*1.5
 
 local minX = 9999
 local maxX = 0
@@ -73,7 +74,7 @@ local function rectangleScoring(drawing, x, y)
 		end
 	end
 
-	if (math.abs(rect.width - prevBox.w) > inch or math.abs(rect.height - prevBox.h) > inch) then
+	if (math.abs(rect.width - prevBox.w) > marginOfError or math.abs(rect.height - prevBox.h) > marginOfError) then
 		return -50
 	end
 
@@ -126,7 +127,7 @@ local function ovalScoring(drawing, x, y)
 		end
 	end
 
-	if (math.abs(oval.xRad - prevBox.w) > (inch*3) or math.abs(oval.yRad - prevBox.h) > (inch*3)) then
+	if (math.abs(oval.xRad - prevBox.w) > marginOfError or math.abs(oval.yRad - prevBox.h) > marginOfError) then
 		return -50
 	end
 
