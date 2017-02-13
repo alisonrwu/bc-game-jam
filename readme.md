@@ -13,6 +13,7 @@ Trevin Wong, Sean Allen, Alison Wu
 
 ### Instructions:
 YOU CAN JUST DOWNLOAD AND RUN: [paper-cut-1.0.exe](https://github.com/alisonrwu/bc-game-jam/blob/master/paper-cut-1.0.exe)
+
 1. Run the .love
    1. Install [LOVE 0.10.2](https://love2d.org/)
    2. Zip all contents and rename to .love extension (or just download [paper-cut-1.0.love](https://github.com/alisonrwu/bc-game-jam/blob/master/paper-cut-1.0.love))
