@@ -12,7 +12,7 @@ Trevin Wong, Sean Allen, Alison Wu
 - Winner of the Volunteer's Choice Award - First Place
 
 ### Instructions:
-YOU CAN JUST DOWNLOAD THE ZIP AND RUN: [PaperCut.exe](https://github.com/alisonrwu/bc-game-jam/blob/master/PaperCut.exe)
+YOU CAN JUST DOWNLOAD THE ZIP AND RUN: [PaperCut.exe](https://github.com/alisonrwu/bc-game-jam/blob/master/build.zip)
 
 1. Run the .love
    1. Install [LOVE 0.10.2](https://love2d.org/)
