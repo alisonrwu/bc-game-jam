@@ -17,4 +17,4 @@ Trevin Wong, Sean Allen, Alison Wu
    2. Zip all contents and rename to .love extension (or just download [paper-cut-1.0.love](https://github.com/alisonrwu/bc-game-jam/blob/master/paper-cut-1.0.love))
 2. Run the .exe
    1. Drag .love to windowsCompile.bat (if on windows) to compile
-   2. it will produce the executable (or just download paper-cut-1.0.exe)
+   2. it will produce the executable (or just download [paper-cut-1.0.exe](https://github.com/alisonrwu/bc-game-jam/blob/master/paper-cut-1.0.exe))
