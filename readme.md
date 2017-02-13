@@ -9,3 +9,12 @@ Lua, Love2d, Paint.NET, OpenMPT, Synth1 and our brains.
 Trevin Wong, Sean Allen, Alison Wu
 
 At the [2017 BC Game Jam](http://www.hackathon.io/77095#)
+
+
+
+## Instructions:
+
+1. Install [LOVE 0.10.2](https://love2d.org/)
+2. Clone repo
+3. Zip all contents and rename zip to .love extension (or just use the paper-cut-1.0.love)
+4. Double click to run!
