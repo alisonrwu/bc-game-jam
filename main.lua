@@ -173,14 +173,14 @@ function gameUpdate(dt)
   love.mouse.setVisible(false)
 
   -- debug
-  if (love.keyboard.isDown("a")) then
-      remainingTime = remainingTime + 999
-      end
+  -- if (love.keyboard.isDown("a")) then
+  --     remainingTime = remainingTime + 999
+  --     end
     
-  if (love.keyboard.isDown("b")) then
-    love.load()
-		ScoreManager.reset()
-  end
+  -- if (love.keyboard.isDown("b")) then
+  --   love.load()
+		-- ScoreManager.reset()
+  -- end
     
 	-- decrement Timer
 	remainingTime = remainingTime - dt

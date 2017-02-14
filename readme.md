@@ -12,11 +12,11 @@ Trevin Wong, Sean Allen, Alison Wu
 - Winner of the Volunteer's Choice Award - First Place
 
 ### Instructions:
-YOU CAN JUST DOWNLOAD THE ZIP AND RUN: [PaperCut.exe](https://github.com/alisonrwu/bc-game-jam/blob/master/build.zip)
+YOU CAN JUST DOWNLOAD THE ZIP AND RUN: [PaperCut.exe](https://github.com/alisonrwu/bc-game-jam/blob/master/PaperCutV1.zip)
 
 1. Run the .love
    1. Install [LOVE 0.10.2](https://love2d.org/)
-   2. Zip all contents and rename to .love extension (or just download [PaperCut.love](https://github.com/alisonrwu/bc-game-jam/blob/master/PaperCut.love))
+   2. Zip all contents and rename to .love extension (or just download [PaperCut.love](https://github.com/alisonrwu/bc-game-jam/blob/master/PaperCutV1.love))
 2. Run the .exe
    1. Drag .love to windowsCompile.bat (if on windows) to compile
    2. Put .exe into build folder and run
