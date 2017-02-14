@@ -557,7 +557,7 @@ function drawTextBubble(score)
 function drawTimer(currentScore)
 	if (currentScore >= scoreThreshold) then
 		remainingTime = resetTime
-		extraScore = extraScore + 50
+		extraScore = extraScore + 100
 		scoreThreshold = scoreThreshold + extraScore
 		targetUpOld = targetUp
 	    targetUp = targetUp + 1
