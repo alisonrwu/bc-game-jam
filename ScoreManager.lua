@@ -1,7 +1,7 @@
 local ScoreManager = {}
 
 inch = 40
-marginOfError = inch*2
+errorMargin = inch*1.5
 
 local minX = 9999
 local maxX = 0
@@ -74,17 +74,16 @@ local function rectangleScoring(drawing, x, y)
 		end
 	end
 
-	if (math.abs(rect.width - prevBox.w) > marginOfError or math.abs(rect.height - prevBox.h) > marginOfError) then
-		return -50
-	end
-
-	local score = (inch-closestTL) + (inch-closestTR) + (inch-closestBL) + (inch-closestBR)
+	local score = (25* ((errorMargin-closestTL)/errorMargin))
+							+ (25* ((errorMargin-closestTR)/errorMargin))
+							+ (25* ((errorMargin-closestBL)/errorMargin))
+							+ (25* ((errorMargin-closestBR)/errorMargin))
 	-- only print positive score (starts negative)
 	if score >= 0 then
-		--print('Score is ', score)
+		print('Score is ', score)
 		return score
 	else
-		return 0
+		return -50 --0
 	end
 end
 
@@ -129,23 +128,21 @@ local function ovalScoring(drawing, x, y)
 			closestB = l
 		end
 	end
-	print(closestT)
-	print(closestR)
-	print(closestL)
-	print(closestB)
+	-- print(closestT) -- about 0 to 30, 0 = best, 100%
+	-- print(closestR)
+	-- print(closestL)
+	-- print(closestB)
 
-	if (math.abs(oval.xRad - prevBox.w) > marginOfError or math.abs(oval.yRad - prevBox.h) > marginOfError) then
-		return -50
-	end
-
-	local score = (inch-closestT) + (inch-closestR) + (inch-closestL) + (inch-closestB)
-	-- local score = 100 - (25)
+	local score = (25* ((errorMargin-closestT)/errorMargin))
+							+ (25* ((errorMargin-closestR)/errorMargin))
+							+ (25* ((errorMargin-closestL)/errorMargin))
+							+ (25* ((errorMargin-closestB)/errorMargin))
 	-- only print positive score (starts negative)
 	if score >= 0 then
 		print('Score is ', score)
 		return score
 	else
-		return 0
+		return -50 --0
 	end
 end
 
