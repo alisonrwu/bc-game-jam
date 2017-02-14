@@ -203,7 +203,7 @@ function gameUpdate(dt)
   end
 
   if targetUp > 2 then
-  	addOvals = true
+  	-- addOvals = true
   end
   if addOvals then
   	if rand1 > 3 then

@@ -1,7 +1,7 @@
 local ScoreManager = {}
 
 inch = 40
-marginOfError = inch*1.5
+marginOfError = inch*2
 
 local minX = 9999
 local maxX = 0
@@ -107,34 +107,39 @@ local function ovalScoring(drawing, x, y)
 	oval.bot.x = centreX
 	oval.bot.y = centreY+oval.yRad
 
-	local closestTL = 9999
-	local closestTR = 9999
-	local closestBL = 9999
-	local closestBR = 9999
+	local closestT = 9999
+	local closestR = 9999
+	local closestL = 9999
+	local closestB = 9999
 	for i,v in ipairs(drawing) do
 		local l = lengthOf(v.x,v.y, oval.top.x, oval.top.y)
-		if l < closestTL then
-			closestTL = l
+		if l < closestT then
+			closestT = l -- closestT is length of the closest point to TOP correct point
 		end
 		l = lengthOf(v.x,v.y, oval.right.x, oval.right.y)
-		if l < closestTR then
-			closestTR = l
+		if l < closestR then
+			closestR = l
 		end
 		l = lengthOf(v.x,v.y, oval.left.x, oval.left.y)
-		if l < closestBL then
-			closestBL = l
+		if l < closestL then
+			closestL = l
 		end
 		l = lengthOf(v.x,v.y, oval.bot.x, oval.bot.y)
-		if l < closestBR then
-			closestBR = l
+		if l < closestB then
+			closestB = l
 		end
 	end
+	print(closestT)
+	print(closestR)
+	print(closestL)
+	print(closestB)
 
 	if (math.abs(oval.xRad - prevBox.w) > marginOfError or math.abs(oval.yRad - prevBox.h) > marginOfError) then
 		return -50
 	end
 
-	local score = (inch-closestTL) + (inch-closestTR) + (inch-closestBL) + (inch-closestBR)
+	local score = (inch-closestT) + (inch-closestR) + (inch-closestL) + (inch-closestB)
+	-- local score = 100 - (25)
 	-- only print positive score (starts negative)
 	if score >= 0 then
 		print('Score is ', score)
@@ -160,11 +165,11 @@ local function drawOval()
 	love.graphics.setColor(100, 230, 100, 125)
 	love.graphics.ellipse('line', (prevBox.x+(prevBox.w/2)), (prevBox.y+(prevBox.h/2)), oval.xRad, oval.yRad)
 
-	-- love.graphics.setColor(200, 200, 200, 255)
-	-- love.graphics.points(oval.top.x, oval.top.y)
-	-- love.graphics.points(oval.left.x, oval.left.y)
-	-- love.graphics.points(oval.right.x, oval.right.y)
-	-- love.graphics.points(oval.bot.x, oval.bot.y)
+	love.graphics.setColor(200, 200, 200, 255)
+	love.graphics.points(oval.top.x, oval.top.y)
+	love.graphics.points(oval.left.x, oval.left.y)
+	love.graphics.points(oval.right.x, oval.right.y)
+	love.graphics.points(oval.bot.x, oval.bot.y)
 end
 
 local function drawBox()
