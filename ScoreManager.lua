@@ -92,17 +92,20 @@ local function ovalScoring(drawing, x, y)
 	-- print('how is my oval')
 	updateCacheValues(drawing)
 
+	local centreX = minX+width/2
+	local centreY = minY+height/2
+
 	oval.xRad = (x/2)*inch
 	oval.yRad = (y/2)*inch
 
-	oval.top.x = minX+oval.xRad
-	oval.top.y = minY
-	oval.left.x = minX
-	oval.left.y = minY+oval.yRad
-	oval.right.x = minX+(oval.xRad*2)
-	oval.right.y = minY+oval.yRad
-	oval.bot.x = minX+oval.xRad
-	oval.bot.y = minY+(oval.yRad*2)
+	oval.top.x = centreX
+	oval.top.y = centreY-oval.yRad
+	oval.left.x = centreX-oval.xRad
+	oval.left.y = centreY
+	oval.right.x = centreX+oval.xRad
+	oval.right.y = centreY
+	oval.bot.x = centreX
+	oval.bot.y = centreY+oval.yRad
 
 	local closestTL = 9999
 	local closestTR = 9999
@@ -144,11 +147,24 @@ end
 local function drawRectangle()
 	love.graphics.setColor(100, 230, 100, 125)
 	love.graphics.rectangle('line', prevBox.x, prevBox.y, rect.width, rect.height)
+
+	-- for debugging, prints 4 points that are compared
+	-- love.graphics.setColor(200, 200, 200, 255)
+	-- love.graphics.points(rect.topR.x, rect.topR.y)
+	-- love.graphics.points(rect.topL.x, rect.topL.y)
+	-- love.graphics.points(rect.botR.x, rect.botR.y)
+	-- love.graphics.points(rect.botL.x, rect.botL.y)
 end
 
 local function drawOval()
 	love.graphics.setColor(100, 230, 100, 125)
-	love.graphics.ellipse('line', (prevBox.x+prevBox.w/2), (prevBox.y+prevBox.h/2), oval.xRad, oval.yRad)
+	love.graphics.ellipse('line', (prevBox.x+(prevBox.w/2)), (prevBox.y+(prevBox.h/2)), oval.xRad, oval.yRad)
+
+	-- love.graphics.setColor(200, 200, 200, 255)
+	-- love.graphics.points(oval.top.x, oval.top.y)
+	-- love.graphics.points(oval.left.x, oval.left.y)
+	-- love.graphics.points(oval.right.x, oval.right.y)
+	-- love.graphics.points(oval.bot.x, oval.bot.y)
 end
 
 local function drawBox()
@@ -164,10 +180,10 @@ local function reset()
 	width = 0
 	height = 0
     
-	prevBox.x = 0
-	prevBox.y = 0
-	prevBox.w = 0
-	prevBox.h = 0
+	-- prevBox.x = 0
+	-- prevBox.y = 0
+	-- prevBox.w = 0
+	-- prevBox.h = 0
     
   rect.width = 0
 	rect.height = 0
