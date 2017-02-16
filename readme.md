@@ -6,7 +6,9 @@ You're a corporate paper cutting slave. Cut the exact size dimensions that your 
 Lua, Love2d, Paint.NET, OpenMPT, Synth1 and our brains.
 
 ### Made by
-Trevin Wong, Sean Allen, Alison Wu
+- Trevin Wong (Programmer)
+- Sean Allen (Programmer, Artist, Sound Guy)
+- Alison Wu (Programmer)
 
 ### Made at [BC Game Jam 2017](http://bcgamejam.com/)
 - Winner of the Volunteer's Choice Award - First Place
