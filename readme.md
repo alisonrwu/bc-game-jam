@@ -14,7 +14,7 @@ Lua, Love2d, Paint.NET, OpenMPT, Synth1 and our brains.
 - Winner of the Volunteer's Choice Award - First Place
 
 ### Instructions:
-YOU CAN JUST DOWNLOAD THE ZIP AND RUN: [PaperCut.exe](https://github.com/alisonrwu/bc-game-jam/blob/master/PaperCutV1.zip)
+YOU CAN JUST DOWNLOAD THE ZIP AND RUN: [PaperCut.zip](https://github.com/alisonrwu/bc-game-jam/blob/master/Paper%20Cut%20V1.zip)
 
 1. Run the .love
    1. Install [LOVE 0.10.2](https://love2d.org/)
