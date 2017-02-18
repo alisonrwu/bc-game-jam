@@ -39,7 +39,7 @@ oval.bot = {}
 local function rectangleScoring(drawing, x, y)
 	-- print('how is my rectangle, is it ', x, 'by', y)
 	updateCacheValues(drawing)
-	print(#drawing)
+	-- print(#drawing)
 
 	local centreX = minX+width/2
 	local centreY = minY+height/2
@@ -78,14 +78,19 @@ local function rectangleScoring(drawing, x, y)
 			closestBR = l
 		end
 	end
+	-- print(closestTL)
+	-- print(closestTR)
+	-- print(closestBL)
+	-- print(closestBR)
+	calcError(x,y)
 
 	local score = (25* ((errorMargin-closestTL)/errorMargin))
 							+ (25* ((errorMargin-closestTR)/errorMargin))
 							+ (25* ((errorMargin-closestBL)/errorMargin))
 							+ (25* ((errorMargin-closestBR)/errorMargin))
+	print('Score is ', score)
 	-- only print positive score (starts negative)
 	if score >= 0 then
-		print('Score is ', score)
 		return score
 	else
 		return -50 -- 0
@@ -137,14 +142,15 @@ local function ovalScoring(drawing, x, y)
 	-- print(closestR)
 	-- print(closestL)
 	-- print(closestB)
+	calcError(x,y)
 
 	local score = (25* ((errorMargin-closestT)/errorMargin))
 							+ (25* ((errorMargin-closestR)/errorMargin))
 							+ (25* ((errorMargin-closestL)/errorMargin))
 							+ (25* ((errorMargin-closestB)/errorMargin))
+	print('Score is ', score)
 	-- only print positive score (starts negative)
 	if score >= 0 then
-		print('Score is ', score)
 		return score
 	else
 		return -50 --0
@@ -228,6 +234,11 @@ function updateCacheValues(drawing)
 	prevBox.y = minY
 	prevBox.w = width
 	prevBox.h = height
+end
+
+function calcError(x,y)
+	errorMargin = ((x+y)/4)*inch
+	print('Error is ', errorMargin)
 end
 
 -- helper function, returns length of 2 points
