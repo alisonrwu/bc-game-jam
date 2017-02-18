@@ -23,6 +23,7 @@ rect.topL = {}
 rect.topR = {}
 rect.botL = {}
 rect.botR = {}
+rect.points = {}
 
 local oval = {}
 oval.xRad = 0
@@ -38,18 +39,22 @@ oval.bot = {}
 local function rectangleScoring(drawing, x, y)
 	-- print('how is my rectangle, is it ', x, 'by', y)
 	updateCacheValues(drawing)
+	print(#drawing)
+
+	local centreX = minX+width/2
+	local centreY = minY+height/2
 
 	rect.width = x*inch
 	rect.height = y*inch
-	rect.topL.x = minX
-	rect.topL.y = minY
 
-	rect.topR.x = minX+rect.width
-	rect.topR.y = minY
-	rect.botL.x = minX
-	rect.botL.y = minY+rect.height
-	rect.botR.x = minX+rect.width
-	rect.botR.y = minY+rect.height
+	rect.topL.x = centreX - rect.width/2 -- minX
+	rect.topL.y = centreY - rect.height/2 -- minY
+	rect.topR.x = centreX + rect.width/2 -- minX+rect.width
+	rect.topR.y = centreY - rect.height/2 -- minY
+	rect.botL.x = centreX - rect.width/2 -- minX
+	rect.botL.y = centreY + rect.height/2 -- minY+rect.height
+	rect.botR.x = centreX + rect.width/2 -- minX+rect.width
+	rect.botR.y = centreY + rect.height/2 -- minY+rect.height
 
 	local closestTL = 9999
 	local closestTR = 9999
@@ -83,7 +88,7 @@ local function rectangleScoring(drawing, x, y)
 		print('Score is ', score)
 		return score
 	else
-		return -50 --0
+		return -50 -- 0
 	end
 end
 
@@ -128,7 +133,7 @@ local function ovalScoring(drawing, x, y)
 			closestB = l
 		end
 	end
-	-- print(closestT) -- about 0 to 30, 0 = best, 100%
+	-- print(closestT)
 	-- print(closestR)
 	-- print(closestL)
 	-- print(closestB)
@@ -147,8 +152,8 @@ local function ovalScoring(drawing, x, y)
 end
 
 local function drawRectangle()
-	love.graphics.setColor(100, 230, 100, 125)
-	love.graphics.rectangle('line', prevBox.x, prevBox.y, rect.width, rect.height)
+	love.graphics.setColor(70, 230, 70, 125)
+	love.graphics.rectangle('line', (prevBox.x+(prevBox.w/2))-(rect.width/2), (prevBox.y+(prevBox.h/2))-(rect.height/2), rect.width, rect.height)
 
 	-- for debugging, prints 4 points that are compared
 	-- love.graphics.setColor(200, 200, 200, 255)
@@ -162,11 +167,11 @@ local function drawOval()
 	love.graphics.setColor(100, 230, 100, 125)
 	love.graphics.ellipse('line', (prevBox.x+(prevBox.w/2)), (prevBox.y+(prevBox.h/2)), oval.xRad, oval.yRad)
 
-	love.graphics.setColor(200, 200, 200, 255)
-	love.graphics.points(oval.top.x, oval.top.y)
-	love.graphics.points(oval.left.x, oval.left.y)
-	love.graphics.points(oval.right.x, oval.right.y)
-	love.graphics.points(oval.bot.x, oval.bot.y)
+	-- love.graphics.setColor(200, 200, 200, 255)
+	-- love.graphics.points(oval.top.x, oval.top.y)
+	-- love.graphics.points(oval.left.x, oval.left.y)
+	-- love.graphics.points(oval.right.x, oval.right.y)
+	-- love.graphics.points(oval.bot.x, oval.bot.y)
 end
 
 local function drawBox()
