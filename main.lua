@@ -1,7 +1,7 @@
 require"TEsound"
-ScoreManager = require('ScoreManager')
 local ScoreManager = require('ScoreManager')
 local MenuManager = require('MenuManager')
+local Scissors = require('Scissors')
 
 function love.load()
 	icon = love.graphics.newImage("Graphics/UI/Icon.png")
@@ -17,8 +17,6 @@ function love.load()
 	love.graphics.setLineWidth(3)
 	angle = 0
 	scale = love.graphics.newImage("Graphics/UI/Scale.png")
-	scissors1 = love.graphics.newImage("Graphics/UI/Scissors.png")
-	scissors2 = love.graphics.newImage("Graphics/UI/Scissors2.png")
 	textBubble = love.graphics.newImage("Graphics/UI/TextBubble.png")
 	background = love.graphics.newImage("Graphics/UI/Background.png")
 	menuBackground = love.graphics.newImage("Graphics/Menu/Background.png")
@@ -27,7 +25,6 @@ function love.load()
 	player.score = 0
 	lastMouseX = 0
 	lastMouseY = 0
-	frameCounter = 0
 	indexToRemoveTo = 0
 	isDrawing = true
 	scored = true
@@ -242,7 +239,7 @@ function gameUpdate(dt)
                 canPlaySound = true
                 TEsound.play("Sounds/SFX/Snip.ogg", "snip")        
     			TEsound.stop("cutting", false)
-    			frameCounter = 20
+    			Scissors.setFrameCounter(20)
     			for j = 1, i do
     				table.insert(toBeRemoved, i)
 	    		end
@@ -330,27 +327,8 @@ function gameDraw()
   	love.graphics.line(v.x, v.y, v.lastX, v.lastY)
   end
 
-	-- Determining angle for the scissors
-	if ((lastMouseY ~= mouseY or lastMouseX ~= mouseX) and drawing[#drawing - 10] ~= nil and mouseDown) then
-		angle = math.angle(mouseX, mouseY, drawing[#drawing - 5].x, drawing[#drawing - 5].y)
-	end
-
-	-- Draw the scissors
-	love.graphics.setColor(255, 255, 255, 255)
-	if (frameCounter < 11) then
-		love.graphics.draw(scissors1, love.mouse.getX(), love.mouse.getY(), angle, 1, 1, scissors1:getWidth()/2, scissors1:getHeight()/2) 
-		if (mouseDown) and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY))  then
-			frameCounter = frameCounter + 1
-		end
-	else
-		love.graphics.draw(scissors2, love.mouse.getX(), love.mouse.getY(), angle, 1, 1, scissors2:getWidth()/2, scissors2:getHeight()/2)
-		if (mouseDown) and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY))  then
-			frameCounter = frameCounter + 1
-			if (frameCounter >= 21) then
-				frameCounter = 0
-			end
-		end
-	end
+  	--draw scissors
+	Scissors.draw(mouseX, mouseY, lastMouseX, lastMouseY, drawing, mouseDown)
 
 	--Draw UI elements
 	love.graphics.setColor(255, 255, 255, 255)
