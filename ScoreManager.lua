@@ -56,22 +56,63 @@ local function rectangleScoring(drawing, x, y)
 	rect.botR.x = centreX + rect.width/2 -- minX+rect.width
 	rect.botR.y = centreY + rect.height/2 -- minY+rect.height
     
-    local targetArea = rect.width * rect.height
-    
     local sP = drawing
     local cP = createInterpolatedRectangle()
     
-    local minimumX = minX
-    local maximumX = maxX
-    local minimumY = minY
-    local maximumY = maxY
+    local successPercentage = calculateSuccessPercentage(sP, cP, rect.topL.x, rect.topR.x, rect.topL.y, rect.botL.y)
+    local score = transformSuccessPercentage(successPercentage, rect.width * rect.height)
     
-    if rect.topL.x < minimumX then minimumX = rect.topL.x end
-    if rect.topR.x > maximumX then maximumX = rect.topR.x end
-    if rect.topL.y < minimumY then minimumY = rect.topL.y end
-    if rect.botL.y > maximumX then maximumY = rect.botL.y end
+    print("Score = ", score)
+    return score
+end
+
+local function ovalScoring(drawing, x, y)
+	-- print('how is my oval')
+	updateCacheValues(drawing)
+
+	local centreX = minX+width/2
+	local centreY = minY+height/2
+
+	oval.xRad = (x/2)*inch
+	oval.yRad = (y/2)*inch
+
+	oval.top.x = centreX
+	oval.top.y = centreY-oval.yRad
+	oval.left.x = centreX-oval.xRad
+	oval.left.y = centreY
+	oval.right.x = centreX+oval.xRad
+	oval.right.y = centreY
+	oval.bot.x = centreX
+	oval.bot.y = centreY+oval.yRad
     
-    local errors = 0
+    local sP = drawing
+    local cP = createInterpolatedOval()
+    
+    local successPercentage = calculateSuccessPercentage(sP, cP, oval.left.x, oval.right.x, oval.top.y, oval.bot.y)
+    local score = transformSuccessPercentage(successPercentage, oval.xRad * oval.yRad * math.pi)
+    
+    print("Score = ", score)
+    return score
+end
+
+function transformSuccessPercentage(successPercentage, targetArea)
+   -- Shapes with smaller areas are typically harder to get, so make those sP's worth more
+    local scaleFactor = 0.5 * math.exp(-1 * targetArea / 3000) + 1
+    local score = successPercentage * scaleFactor * 100
+    
+    -- Cap scores at 100 points
+    if score > 100 then score = 100 end
+    
+    return score
+end
+
+function calculateSuccessPercentage(sP, cP, minimumX, maximumX, minimumY, maximumY)
+    if minX < minimumX then minimumX = minX end
+    if maxX > maximumX then maximumX = maxX end
+    if minY < minimumY then minimumY = minY end
+    if maxY > maximumY then maximumY = maxY end
+    
+    local successes = 0
     local pointsChecked = 0
     
     for i = minimumX, maximumX, 1 do
@@ -84,22 +125,17 @@ local function rectangleScoring(drawing, x, y)
                 pointsChecked = pointsChecked + 1
             end
             
-            if insideDrawing and not insideTestShape then
-                errors = errors + 1
-            end
-            
-            if insideTestShape and not insideDrawing then
-                errors = errors + 1
+            if insideDrawing and insideTestShape then
+                successes = successes + 1
             end
         end
     end
     
-    local successes = pointsChecked - errors
     local successPercentage = successes / pointsChecked
     
     print("SuccessP = ", successPercentage)
     
-    return successPercentage * 100
+    return successPercentage
 end
 
 function isPointInsidePolygon(point, polygon)
@@ -164,64 +200,32 @@ function createInterpolatedRectangle()
     return outputList
 end
 
-local function ovalScoring(drawing, x, y)
-	-- print('how is my oval')
-	updateCacheValues(drawing)
-
-	local centreX = minX+width/2
-	local centreY = minY+height/2
-
-	oval.xRad = (x/2)*inch
-	oval.yRad = (y/2)*inch
-
-	oval.top.x = centreX
-	oval.top.y = centreY-oval.yRad
-	oval.left.x = centreX-oval.xRad
-	oval.left.y = centreY
-	oval.right.x = centreX+oval.xRad
-	oval.right.y = centreY
-	oval.bot.x = centreX
-	oval.bot.y = centreY+oval.yRad
-
-	local closestT = 9999
-	local closestR = 9999
-	local closestL = 9999
-	local closestB = 9999
-	for i,v in ipairs(drawing) do
-		local l = lengthOf(v.x,v.y, oval.top.x, oval.top.y)
-		if l < closestT then
-			closestT = l -- closestT is length of the closest point to TOP correct point
-		end
-		l = lengthOf(v.x,v.y, oval.right.x, oval.right.y)
-		if l < closestR then
-			closestR = l
-		end
-		l = lengthOf(v.x,v.y, oval.left.x, oval.left.y)
-		if l < closestL then
-			closestL = l
-		end
-		l = lengthOf(v.x,v.y, oval.bot.x, oval.bot.y)
-		if l < closestB then
-			closestB = l
-		end
-	end
-	-- print(closestT)
-	-- print(closestR)
-	-- print(closestL)
-	-- print(closestB)
-	calcError(x,y)
-
-	local score = (25* ((errorMargin-closestT)/errorMargin))
-							+ (25* ((errorMargin-closestR)/errorMargin))
-							+ (25* ((errorMargin-closestL)/errorMargin))
-							+ (25* ((errorMargin-closestB)/errorMargin))
-	print('Score is ', score)
-	-- only print positive score (starts negative)
-	if score >= 0 then
-		return score
-	else
-		return -50 --0
-	end
+function createInterpolatedOval()
+    local outputList = {}
+    
+    local h = oval.bot.y - oval.top.y
+    local w = oval.right.x - oval.left.x
+    
+    local function ellipseFunctionY(x)
+        -- h * sqrt(1/4 - (x/w)^2)
+        return h * math.sqrt(1/4 - (x/w) * (x/w))
+    end
+    
+    local step = w / 10
+    local halfW = w / 2
+    local halfH = h / 2
+    
+    for i = 0, w, step do
+        outputList[#outputList+1] = {x = oval.left.x + i,
+                                     y = oval.top.y + halfH - ellipseFunctionY(i - halfW)}
+    end
+    
+    for i = 0, w, step do
+       outputList[#outputList+1] = {x = oval.right.x - i,
+                                    y = oval.top.y + halfH + ellipseFunctionY(i - halfW)} 
+    end
+    
+    return outputList
 end
 
 local function drawRectangle()
@@ -229,11 +233,11 @@ local function drawRectangle()
 	love.graphics.rectangle('line', (prevBox.x+(prevBox.w/2))-(rect.width/2), (prevBox.y+(prevBox.h/2))-(rect.height/2), rect.width, rect.height)
 
 	-- for debugging, prints 4 points that are compared
-	love.graphics.setColor(255, 0, 0, 255)
-	love.graphics.points(rect.topR.x, rect.topR.y)
-	love.graphics.points(rect.topL.x, rect.topL.y)
-	love.graphics.points(rect.botR.x, rect.botR.y)
-	love.graphics.points(rect.botL.x, rect.botL.y)
+	--love.graphics.setColor(255, 0, 0, 255)
+	--love.graphics.points(rect.topR.x, rect.topR.y)
+	--love.graphics.points(rect.topL.x, rect.topL.y)
+	--love.graphics.points(rect.botR.x, rect.botR.y)
+	--love.graphics.points(rect.botL.x, rect.botL.y)
 end
 
 local function drawOval()
@@ -265,7 +269,7 @@ local function reset()
 	-- prevBox.w = 0
 	-- prevBox.h = 0
     
-  rect.width = 0
+    rect.width = 0
 	rect.height = 0
 	rect.topL = {}
 	rect.topR = {}
@@ -303,31 +307,11 @@ function updateCacheValues(drawing)
 	prevBox.h = height
 end
 
-function calcError(x,y)
-	errorMargin = ((x+y)/4)*inch
-	print('Error is ', errorMargin)
-end
-
--- helper function, returns length of 2 points
-function lengthOf(x1,y1,x2,y2)
-	return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
-end
-
--- local function getWidth()
--- 	return width
--- end
-
--- local function getHeight()
--- 	return height
--- end
-
 ScoreManager.rectangleScoring = rectangleScoring
 ScoreManager.ovalScoring = ovalScoring
 ScoreManager.drawRectangle = drawRectangle
 ScoreManager.drawOval = drawOval
 ScoreManager.drawBox = drawBox
 ScoreManager.reset = reset
--- ScoreManager.getWidth = getWidth
--- ScoreManager.getHeight = getHeight
 
 return ScoreManager
