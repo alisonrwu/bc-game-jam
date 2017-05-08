@@ -1,6 +1,7 @@
 require"TEsound"
 local ScoreManager = require('ScoreManager')
 local MenuManager = require('MenuManager')
+local GraphicsManager = require('GraphicsManager')
 local Scissors = require('Scissors')
 
 function love.load()
@@ -137,26 +138,12 @@ function instructionsUpdate()
 end
 
 function instructionsDraw()
-	love.graphics.setColor(255,255,255,255)
-	love.graphics.draw(menuBackground, 0, 0)
-	love.graphics.printf("The boss wants you to cut some paper...", 0, 50, width, 'center')
-	love.graphics.setColor(200, 80, 80, 255)
-	love.graphics.printf("Better do what he says, fast!", 0, 150, width, 'center')
-	love.graphics.setColor(255,255,255,255)
-	love.graphics.printf("Use the left mouse button to cut\n the proper size sheets of paper.", 0, 230, width, 'center')    
+	GraphicsManager:draw(menuBackground, 0, 0, NORMAL)
+    GraphicsManager:drawText("The boss wants you to cut some paper...", 0, 50, width, 'center', NORMAL)
+	GraphicsManager:drawText("Better do what he says, fast!", 0, 150, width, 'center', RED)
+	GraphicsManager:drawText("Use the left mouse button to cut\n the proper size sheets of paper.", 0, 230, width, 'center', NORMAL)   
 
-	if (blinkingCounter < 20) then
-		love.graphics.printf("Click to start!", 0, 390, width, 'center')  
-		blinkingCounter = blinkingCounter + 1
-	else
-		love.graphics.setColor(255,255,255,100)
-		love.graphics.printf("Click to start!", 0, 390, width, 'center')
-		blinkingCounter = blinkingCounter + 1
-
-		if (blinkingCounter == 40) then
-			blinkingCounter = 0
-		end    
-	end    
+	  
 
 	if (isTransitioningInstructions or isTransitioningGame) then
 		love.graphics.setColor(0, 0, 0, alpha*255)
