@@ -55,46 +55,113 @@ local function rectangleScoring(drawing, x, y)
 	rect.botL.y = centreY + rect.height/2 -- minY+rect.height
 	rect.botR.x = centreX + rect.width/2 -- minX+rect.width
 	rect.botR.y = centreY + rect.height/2 -- minY+rect.height
+    
+    local targetArea = rect.width * rect.height
+    
+    local sP = drawing
+    local cP = createInterpolatedRectangle()
+    
+    local minimumX = minX
+    local maximumX = maxX
+    local minimumY = minY
+    local maximumY = maxY
+    
+    if rect.topL.x < minimumX then minimumX = rect.topL.x end
+    if rect.topR.x > maximumX then maximumX = rect.topR.x end
+    if rect.topL.y < minimumY then minimumY = rect.topL.y end
+    if rect.botL.y > maximumX then maximumY = rect.botL.y end
+    
+    local errors = 0
+    local pointsChecked = 0
+    
+    for i = minimumX, maximumX, 1 do
+        for j = minimumY, maximumY, 1 do
+            local testPoint = {x = i, y = j}
+            local insideDrawing = isPointInsidePolygon(testPoint, sP)
+            local insideTestShape = isPointInsidePolygon(testPoint, cP)
+            
+            if insideDrawing or insideTestShape then
+                pointsChecked = pointsChecked + 1
+            end
+            
+            if insideDrawing and not insideTestShape then
+                errors = errors + 1
+            end
+            
+            if insideTestShape and not insideDrawing then
+                errors = errors + 1
+            end
+        end
+    end
+    
+    local successes = pointsChecked - errors
+    local successPercentage = successes / pointsChecked
+    
+    print("SuccessP = ", successPercentage)
+    
+    return successPercentage * 100
+end
 
-	local closestTL = 9999
-	local closestTR = 9999
-	local closestBL = 9999
-	local closestBR = 9999
-	for i,v in ipairs(drawing) do
-		local l = lengthOf(v.x,v.y, rect.topL.x, rect.topL.y)
-		if l < closestTL then
-			closestTL = l
-		end
-		l = lengthOf(v.x,v.y, rect.topR.x, rect.topR.y)
-		if l < closestTR then
-			closestTR = l
-		end
-		l = lengthOf(v.x,v.y, rect.botL.x, rect.botL.y)
-		if l < closestBL then
-			closestBL = l
-		end
-		l = lengthOf(v.x,v.y, rect.botR.x, rect.botR.y)
-		if l < closestBR then
-			closestBR = l
-		end
-	end
-	-- print(closestTL)
-	-- print(closestTR)
-	-- print(closestBL)
-	-- print(closestBR)
-	calcError(x,y)
+function isPointInsidePolygon(point, polygon)
+    local x = point.x
+    local y = point.y
+    
+    local inside = false
+    local lastPoint = polygon[#polygon]
+    for _, p in ipairs(polygon) do
+        local xi = p.x
+        local yi = p.y
+        
+        local xj = lastPoint.x
+        local yj = lastPoint.y
+        
+        lastPoint = p
+        
+        local intersect = ((yi > y) ~= (yj > y)) and (x < (xj - xi) * (y - yi) / (yj - yi) + xi)
+        if intersect then
+            inside = not inside
+        end
+    end
+    
+    return inside
+end
 
-	local score = (25* ((errorMargin-closestTL)/errorMargin))
-							+ (25* ((errorMargin-closestTR)/errorMargin))
-							+ (25* ((errorMargin-closestBL)/errorMargin))
-							+ (25* ((errorMargin-closestBR)/errorMargin))
-	print('Score is ', score)
-	-- only print positive score (starts negative)
-	if score >= 0 then
-		return score
-	else
-		return -50 -- 0
-	end
+function createInterpolatedRectangle()
+    local outputList = {}
+    
+    -- Top line
+    local diff = rect.topR.x - rect.topL.x
+    local step = diff / 10
+    
+    for i = 0, diff, step do
+        outputList[#outputList+1] = {x = rect.topL.x + i, y = rect.topL.y}
+    end
+    
+    -- Right line
+    diff = rect.botR.y - rect.topR.y
+    step = diff / 10
+    
+    for i = 0, diff, step do
+        outputList[#outputList+1] = {x = rect.topR.x, y = rect.topR.y + i}
+    end
+    
+    -- Bottom line
+    diff = rect.botR.x - rect.botL.x
+    step = diff / 10
+    
+    for i = 0, diff, step do
+        outputList[#outputList+1] = {x = rect.botR.x - i, y = rect.botL.y}
+    end
+    
+    -- Left line
+    diff = rect.botL.y - rect.topL.y
+    step = diff / 10
+    
+    for i = 0, diff, step do
+        outputList[#outputList+1] = {x = rect.botL.x, y = rect.botL.y - i}
+    end
+    
+    return outputList
 end
 
 local function ovalScoring(drawing, x, y)
@@ -162,11 +229,11 @@ local function drawRectangle()
 	love.graphics.rectangle('line', (prevBox.x+(prevBox.w/2))-(rect.width/2), (prevBox.y+(prevBox.h/2))-(rect.height/2), rect.width, rect.height)
 
 	-- for debugging, prints 4 points that are compared
-	-- love.graphics.setColor(200, 200, 200, 255)
-	-- love.graphics.points(rect.topR.x, rect.topR.y)
-	-- love.graphics.points(rect.topL.x, rect.topL.y)
-	-- love.graphics.points(rect.botR.x, rect.botR.y)
-	-- love.graphics.points(rect.botL.x, rect.botL.y)
+	love.graphics.setColor(255, 0, 0, 255)
+	love.graphics.points(rect.topR.x, rect.topR.y)
+	love.graphics.points(rect.topL.x, rect.topL.y)
+	love.graphics.points(rect.botR.x, rect.botR.y)
+	love.graphics.points(rect.botL.x, rect.botL.y)
 end
 
 local function drawOval()
