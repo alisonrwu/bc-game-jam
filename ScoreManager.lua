@@ -1,7 +1,7 @@
 local ScoreManager = {}
 
 inch = 40
-errorMargin = inch*1.5
+maximumScore = 160
 
 local minX = 9999
 local maxX = 0
@@ -97,11 +97,11 @@ end
 
 function transformSuccessPercentage(successPercentage, targetArea)
    -- Shapes with smaller areas are typically harder to get, so make those sP's worth more
-    local scaleFactor = 0.5 * math.exp(-1 * targetArea / 3000) + 1
-    local score = successPercentage * scaleFactor * 100
+    local scaleFactor = 0.25 * math.exp(-1 * targetArea / 3000) + 0.75
+    local score = successPercentage * scaleFactor * maximumScore
     
-    -- Cap scores at 100 points
-    if score > 100 then score = 100 end
+    -- Cap scores at some number of points
+    if score > maximumScore then score = maximumScore end
     
     return score
 end
