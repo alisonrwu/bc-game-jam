@@ -13,6 +13,8 @@ function love.load()
 	toBeRemoved = {}
 	mouseX = 0
 	mouseY = 0
+    mouseDown = false
+    mouseReleased = true
 	width = love.graphics.getWidth()
 	height = love.graphics.getHeight()
 	love.graphics.setLineWidth(3)
@@ -59,6 +61,7 @@ function love.load()
 	blinkingCounter = 0
 	blinkingCounter2 = 0
 	remainingTime = 50
+    remainingTimeAtLastScoring = 60
 	gameOver = false
 	TEsound.play("Sounds/Music/Paper Cut Title.ogg", "menuTheme")
 	TEsound.volume("menuTheme", 0.8)
@@ -222,7 +225,6 @@ function gameUpdate(dt)
     		if isIntersect(drawing[i].x, drawing[i].y, drawing[i].lastX, drawing[i].lastY, mouseX, mouseY, lastMouseX, lastMouseY, true, true) then
     			print("I am running")
     			isDrawing = false
-    			mouseDown = false
                 canPlaySound = true
                 TEsound.play("Sounds/SFX/Snip.ogg", "snip")        
     			TEsound.stop("cutting", false)
@@ -244,7 +246,7 @@ function gameUpdate(dt)
   end    
 
   -- remove the beginning part of the shape
-  if (not mouseDown) then
+  if (not isDrawing) then
   	for i = 1, #toBeRemoved do 
 			-- print("to be removed index: ", i)
 			table.remove(drawing, 1)
@@ -273,6 +275,9 @@ function gameUpdate(dt)
 			comboBonus = comboBonus + 0.05
 			table.insert(scoreTable, {x = mouseX, y = mouseY, score = currentScore, alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
 			displayScore()
+            remainingTimeAtLastScoring = remainingTime
+            generated = false
+            mouseDown = false
 			scored = true
     end           
 		toBeRemoved = {}
@@ -418,7 +423,6 @@ function love.mousepressed(x, y, button, istouch)
 		TEsound.playLooping("Sounds/SFX/Cutting.ogg", "cutting")
 		ScoreManager.reset()
 		scored = false
-		generated = false
 	end
 
 	if (gameOver) then
@@ -456,73 +460,75 @@ function displayScore()
 end
 
 function drawTextBubble(score)
-	if (not scored and not gameOver) then
+	if ((not scored and not gameOver) or 
+        (not gameOver and (remainingTimeAtLastScoring - remainingTime) >= 3)) then
 		if pickRect then
 			love.graphics.print("I need a ".. rand1 .. '" x ' .. rand2 .. '" rectangle!', 20, 20)
 		elseif pickOval then
 			love.graphics.print("I need a ".. rand1 .. '" x ' .. rand2 .. '" oval, pronto!', 20, 20)
 		end
-		elseif (gameOver) then
-			love.graphics.setColor(230, 80, 80, 240)
-			love.graphics.print("You're fired! Stop wasting paper!", 20, 20)
-		else
-			if (score < 0)  then
-				comboBonus = 1.00
-				love.graphics.setColor(255, 100, 100, 255)
-				love.graphics.print("That's coming out your paycheck", 20, 20)
-		        if (canPlaySound) then
-		          TEsound.play("Sounds/SFX/Wrong.wav", "wrong")
-		          canPlaySound = false
-		        end
-			end
-			if (score >= 0 and score < 20) then
-				comboBonus = 1.00
-				love.graphics.setColor(255, 255, 255, 255)
-				love.graphics.print("What are you doing?!", 20, 20)
-		        if (canPlaySound) then
-		          TEsound.play("Sounds/SFX/Correct.wav", "correct")
-		          canPlaySound = false
-		        end
-			end
-			if (score >= 20 and score < 70) then
-				comboBonus = 1.00
-				love.graphics.setColor(255, 255, 255, 255)
-				love.graphics.print("Are you a monkey?", 20, 20)
-		        if (canPlaySound) then
-		          TEsound.play("Sounds/SFX/Correct.wav", "correct")
-		          canPlaySound = false
-		      	end
-			end
-			if (score >= 70 and score < 100) then
-				love.graphics.setColor(255, 255, 255, 255)
-				love.graphics.print("Close but not really.", 20, 20)
-		        if (canPlaySound) then
-		          TEsound.play("Sounds/SFX/Correct.wav", "correct")
-		          canPlaySound = false
-		        end
-			end
-			if (score >= 100 and score < 150) then
-				love.graphics.setColor(255, 255, 255, 255)
-				love.graphics.print("Don't get cocky.", 20, 20)
-		        if (canPlaySound) then
-			        TEsound.play("Sounds/SFX/Correct.wav", "correct")
-			        canPlaySound = false
-		        end
-			end
-			if (score >= 150) then
-				love.graphics.setColor(127, 255, 127, 255)
-				love.graphics.print("OwO what's this?", 20, 20)
-		        if (canPlaySound) then
-		          TEsound.play("Sounds/SFX/Correct.wav", "correct")
-		          canPlaySound = false
-		      	end
-			end
-		end
-	end
+    elseif (gameOver) then
+		love.graphics.setColor(230, 80, 80, 240)
+		love.graphics.print("You're fired! Stop wasting paper!", 20, 20)
+	else
+		if (score < 0)  then
+	       comboBonus = 1.00
+	       love.graphics.setColor(255, 100, 100, 255)
+           love.graphics.print("That's coming out your paycheck", 20, 20)
+		   if (canPlaySound) then
+                TEsound.play("Sounds/SFX/Wrong.wav", "wrong")
+		        canPlaySound = false
+		  end
+        end
+		if (score >= 0 and score < 20) then
+            comboBonus = 1.00
+            love.graphics.setColor(255, 255, 255, 255)
+            love.graphics.print("What are you doing?!", 20, 20)
+            if (canPlaySound) then
+                TEsound.play("Sounds/SFX/Correct.wav", "correct")
+                canPlaySound = false
+            end
+        end
+        if (score >= 20 and score < 70) then
+            comboBonus = 1.00
+            love.graphics.setColor(255, 255, 255, 255)
+            love.graphics.print("Are you a monkey?", 20, 20)
+            if (canPlaySound) then
+                TEsound.play("Sounds/SFX/Correct.wav", "correct")
+                canPlaySound = false
+            end
+        end
+        if (score >= 70 and score < 100) then
+            love.graphics.setColor(255, 255, 255, 255)
+            love.graphics.print("Close but not really.", 20, 20)
+            if (canPlaySound) then
+                TEsound.play("Sounds/SFX/Correct.wav", "correct")
+                canPlaySound = false
+            end
+        end
+        if (score >= 100 and score < 150) then
+            love.graphics.setColor(255, 255, 255, 255)
+            love.graphics.print("Don't get cocky.", 20, 20)
+            if (canPlaySound) then
+                TEsound.play("Sounds/SFX/Correct.wav", "correct")
+                canPlaySound = false
+            end
+        end
+        if (score >= 150) then
+            love.graphics.setColor(127, 255, 127, 255)
+            love.graphics.print("OwO what's this?", 20, 20)
+            if (canPlaySound) then
+                TEsound.play("Sounds/SFX/Correct.wav", "correct")
+                canPlaySound = false
+            end
+        end
+    end
+end
 
 function drawTimer(currentScore)
 	if (currentScore >= scoreThreshold) then
 		remainingTime = resetTime
+        remainingTimeAtLastScoring = resetTime
 		extraScore = extraScore + 100
 		scoreThreshold = scoreThreshold + extraScore
 		targetUpOld = targetUp
@@ -572,4 +578,8 @@ end
 
 function love.mousereleased(x, y, button, istouch) 
 	isPressed = true
+    
+    if(not mouseReleased and button == 1) then
+        mouseReleased = true
+    end
 end
