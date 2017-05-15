@@ -23,9 +23,9 @@ function Instructions:draw()
 end
 
 function Instructions:load()
-    Instructions.WAIT_TIME = 0.5
-    Instructions.counter = 0 
-    Instructions.blink = false
+    self.WAIT_TIME = 0.5
+    self.counter = 0 
+    self.blink = false
 end
                     
 function Instructions:mouseRelease(x, y, button, istouch)

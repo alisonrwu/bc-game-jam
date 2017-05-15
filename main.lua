@@ -6,18 +6,18 @@ require "Start"
 require "Game"
 require "UI"
 require "Math"
+require "GameOver"
 
 ScoreManager = require "ScoreManager"
 Scissors = require "Scissors"
 
+ 
     
 function love.load()
-    setState(Game)
-    state:load()
-    
     loadImages()
     loadGraphics()
-	
+    
+    setState(Game)
     
 	TEsound.play("Sounds/Music/Paper Cut Title.ogg", "menuTheme")
 	TEsound.volume("menuTheme", 0.8)
@@ -64,7 +64,7 @@ function love.draw()
     Fade:draw()
 end    
 
-
+    
 function love.mousepressed(x, y, button, istouch)    
 	state:mousePressed(x, y, button, istouch)
 

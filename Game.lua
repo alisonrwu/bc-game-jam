@@ -6,7 +6,7 @@ function Game:update(dt)
 	-- decrement Timer
 	remainingTime = remainingTime - dt
 	if remainingTime <= 0 then
-		gameOver = true
+		setState(GameOver)
 	end
 
 	if (not music) then
@@ -47,7 +47,7 @@ function Game:update(dt)
   mouseX = love.mouse.getX()
   mouseY = love.mouse.getY()
 
-  if (not(gameOver)) then
+  
     -- main drawing mechanic
     if mouseDown and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY)) then
     	if (isDrawing) then
@@ -69,8 +69,7 @@ function Game:update(dt)
 	    	end
 	    end
 	  end
-
-	end        
+       
 
   -- handle sound
   if (not((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY))) then
@@ -118,15 +117,7 @@ function Game:update(dt)
 	end
 end  --???      
 
-	if (gameOver) then
-		love.mouse.setVisible(true)
-		TEsound.pitch("music", 0.9)
-		TEsound.stop("heartbeat")
-		drawing = {}
-		ScoreManager.reset()
-		mouseDown = false
-		TEsound.stop("cutting")
-	end
+	
 end    
 
 ------------------------------------------------------------------- Called on every frame to draw the game
@@ -163,20 +154,10 @@ function Game:draw()
 	love.graphics.draw(textBubble, 10, 10)
 	drawTextBubble(currentScore)
 	displayScore()
-	if (not gameOver) then
 		love.graphics.setColor(255, 255, 255, 255)
 		love.graphics.print("Paycheck: " .. player.score, width - 275, height - 50)
 		love.graphics.print("Target: " .. scoreThreshold, width - 220, 55)
-		love.graphics.draw(scale, 30, height - 125)
-	else
-		love.graphics.setColor(0, 0, 0, 255)
-		love.graphics.rectangle("fill", 0, 0, width, height)
-		love.graphics.setColor(255, 255, 255, 255)
-		love.graphics.draw(textBubble, 10, 10)
-		drawTextBubble(currentScore)
-		drawTimer(player.score, scoreThreshold)
-		displayScore()
-	end         
+		love.graphics.draw(scale, 30, height - 125)      
 end    
 
 function Game:load()
@@ -191,7 +172,7 @@ function Game:load()
 	toBeRemoved = {}
     player = {}
 	player.score = 0
-    remainingTime = 50
+    remainingTime = 1
     remainingTimeAtLastScoring = 60
     comboBonus = 1
 	heartbeat = false
@@ -203,7 +184,6 @@ function Game:load()
     resetTime = 50
 	scoreThreshold = 100
 	extraScore = 0
-	gameOver = false
     rand1 = 0
 	rand2 = 0
 	currentScore = 0
@@ -234,10 +214,5 @@ function Game:mousePressed(x, y, button, istouch)
 		ScoreManager.reset()
 		scored = false
 	end
-
-	if (gameOver) then
-		love.load()
-		ScoreManager.reset()
-	end    
 end
 

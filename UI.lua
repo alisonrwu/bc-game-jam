@@ -127,20 +127,5 @@ function drawTimer(currentScore)
 		end
 
 		love.graphics.print("Time: " .. math.ceil(remainingTime, 1), 25, 55)
-	else 
-		love.graphics.setColor(255, 255, 255, 255)
-		love.graphics.printf("GAME OVER", 0, height / 2, width, 'center')
-		if (blinkingCounter2 < 25) then
-			love.graphics.print("Play again?", width - 300, height - 90)  
-			blinkingCounter2 = blinkingCounter2 + 1
-		else
-			love.graphics.setColor(255,255,255,100)
-			love.graphics.print("Play again?", width - 300, height - 90)
-			blinkingCounter2 = blinkingCounter2 + 1
-
-			if (blinkingCounter2 == 50) then
-				blinkingCounter2 = 0
-			end    
-		end    
-	end
 end     
+    end

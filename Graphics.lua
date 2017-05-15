@@ -1,7 +1,8 @@
 Graphics = {
     NORMAL = { 255, 255, 255, 255 },
     RED = { 200, 80, 80, 255 },
-    FADED = { 255, 255, 255, 100 }
+    FADED = { 255, 255, 255, 100 },
+    BLACK = { 0, 0, 0, 255 }
 }
 
 function Graphics:setColor(c)    
