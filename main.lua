@@ -1,160 +1,88 @@
-require"TEsound"
-local ScoreManager = require('ScoreManager')
-local MenuManager = require('MenuManager')
-local GraphicsManager = require('GraphicsManager')
-local Scissors = require('Scissors')
+require "TEsound"
+require "Instructions"
+require "ScoreManager"
+require "Graphics"
+require "Fade"
+require "Scissors"
+require "Start"
+
+drawing = {}
+toBeRemoved = {}
+scoreTable = {}
 
 function love.load()
-	icon = love.graphics.newImage("Graphics/UI/Icon.png")
-	love.window.setIcon(icon:getData())	
-	love.graphics.setBackgroundColor(255,255,255)
-	love.graphics.setPointSize( 5 )
-	drawing = {}
-	toBeRemoved = {}
-	mouseX = 0
-	mouseY = 0
-    mouseDown = false
-    mouseReleased = true
-	width = love.graphics.getWidth()
-	height = love.graphics.getHeight()
-	love.graphics.setLineWidth(3)
-	angle = 0
-	scale = love.graphics.newImage("Graphics/UI/Scale.png")
-	textBubble = love.graphics.newImage("Graphics/UI/TextBubble.png")
-	background = love.graphics.newImage("Graphics/UI/Background.png")
-	menuBackground = love.graphics.newImage("Graphics/Menu/Background.png")
-  	combo = love.graphics.newImage("Graphics/UI/combo.png")
-	player = {}
-	player.score = 0
-	lastMouseX = 0
-	lastMouseY = 0
-	indexToRemoveTo = 0
+    setState(Start)
+    loadImages()
+    loadGraphics()
+    loadGameSettings()
+	
+    width = love.graphics.getWidth()
+	height = love.graphics.getHeight()   
+    
 	isDrawing = true
 	scored = true
-	scoreTable = {}
 	generated = false
-	rand1 = 0
-	rand2 = 0
-	currentScore = 0
-	font = love.graphics.newImageFont("Graphics/UI/Imagefont.png",
+
+	TEsound.play("Sounds/Music/Paper Cut Title.ogg", "menuTheme")
+	TEsound.volume("menuTheme", 0.8)
+
+	music = false
+    canPlaySound = false
+end
+
+function loadImages()
+    icon = love.graphics.newImage("Graphics/UI/Icon.png")
+    menuBG = love.graphics.newImage("Graphics/Menu/Background.png")
+    BG = love.graphics.newImage("Graphics/UI/Background.png")
+    scale = love.graphics.newImage("Graphics/UI/Scale.png")
+	textBubble = love.graphics.newImage("Graphics/UI/TextBubble.png")
+  	combo = love.graphics.newImage("Graphics/UI/combo.png")
+    TITLE_BUTTON = love.graphics.newImage("Graphics/Menu/testTitle.png")
+    START_BUTTON = love.graphics.newImage("Graphics/Menu/startButton.png")    
+end
+
+function loadGraphics()
+    love.window.setIcon(icon:getData())	
+	love.graphics.setBackgroundColor(255,255,255)
+	love.graphics.setPointSize(5)
+    love.graphics.setLineWidth(3)
+        
+    font = love.graphics.newImageFont("Graphics/UI/Imagefont.png",
 		" abcdefghijklmnopqrstuvwxyz" ..
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ0" ..
 		"123456789.,!?-+/():;%&`'*#=[]\"")
-	love.graphics.setFont(font)
-	isMenu = true
-	isInstructions = false
-	isPressed = false
-	isTransitioningGame = false
-	isTransitioningInstructions = false
-	music = false
-	timer = 0
-	alpha = 0
-	fadein  = 1
-	display = 1.2
-	fadeout = 2.5
+	love.graphics.setFont(font)              
+end      
+    
+function loadGameSettings()
+    addOvals = false
+    pickOval = false
+    pickRect = true
+    heartbeat = false
+    comboBonus = 1
+    targetUpOld = 0
+    targetUp = 0
+    timer = 0
 	resetTime = 50
 	scoreThreshold = 100
-	extraScore = 0
-	fadeout  = 1
-	display = 1.1
-	fadein = 1.5
-	blinkingCounter = 0
-	blinkingCounter2 = 0
-	remainingTime = 50
-    remainingTimeAtLastScoring = 60
-	gameOver = false
-	TEsound.play("Sounds/Music/Paper Cut Title.ogg", "menuTheme")
-	TEsound.volume("menuTheme", 0.8)
-	comboBonus = 1
-	heartbeat = false
-  canPlaySound = false
+	extraScore = 0  
+    currentScore = 0    
+    remainingTime = 50    
+end        
 
-  targetUpOld = 0
-  targetUp = 0
-  addOvals = false
-  pickOval = false
-  pickRect = true
-end
-
+function setState(s)
+    state = s
+end    
 
 function love.update(dt)
-	if(isTransitioningGame) then
-		fadeToGame(dt)    
-	end
-
-	if(isTransitioningInstructions) then
-		fadeToInstructions(dt)
-	end
-
-	if (isMenu) then
-		menuUpdate(dt)
-	elseif (isInstructions) then
-		isTransitioningInstructions = false
-		instructionsUpdate()
-	else
-		isTransitioningGame = false
-		gameUpdate(dt)
-	end
+    state:update(dt)
+    Fade:update(dt)
 end
-
-function fadeToInstructions(dt)
-	timer=timer+dt
-	if timer<fadeout then alpha=timer*3 print("Fade out: ", alpha)
-		elseif timer<display then alpha=1 print("Display: ", alpha)
-			elseif timer<fadein then 
-				alpha=(1-((timer-display)/(fadeout-display)))*2 print("Fade in: ", alpha)
-				else alpha=0 
-					isMenu = false
-					isInstructions = true
-					timer = 0
-				end
-			end    
-
-function fadeToGame(dt)
-	timer=timer+dt
-if timer<fadeout then alpha=timer*3 print("Fade out: ", alpha) -- still fading in
-	elseif timer<display then alpha=1 print("Display: ", alpha)
-		elseif timer<fadein then 
-			alpha=(1-((timer-display)/(fadeout-display)))*2 print("Fade in: ", alpha)
-			else alpha=0 
-				isMenu = false
-				isInstructions = false
-				timer = 0
-			end
-		end    
 
 function love.draw()
-	if (isMenu) then
-		menuDraw()
-		elseif (isInstructions) then
-			instructionsDraw()    
-		else    
-			gameDraw()
-		end
-	end
-
-function instructionsUpdate()
-	if (isPressed and not isTransitioningInstructions and not isTransitioningGame) then
-		TEsound.play("Sounds/SFX/Click.mp3", "click")
-		isTransitioningGame = true
-	end        
-end
-
-function instructionsDraw()
-	GraphicsManager:draw(menuBackground, 0, 0, NORMAL)
-    GraphicsManager:drawText("The boss wants you to cut some paper...", 0, 50, width, 'center', NORMAL)
-	GraphicsManager:drawText("Better do what he says, fast!", 0, 150, width, 'center', RED)
-	GraphicsManager:drawText("Use the left mouse button to cut\n the proper size sheets of paper.", 0, 230, width, 'center', NORMAL)   
-
-	  
-
-	if (isTransitioningInstructions or isTransitioningGame) then
-		love.graphics.setColor(0, 0, 0, alpha*255)
-		love.graphics.rectangle("fill", 0, 0, width, height)
-	end
-
-	isPressed = false
-end            
+    state:draw()
+    Fade:draw()
+end    
 
 function gameUpdate(dt)
   love.mouse.setVisible(false)
@@ -184,7 +112,7 @@ function gameUpdate(dt)
 
   --setup RNG for current problem
   if (generated == false) then
-  	rand1 = love.math.random(12) / 2
+    rand1    = love.math.random(12) / 2
   	rand2 = love.math.random(12) / 2
   	generated = true
   end
@@ -298,7 +226,7 @@ end
 ------------------------------------------------------------------- Called on every frame to draw the game
 function gameDraw()
   love.graphics.setColor(255, 255, 255, 255)
-  love.graphics.draw(background, 0, 0)
+  love.graphics.draw(BG, 0, 0)
 
   if (scored == true) then
   	if pickRect then
@@ -345,46 +273,6 @@ function gameDraw()
 	end         
 end    
 
-------------------------------------------------------------------- Called on every frame to draw the menu
-function menuDraw()
-	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.draw(menuBackground, 0, 0)
-	for i, button in ipairs(MenuManager) do
-		love.graphics.setColor(255, 255, 255, 255)
-		love.graphics.draw(button.image, button.x, button.y)
-	end
-
-	if (isTransitioningInstructions or isTransitioningGame) then
-		love.graphics.setColor(0, 0, 0, alpha*255)
-		love.graphics.rectangle("fill", 0, 0, width, height)
-	else
-		love.graphics.printf("Made by: Trevin \"terb\" Wong, Alison \"arwu\" Wu, and Sean \"sdace\" Allen", 10, height  - 80, width)
-	end
-
-	isPressed = false
-end    
-
-------------------------------------------------------------------- Called on every frame to update the menu
-function menuUpdate(dt)
-	love.mouse.setVisible(true)
-  ScoreManager.reset()
-
-	TEsound.stop("music")
-	TEsound.pitch("music", 1)
-
-	for i, button in ipairs(MenuManager) do
-		mouseX = love.mouse.getX()
-		mouseY = love.mouse.getY()
-		buttonWidth = button.image:getWidth()
-		buttonHeight = button.image:getHeight()
-
-		if ((pointInRectangle(mouseX, mouseY, button.x, button.y, buttonWidth, buttonHeight)) and isPressed
-			and not isTransitioningInstructions and not isTransitioningGame) then
-			button.press()
-			print("Pressed a button")
-		end
-	end    
-end
 
 function pointInRectangle(pointx, pointy, rectx, recty, rectwidth, rectheight)
 	return pointx > rectx and pointy > recty and pointx < rectx + rectwidth and pointy < recty + rectheight
@@ -577,9 +465,18 @@ function drawTimer(currentScore)
 end     
 
 function love.mousereleased(x, y, button, istouch) 
-	isPressed = true
+--	isPressed = true
     
-    if(not mouseReleased and button == 1) then
-        mouseReleased = true
-    end
+--    if(not mouseReleased and button == 1) then
+--        mouseReleased = true
+--    end
+
+	state:mouseRelease()
+end
+
+function love.keypressed(key, u)
+   --Debug
+   if key == "rctrl" then --set to whatever key you want to use
+      debug.debug()
+   end
 end
