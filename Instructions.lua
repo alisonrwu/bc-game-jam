@@ -1,9 +1,4 @@
-Instructions = {
-    WAIT_TIME = 0.5,
-    counter = 0, 
-    blink = false
-}
-
+Instructions = {}
 
 function Instructions:update(dt)
     self.counter = self.counter + dt
@@ -26,9 +21,18 @@ function Instructions:draw()
         Graphics:drawText("Click to Start!", 0, 370, width, 'center', Graphics.NORMAL)
 	end
 end
+
+function Instructions:load()
+    Instructions.WAIT_TIME = 0.5
+    Instructions.counter = 0 
+    Instructions.blink = false
+end
                     
-function Instructions:mouseRelease()
+function Instructions:mouseRelease(x, y, button, istouch)
   TEsound.play("Sounds/SFX/Click.mp3", "click")
     Fade:resetTimer()
     Fade:beginFade()
 end    
+
+function Instructions:mousePressed(x, y, button, istouch)    
+end

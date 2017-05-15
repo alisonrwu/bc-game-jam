@@ -88,7 +88,7 @@ icon = love.graphics.newImage("Graphics/UI/Icon.png")
   pickRect = true
 
 function love.load()
-    setState(Game)
+    setState(Start)
     loadImages()
     loadGraphics()
     loadGameSettings()
@@ -100,8 +100,8 @@ function love.load()
 	scored = true
 	generated = false
 
-	TEsound.play("Sounds/Music/Paper Cut Title.ogg", "menuTheme")
-	TEsound.volume("menuTheme", 0.8)
+--	TEsound.play("Sounds/Music/Paper Cut Title.ogg", "menuTheme")
+--	TEsound.volume("menuTheme", 0.8)
 
 	music = false
     canPlaySound = false
@@ -113,9 +113,7 @@ function loadImages()
     BG = love.graphics.newImage("Graphics/UI/Background.png")
     scale = love.graphics.newImage("Graphics/UI/Scale.png")
 	textBubble = love.graphics.newImage("Graphics/UI/TextBubble.png")
-  	combo = love.graphics.newImage("Graphics/UI/combo.png")
-    TITLE_BUTTON = love.graphics.newImage("Graphics/Menu/testTitle.png")
-    START_BUTTON = love.graphics.newImage("Graphics/Menu/startButton.png")    
+  	combo = love.graphics.newImage("Graphics/UI/combo.png") 
 end
 
 function loadGraphics()
@@ -149,6 +147,7 @@ end
 
 function setState(s)
     state = s
+    state:load()
 end    
 
 function love.update(dt)
@@ -164,14 +163,7 @@ end
 
 
 function love.mousepressed(x, y, button, istouch)    
-	if (button == 1 and scored == true and isMenu == false and isInstructions == false and not gameOver) then 
-		mouseDown = true
-		isDrawing = true
-		drawing = {}
-		TEsound.playLooping("Sounds/SFX/Cutting.ogg", "cutting")
-		ScoreManager.reset()
-		scored = false
-	end
+	state:mousePressed(x, y, button, istouch)
 
 	if (gameOver) then
 		love.load()
@@ -180,12 +172,7 @@ function love.mousepressed(x, y, button, istouch)
 end
 
 function love.mousereleased(x, y, button, istouch) 
-    isPressed = true
-    
-    if(not mouseReleased and button == 1) then
-        mouseReleased = true
-    end
---	state:mouseRelease()
+	state:mouseRelease(x, y, button, istouch)
 end
 
 function love.keypressed(key, u)

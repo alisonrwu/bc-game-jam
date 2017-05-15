@@ -179,6 +179,27 @@ function Game:draw()
 	end         
 end    
 
-function Game:mouseRelease()
-  
+function Game:mouseRelease(x, y, button, istouch)
+  isPressed = true
+    
+    if(not mouseReleased and button == 1) then
+        mouseReleased = true
+    end
 end    
+
+function Game:mousePressed(x, y, button, istouch)    
+	if (button == 1 and scored == true) then 
+		mouseDown = true
+		isDrawing = true
+		drawing = {}
+		TEsound.playLooping("Sounds/SFX/Cutting.ogg", "cutting")
+		ScoreManager.reset()
+		scored = false
+	end
+
+	if (gameOver) then
+		love.load()
+		ScoreManager.reset()
+	end    
+end
+
