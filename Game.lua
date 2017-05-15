@@ -172,7 +172,7 @@ function Game:load()
 	toBeRemoved = {}
     player = {}
 	player.score = 0
-    remainingTime = 1
+    remainingTime = 10
     remainingTimeAtLastScoring = 60
     comboBonus = 1
 	heartbeat = false

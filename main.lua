@@ -11,13 +11,12 @@ require "GameOver"
 ScoreManager = require "ScoreManager"
 Scissors = require "Scissors"
 
- 
     
 function love.load()
     loadImages()
     loadGraphics()
     
-    setState(Game)
+    setState(Start)
     
 	TEsound.play("Sounds/Music/Paper Cut Title.ogg", "menuTheme")
 	TEsound.volume("menuTheme", 0.8)
@@ -41,7 +40,6 @@ function loadGraphics()
     love.graphics.setLineWidth(3)
     width = love.graphics.getWidth()
 	height = love.graphics.getHeight() 
-        
     font = love.graphics.newImageFont("Graphics/UI/Imagefont.png",
 		" abcdefghijklmnopqrstuvwxyz" ..
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ0" ..
@@ -63,15 +61,9 @@ function love.draw()
     state:draw()
     Fade:draw()
 end    
-
     
 function love.mousepressed(x, y, button, istouch)    
 	state:mousePressed(x, y, button, istouch)
-
-	if (gameOver) then
-		love.load()
-		ScoreManager.reset()
-	end    
 end
 
 function love.mousereleased(x, y, button, istouch) 
@@ -79,8 +71,7 @@ function love.mousereleased(x, y, button, istouch)
 end
 
 function love.keypressed(key, u)
-   --Debug
-   if key == "rctrl" then --set to whatever key you want to use
+   if key == "rctrl" then
       debug.debug()
    end
 end

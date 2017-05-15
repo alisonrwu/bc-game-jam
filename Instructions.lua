@@ -7,6 +7,10 @@ function Instructions:update(dt)
         self.counter = 0
         self.blink = not self.blink
     end
+    
+    if (Fade:getAlpha() == 1) then
+        setState(Game)
+    end    
 end                            
     
 function Instructions:draw()  
