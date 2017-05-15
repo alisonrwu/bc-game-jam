@@ -4,9 +4,6 @@ TitleButton = {}
 StartButton = {}
 
 function Start:update(dt)
-    if (Fade:getAlpha() == 1) then
-        setState(Instructions)
-    end    
 end                            
     
 function Start:draw()  
@@ -35,7 +32,7 @@ end
                     
 function Start:mouseRelease(x, y, button, istouch)
   TEsound.play("Sounds/SFX/Click.mp3", "click")
-    Fade:beginFade()
+    Fade:fadeToState(Instructions)
 end    
 
 function Start:mousePressed(x, y, button, istouch)    
