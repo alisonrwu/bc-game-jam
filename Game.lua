@@ -179,6 +179,44 @@ function Game:draw()
 	end         
 end    
 
+function Game:load()
+    currentScore = 0
+    scoreThreshold = 100
+    drawing = {}
+    player = {}
+    player.score = 0
+    toBeRemoved = {}
+    scoreTable = {}
+    drawing = {}
+	toBeRemoved = {}
+    player = {}
+	player.score = 0
+    remainingTime = 50
+    remainingTimeAtLastScoring = 60
+    comboBonus = 1
+	heartbeat = false
+     targetUpOld = 0
+  targetUp = 0
+  addOvals = false
+  pickOval = false
+  pickRect = true
+    resetTime = 50
+	scoreThreshold = 100
+	extraScore = 0
+	gameOver = false
+    rand1 = 0
+	rand2 = 0
+	currentScore = 0
+    mouseDown = false
+    mouseReleased = true
+	angle = 0
+	indexToRemoveTo = 0
+	isDrawing = true
+    scored = true
+	scoreTable = {}
+	generated = false
+end    
+
 function Game:mouseRelease(x, y, button, istouch)
   isPressed = true
     
