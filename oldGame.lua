@@ -17,30 +17,9 @@ function oldGame:update(dt)
 	TEsound.cleanup()
 
   --setup RNG for current problem
-  if (generated == false) then
-    rand1    = love.math.random(12) / 2
-  	rand2 = love.math.random(12) / 2
-  	generated = true
-  end
-
-  if targetUp > 2 then
-  	-- TODO: draw some graphic to show ovals added
-  	addOvals = true
-  end
-  if addOvals then
-  	if rand1 > 3 then
-  		pickRect = true
-  		pickOval = false
-  	else
-  		pickRect = false
-  		pickOval = true
-  	end
-  end
-    
-  -- exit oldGame
-  if love.keyboard.isDown('escape') then
-  	love.event.push('quit')
-  end
+  if (generated == false) then Game:generateProblem() end
+  if targetUp > 2 then addOvals = true end
+  Game:pickShape()      
     
   lastMouseX = mouseX
   lastMouseY = mouseY
@@ -226,3 +205,21 @@ function oldGame:mousePressed(x, y, button, istouch)
 		scored = false
 	end
 end
+
+function Game:pickShape()
+  if addOvals then
+  	if rand1 > 3 then
+  		pickRect = true
+  		pickOval = false
+  	else
+  		pickRect = false
+  		pickOval = true
+  	end
+  end
+end
+
+function Game:generateProblem()
+    rand1 = love.math.random(12) / 2
+  	rand2 = love.math.random(12) / 2
+  	generated = true
+end  
