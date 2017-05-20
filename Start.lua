@@ -1,32 +1,34 @@
-Start = {}
-Credits = {}
-TitleButton = {}
-StartButton = {}
+Start = {
+    Credits = {},
+    TitleButton = {},
+    StartButton = {}
+}
+
 
 function Start:update(dt)
 end                            
     
 function Start:draw()  
     Graphics:draw(menuBG, 0, 0, Graphics.NORMAL)
-    Graphics:draw(TitleButton.IMAGE, TitleButton.X, TitleButton.X, Graphics.NORMAL)
-    Graphics:draw(StartButton.IMAGE, StartButton.X, StartButton.Y, Graphics.NORMAL)
-    Graphics:drawText(Credits.TEXT, Credits.X, Credits.Y, Credits.LIMIT, Credits.ALIGN, Graphics.NORMAL)
+    Graphics:draw(self.TitleButton.IMAGE, self.TitleButton.X, self.TitleButton.X, Graphics.NORMAL)
+    Graphics:draw(self.StartButton.IMAGE, self.StartButton.X, self.StartButton.Y, Graphics.NORMAL)
+    Graphics:drawText(self.Credits.TEXT, self.Credits.X, self.Credits.Y, self.Credits.LIMIT, self.Credits.ALIGN, Graphics.NORMAL)
 end
 
 function Start:load()
-    Credits.TEXT = "Made by: Trevin \"terb\" Wong, Alison \"arwu\" Wu, Sean \"sdace\" Allen and Ryan \"PROWNE\" Wirth"
-    Credits.X = 5
-    Credits.Y = height - 80
-    Credits.LIMIT = width
-    Credits.ALIGN = center
+    self.Credits.TEXT = "Made by: Trevin \"terb\" Wong, Alison \"arwu\" Wu, Sean \"sdace\" Allen and Ryan \"PROWNE\" Wirth"
+    self.Credits.X = 5
+    self.Credits.Y = height - 90
+    self.Credits.LIMIT = width
+    self.Credits.ALIGN = center
     
-    TitleButton.IMAGE = love.graphics.newImage("Graphics/Menu/testTitle.png")
-    TitleButton.X = width/6
-    TitleButton.Y = height/4
+    self.TitleButton.IMAGE = love.graphics.newImage("Graphics/Menu/testTitle.png")
+    self.TitleButton.X = width/6
+    self.TitleButton.Y = height/4
     
-    StartButton.IMAGE = love.graphics.newImage("Graphics/Menu/startButton.png")
-    StartButton.X = width/3
-    StartButton.Y = height/2
+    self.StartButton.IMAGE = love.graphics.newImage("Graphics/Menu/startButton.png")
+    self.StartButton.X = width/3
+    self.StartButton.Y = height/2   
 end    
 
                     

@@ -1,10 +1,13 @@
-Game = {}
+oldGame = {}
 
-function Game:update(dt)
+function oldGame:update(dt)
+  love.mouse.setVisible(false)
 
 	-- decrement Timer
 	remainingTime = remainingTime - dt
-	if remainingTime <= 0 then setState(GameOver) end
+	if remainingTime <= 0 then
+		setState(oldGameOver)
+	end
 
 	if (not music) then
 		TEsound.stop("menuTheme")
@@ -13,11 +16,31 @@ function Game:update(dt)
 	end
 	TEsound.cleanup()
 
-    if generated == false then Game:generateProblem() end 
-    if targetUp > 2 then addOvals = true end
+  --setup RNG for current problem
+  if (generated == false) then
+    rand1    = love.math.random(12) / 2
+  	rand2 = love.math.random(12) / 2
+  	generated = true
+  end
+
+  if targetUp > 2 then
+  	-- TODO: draw some graphic to show ovals added
+  	addOvals = true
+  end
+  if addOvals then
+  	if rand1 > 3 then
+  		pickRect = true
+  		pickOval = false
+  	else
+  		pickRect = false
+  		pickOval = true
+  	end
+  end
     
-  Game:pickShape()
-    
+  -- exit oldGame
+  if love.keyboard.isDown('escape') then
+  	love.event.push('quit')
+  end
     
   lastMouseX = mouseX
   lastMouseY = mouseY
@@ -25,9 +48,8 @@ function Game:update(dt)
   mouseY = love.mouse.getY()
 
   
-    
     -- main drawing mechanic
-    if mouseDown and Game:isMouseMoving() then
+    if mouseDown and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY)) then
     	if (isDrawing) then
     		table.insert(drawing, {x = mouseX, y = mouseY, lastX = lastMouseX, lastY = lastMouseY})
     	end
@@ -50,7 +72,7 @@ function Game:update(dt)
        
 
   -- handle sound
-  if (not Game:isMouseMoving()) then
+  if (not((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY))) then
   	TEsound.pause("cutting")
   else
   	TEsound.resume("cutting")
@@ -98,8 +120,8 @@ end  --???
 	
 end    
 
-------------------------------------------------------------------- Called on every frame to draw the game
-function Game:draw()
+------------------------------------------------------------------- Called on every frame to draw the oldGame
+function oldGame:draw()
   love.graphics.setColor(255, 255, 255, 255)
   love.graphics.draw(BG, 0, 0)
 
@@ -138,8 +160,7 @@ function Game:draw()
 		love.graphics.draw(scale, 30, height - 125)      
 end    
 
-function Game:load()
-    love.mouse.setVisible(false)    
+function oldGame:load()
     currentScore = 0
     scoreThreshold = 100
     drawing = {}
@@ -151,7 +172,7 @@ function Game:load()
 	toBeRemoved = {}
     player = {}
 	player.score = 0
-    remainingTime = 10
+    remainingTime = 50
     remainingTimeAtLastScoring = 60
     comboBonus = 1
 	heartbeat = false
@@ -176,7 +197,7 @@ function Game:load()
 	generated = false
 end    
 
-function Game:mouseRelease(x, y, button, istouch)
+function oldGame:mouseRelease(x, y, button, istouch)
   isPressed = true
     
     if(not mouseReleased and button == 1) then
@@ -184,7 +205,7 @@ function Game:mouseRelease(x, y, button, istouch)
     end
 end    
 
-function Game:mousePressed(x, y, button, istouch)    
+function oldGame:mousePressed(x, y, button, istouch)    
 	if (button == 1 and scored == true) then 
 		mouseDown = true
 		isDrawing = true
@@ -194,37 +215,3 @@ function Game:mousePressed(x, y, button, istouch)
 		scored = false
 	end
 end
-
-function Game:pickShape()
-  if addOvals then
-  	if rand1 > 3 then
-  		pickRect = true
-  		pickOval = false
-  	else
-  		pickRect = false
-  		pickOval = true
-  	end
-  end
-end
-
-function Game:drawLine()
- -- main drawing mechanic
-    if (Game:isMouseMoving() and isDrawing) then
-            table.insert(drawing, {x = mouseX, y = mouseY, lastX = lastMouseX, lastY = lastMouseY})
-    	end
-end
-
-function Game:isMouseMoving()
-    return (mouseX ~= lastMouseX or mouseY ~= lastmouseY)
-end    
-
-function Game:checkIntersection()
-
-end
-
-function Game:generateProblem()
-    rand1 = love.math.random(12) / 2
-  	rand2 = love.math.random(12) / 2
-  	generated = true
-end    
-

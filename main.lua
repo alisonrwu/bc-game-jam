@@ -7,6 +7,7 @@ require "Game"
 require "UI"
 require "Math"
 require "GameOver"
+require "oldGame"
 
 ScoreManager = require "ScoreManager"
 Scissors = require "Scissors"
@@ -15,9 +16,13 @@ Scissors = require "Scissors"
 function love.load()
     loadImages()
     loadGraphics()
-    
+    Start:load()
+    Instructions:load()
+    oldGame:load()
+    GameOver:load()
+
     setState(Start)
-    
+        
 	TEsound.play("Sounds/Music/Paper Cut Title.ogg", "menuTheme")
 	TEsound.volume("menuTheme", 0.8)
 	music = false
@@ -46,10 +51,10 @@ function loadGraphics()
 		"123456789.,!?-+/():;%&`'*#=[]\"")
 	love.graphics.setFont(font)              
 end      
+
     
 function setState(s)
     state = s
-    state:load()
 end    
 
 function love.update(dt)
@@ -74,4 +79,8 @@ function love.keypressed(key, u)
    if key == "rctrl" then
       debug.debug()
    end
+
+  if love.keyboard.isDown('escape') then
+  	 love.event.push('quit')
+  end
 end
