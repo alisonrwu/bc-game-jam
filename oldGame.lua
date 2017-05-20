@@ -6,7 +6,7 @@ function oldGame:update(dt)
 	-- decrement Timer
 	remainingTime = remainingTime - dt
 	if remainingTime <= 0 then
-		setState(oldGameOver)
+		setState(GameOver)
 	end
 
 	if (not music) then
