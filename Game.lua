@@ -83,9 +83,26 @@ function Game:update(dt)
 			end
 			player.score = player.score + score
 			currentScore = score * comboBonus
-			comboBonus = comboBonus + 0.05
+			comboBonus = comboBonus + 0.05  
 			table.insert(scoreTable, {x = mouseX, y = mouseY, score = currentScore, alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
-			displayScore()
+                
+            local showTargetUp = false
+            if(player.score >= scoreThreshold) then showTargetUp = true end
+                
+            if (currentScore >= scoreThreshold) then
+                remainingTime = resetTime
+                remainingTimeAtLastScoring = resetTime
+                extraScore = extraScore + 100
+                scoreThreshold = scoreThreshold + extraScore
+                targetUpOld = targetUp
+                targetUp = targetUp + 1
+                if (canPlaySound) then
+                  TEsound.play("Sounds/SFX/newTarget.ogg", "newTarget")
+                  canPlaySound = false
+                end
+            end
+                
+			displayScore(showTargetUp)
             remainingTimeAtLastScoring = remainingTime
             generated = false
             mouseDown = false
