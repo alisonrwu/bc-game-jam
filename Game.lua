@@ -21,19 +21,20 @@ function Game:update(dt)
   if targetUp > 2 then addOvals = true end
   Game:pickShape()      
     
-  lastMouseX = mouseX
-  lastMouseY = mouseY
-  mouseX = love.mouse.getX()
-  mouseY = love.mouse.getY()
+  mouse.lastX = mouse.X 
+  mouse.lastY = mouse.Y    
+  mouse.X = love.mouse.getX()
+  mouse.Y = love.mouse.getY()
+    
   
     -- main drawing mechanic
     if isDrawing and Game:isMouseMoving() then
-        table.insert(drawing, {x = mouseX, y = mouseY, lastX = lastMouseX, lastY = lastMouseY})
+        table.insert(drawing, {x = mouse.X, y = mouse.Y, lastX = mouse.lastX, lastY = mouse.lastY})
         
     -- main intersection mechanic
     for i = 1, #drawing - 10 do
     	if drawing[i].x and drawing[i].y and drawing[i].lastX and drawing[i].lastY then
-    		if isIntersecting(drawing[i].x, drawing[i].y, drawing[i].lastX, drawing[i].lastY, mouseX, mouseY, lastMouseX, lastMouseY, true, true) then
+    		if checkIntersection(drawing, mouse, i) then
     			isDrawing = false
                 canPlaySound = true
                 TEsound.play("Sounds/SFX/Snip.ogg", "snip")        
@@ -99,7 +100,7 @@ function Game:update(dt)
                 end
             end
                 
-			table.insert(scoreTable, {x = mouseX, y = mouseY, score = currentScore, alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY, targetUp = showTargetUp, pickRect = pickRect, pickOval = pickOval})
+			table.insert(scoreTable, {x = mouse.X, y = mouse.Y, score = currentScore, alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY, targetUp = showTargetUp, pickRect = pickRect, pickOval = pickOval})
             
 			displayScore(showTargetUp)
                 
@@ -132,7 +133,7 @@ function Game:draw()
   end
 
   	--draw scissors
-	Scissors.draw(mouseX, mouseY, lastMouseX, lastMouseY, drawing, isDrawing)
+	Scissors.draw(mouse.X, mouse.Y, mouse.lastX, mouse.lastY, drawing, isDrawing)
 
 	--Draw UI elements
 	love.graphics.setColor(255, 255, 255, 255)
@@ -148,6 +149,7 @@ function Game:draw()
 end    
 
 function Game:load()
+    mouse = {}
     currentScore = 0
     scoreThreshold = 100
     drawing = {}
@@ -220,5 +222,5 @@ function Game:generateProblem()
 end  
 
 function Game:isMouseMoving()
-    return ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY))
+    return ((mouse.X ~= mouse.lastX) or (mouse.Y ~= mouse.lastY))
 end    
