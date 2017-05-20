@@ -14,7 +14,7 @@ function displayScore()
       if (comboBonus >= 1.15) then
       	love.graphics.draw(combo, v.boxWidth - 25, v.boxHeight + 24, 0, 0.175, 0.175) 
       end
-      if (showTargetUp) then
+      if (v.targetUp) then
         love.graphics.setColor(230, 230, 130, v.alpha)    
         love.graphics.print("Target Up!", v.boxWidth, v.boxHeight - 26, 0, 0.9, 0.9) 
         love.graphics.setColor(255, 255, 255, v.alpha)    

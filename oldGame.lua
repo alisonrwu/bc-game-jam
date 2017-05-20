@@ -106,7 +106,7 @@ function oldGame:update(dt)
 			player.score = player.score + score
 			currentScore = score * comboBonus
 			comboBonus = comboBonus + 0.05
-			table.insert(scoreTable, {x = mouseX, y = mouseY, score = currentScore, alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
+            
             
             showTargetUp = false
             if (player.score >= scoreThreshold) then
@@ -123,7 +123,10 @@ function oldGame:update(dt)
                 end
             end
                 
+			table.insert(scoreTable, {x = mouseX, y = mouseY, score = currentScore, alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY, targetUp = showTargetUp})
+            
 			displayScore(showTargetUp)
+                
             remainingTimeAtLastScoring = remainingTime
             generated = false
             mouseDown = false
