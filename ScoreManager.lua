@@ -98,7 +98,10 @@ end
 function transformSuccessPercentage(successPercentage, targetArea)
    -- Shapes with smaller areas are typically harder to get, so make those sP's worth more
     local scaleFactor = 0.25 * math.exp(-1 * targetArea / 3000) + 0.75
-    local score = successPercentage * scaleFactor * maximumScore
+    local transformedPercentage = successPercentage - 0.5
+    if(transformedPercentage >= 0) then transformedPercentage = 2 * transformedPercentage end
+    
+    local score = transformedPercentage * scaleFactor * maximumScore
     
     -- Cap scores at some number of points
     if score > maximumScore then score = maximumScore end

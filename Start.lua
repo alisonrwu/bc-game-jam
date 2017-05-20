@@ -8,7 +8,7 @@ Start = {
 function Start:update(dt)
 end                            
     
-function Start:draw()  
+function Start:draw()
     Graphics:draw(menuBG, 0, 0, Graphics.NORMAL)
     Graphics:draw(self.TitleButton.IMAGE, self.TitleButton.X, self.TitleButton.X, Graphics.NORMAL)
     Graphics:draw(self.StartButton.IMAGE, self.StartButton.X, self.StartButton.Y, Graphics.NORMAL)

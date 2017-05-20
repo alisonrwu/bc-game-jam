@@ -23,7 +23,6 @@ function GameOver:draw()
     Graphics:draw(textBubble, 10, 10, Graphics.NORMAL)
     Graphics:drawText("GAME OVER", 0, height / 2, width, "center", Graphics.NORMAL)
     
-    drawTextBubble(currentScore)
     drawTimer(player.score, scoreThreshold)
     displayScore()
     

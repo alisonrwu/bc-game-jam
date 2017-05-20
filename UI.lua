@@ -29,6 +29,8 @@ function displayScore()
 end
 
 function drawTargetShape()
+    if gameOver then return end
+    
     if pickRect then
         ScoreManager.drawRectangle()
     elseif pickOval then
@@ -39,6 +41,8 @@ function drawTargetShape()
 end
 
 function drawTextBubble(score)
+    if gameOver then return end
+    
 	if ((not scored and not gameOver) or 
         (not gameOver and (remainingTimeAtLastScoring - remainingTime) >= 3)) then
         love.graphics.setColor(255, 255, 255, 255)
