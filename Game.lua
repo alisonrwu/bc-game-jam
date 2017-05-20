@@ -99,7 +99,7 @@ function Game:update(dt)
                 end
             end
                 
-			table.insert(scoreTable, {x = mouseX, y = mouseY, score = currentScore, alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY, targetUp = showTargetUp})
+			table.insert(scoreTable, {x = mouseX, y = mouseY, score = currentScore, alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY, targetUp = showTargetUp, pickRect = pickRect, pickOval = pickOval})
             
 			displayScore(showTargetUp)
                 
