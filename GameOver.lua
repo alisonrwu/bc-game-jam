@@ -20,16 +20,15 @@ end
     
 function GameOver:draw()  
     Graphics:drawRect(0, 0, width, height, Graphics.BLACK)
-    Graphics:draw(textBubble, 10, 10, Graphics.NORMAL)
     Graphics:drawText("GAME OVER", 0, height / 2, width, "center", Graphics.NORMAL)
     
     drawTimer(player.score, scoreThreshold)
     displayScore()
     
     if (self.blink) then
-        Graphics:drawText("Play Again?", 0, 370, width, 'center', Graphics.FADED)
+        Graphics:drawText("Play Again?", 0, height * (3/4), width, 'center', Graphics.FADED)
 	else
-        Graphics:drawText("Play Again?", 0, 370, width, 'center', Graphics.NORMAL)
+        Graphics:drawText("Play Again?", 0, height * (3/4), width, 'center', Graphics.NORMAL)
 	end
 end
 
