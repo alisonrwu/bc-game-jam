@@ -28,9 +28,20 @@ function displayScore()
 	end
 end
 
+function drawTargetShape()
+    if pickRect then
+        ScoreManager.drawRectangle()
+    elseif pickOval then
+        ScoreManager.drawOval()
+    else
+        ScoreManager.drawRectangle()
+    end
+end
+
 function drawTextBubble(score)
 	if ((not scored and not gameOver) or 
         (not gameOver and (remainingTimeAtLastScoring - remainingTime) >= 3)) then
+        love.graphics.setColor(255, 255, 255, 255)
 		if pickRect then
 			love.graphics.print("I need a ".. rand1 .. '" x ' .. rand2 .. '" rectangle!', 20, 20)
 		elseif pickOval then
@@ -40,6 +51,7 @@ function drawTextBubble(score)
 		love.graphics.setColor(230, 80, 80, 240)
 		love.graphics.print("You're fired! Stop wasting paper!", 20, 20)
 	else
+        drawTargetShape()
 		if (score < 0)  then
 	       comboBonus = 1.00
 	       love.graphics.setColor(255, 100, 100, 255)

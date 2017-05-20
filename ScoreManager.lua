@@ -263,25 +263,6 @@ local function reset()
 	maxY = 0
 	width = 0
 	height = 0
-    
-	-- prevBox.x = 0
-	-- prevBox.y = 0
-	-- prevBox.w = 0
-	-- prevBox.h = 0
-    
-    rect.width = 0
-	rect.height = 0
-	rect.topL = {}
-	rect.topR = {}
-	rect.botL = {}
-	rect.botR = {}
-
-	oval.xRad = 0
-	oval.yRad = 0
-	oval.top = {}
-	oval.right = {}
-	oval.left = {}
-	oval.bot = {}
 end
 
 function updateCacheValues(drawing)

@@ -16,9 +16,9 @@ function Start:draw()
 end
 
 function Start:load()
-    self.Credits.TEXT = "Made by: Trevin \"terb\" Wong, Alison \"arwu\" Wu, Sean \"sdace\" Allen and Ryan \"PROWNE\" Wirth"
+    self.Credits.TEXT = "Made by: Trevin \"terb\" Wong, Alison \"arwu\" Wu, Sean \"sdace\" Allen and Ryan \"Rye\" Wirth"
     self.Credits.X = 5
-    self.Credits.Y = height - 90
+    self.Credits.Y = height - 100
     self.Credits.LIMIT = width
     self.Credits.ALIGN = center
     

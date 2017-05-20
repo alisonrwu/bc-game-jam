@@ -144,14 +144,6 @@ function oldGame:draw()
   love.graphics.setColor(255, 255, 255, 255)
   love.graphics.draw(BG, 0, 0)
 
-  if (scored == true) then
-  	if pickRect then
-  		ScoreManager.drawRectangle()
-		elseif pickOval then
-  		ScoreManager.drawOval()
-  	end
-  end	
-
   --Draw all the lines the user has drawn already
   if (isDrawing) then
   	love.graphics.setColor(126, 126, 126, 255)
