@@ -7,7 +7,6 @@ require "Game"
 require "UI"
 require "Math"
 require "GameOver"
-require "oldGame"
 
 ScoreManager = require "ScoreManager"
 Scissors = require "Scissors"
@@ -18,7 +17,7 @@ function love.load()
     loadGraphics()
     Start:load()
     Instructions:load()
-    oldGame:load()
+    Game:load()
     GameOver:load()
 
     setState(Start)

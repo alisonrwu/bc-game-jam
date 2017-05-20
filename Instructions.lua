@@ -30,7 +30,7 @@ end
                     
 function Instructions:mouseRelease(x, y, button, istouch)
   TEsound.play("Sounds/SFX/Click.mp3", "click")
-    Fade:fadeToState(oldGame)
+    Fade:fadeToState(Game)
 end    
 
 function Instructions:mousePressed(x, y, button, istouch)    
