@@ -24,7 +24,7 @@ end
 
 function Graphics:draw(drawable, x, y, c)
   if c then self:setColor(c) end
-    love.graphics.draw(drawable, x, y)
+    love.graphics.draw(drawable, x, y, 0, windowScale, windowScale)
 end      
 
 return Graphics

@@ -121,7 +121,7 @@ end
 ------------------------------------------------------------------- Called on every frame to draw the Game
 function Game:draw()
   love.graphics.setColor(255, 255, 255, 255)
-  love.graphics.draw(BG, 0, 0)
+  love.graphics.draw(BG, 0, 0, 0, windowScale, windowScale)
 
   --Draw all the lines the user has drawn already
   if (isDrawing) then
@@ -147,7 +147,7 @@ function Game:draw()
 		love.graphics.setColor(255, 255, 255, 255)
 		love.graphics.print("Paycheck: " .. player.score, width - 275, height - 50)
 		love.graphics.print("Target: " .. scoreThreshold, width - 220, 55)
-		love.graphics.draw(scale, 30, height - 125)      
+		love.graphics.draw(scale, 30 * windowScale, height - 105 * windowScale)      
 end    
 
 function Game:load()

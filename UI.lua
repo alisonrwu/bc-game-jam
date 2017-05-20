@@ -43,23 +43,26 @@ end
 function drawTextBubble(score)
     if gameOver then return end
     
+    local feedbackX = 20
+    local feedbackY = 20
+    
 	if ((not scored and not gameOver) or 
         (not gameOver and (remainingTimeAtLastScoring - remainingTime) >= 3)) then
         love.graphics.setColor(255, 255, 255, 255)
 		if pickRect then
-			love.graphics.print("I need a ".. rand1 .. '" x ' .. rand2 .. '" rectangle!', 20, 20)
+			love.graphics.print("I need a ".. rand1 .. '" x ' .. rand2 .. '" rectangle!', feedbackX, feedbackY)
 		elseif pickOval then
-			love.graphics.print("I need a ".. rand1 .. '" x ' .. rand2 .. '" oval, pronto!', 20, 20)
+			love.graphics.print("I need a ".. rand1 .. '" x ' .. rand2 .. '" oval, pronto!', feedbackX, feedbackY)
 		end
     elseif (gameOver) then
 		love.graphics.setColor(230, 80, 80, 240)
-		love.graphics.print("You're fired! Stop wasting paper!", 20, 20)
+		love.graphics.print("You're fired! Stop wasting paper!", feedbackX, feedbackY)
 	else
         drawTargetShape()
 		if (score < 0)  then
 	       comboBonus = 1.00
 	       love.graphics.setColor(255, 100, 100, 255)
-           love.graphics.print("That's coming out your paycheck", 20, 20)
+           love.graphics.print("That's coming out your paycheck", feedbackX, feedbackY)
 		   if (canPlaySound) then
                 TEsound.play("Sounds/SFX/Wrong.wav", "wrong")
 		        canPlaySound = false
@@ -68,7 +71,7 @@ function drawTextBubble(score)
 		if (score >= 0 and score < 20) then
             comboBonus = 1.00
             love.graphics.setColor(255, 255, 255, 255)
-            love.graphics.print("What are you doing?!", 20, 20)
+            love.graphics.print("What are you doing?!", feedbackX, feedbackY)
             if (canPlaySound) then
                 TEsound.play("Sounds/SFX/Correct.wav", "correct")
                 canPlaySound = false
@@ -77,7 +80,7 @@ function drawTextBubble(score)
         if (score >= 20 and score < 70) then
             comboBonus = 1.00
             love.graphics.setColor(255, 255, 255, 255)
-            love.graphics.print("Are you a monkey?", 20, 20)
+            love.graphics.print("Are you a monkey?", feedbackX, feedbackY)
             if (canPlaySound) then
                 TEsound.play("Sounds/SFX/Correct.wav", "correct")
                 canPlaySound = false
@@ -85,7 +88,7 @@ function drawTextBubble(score)
         end
         if (score >= 70 and score < 100) then
             love.graphics.setColor(255, 255, 255, 255)
-            love.graphics.print("Close but not really.", 20, 20)
+            love.graphics.print("Close but not really.", feedbackX, feedbackY)
             if (canPlaySound) then
                 TEsound.play("Sounds/SFX/Correct.wav", "correct")
                 canPlaySound = false
@@ -93,7 +96,7 @@ function drawTextBubble(score)
         end
         if (score >= 100 and score < 150) then
             love.graphics.setColor(255, 255, 255, 255)
-            love.graphics.print("Don't get cocky.", 20, 20)
+            love.graphics.print("Don't get cocky.", feedbackX, feedbackY)
             if (canPlaySound) then
                 TEsound.play("Sounds/SFX/Correct.wav", "correct")
                 canPlaySound = false
@@ -101,7 +104,7 @@ function drawTextBubble(score)
         end
         if (score >= 150) then
             love.graphics.setColor(127, 255, 127, 255)
-            love.graphics.print("OwO what's this?", 20, 20)
+            love.graphics.print("OwO what's this?", feedbackX, feedbackY)
             if (canPlaySound) then
                 TEsound.play("Sounds/SFX/Correct.wav", "correct")
                 canPlaySound = false
