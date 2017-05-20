@@ -28,7 +28,7 @@ function Game:update(dt)
 
   
     -- main drawing mechanic
-    if mouseDown and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY)) then
+    if mouseDown and Game:isMouseMoving() then
     	if (isDrawing) then
     		table.insert(drawing, {x = mouseX, y = mouseY, lastX = lastMouseX, lastY = lastMouseY})
     	end
@@ -51,7 +51,7 @@ function Game:update(dt)
        
 
   -- handle sound
-  if (not((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY))) then
+  if not Game:isMouseMoving() then
   	TEsound.pause("cutting")
   else
   	TEsound.resume("cutting")
@@ -223,3 +223,7 @@ function Game:generateProblem()
   	rand2 = love.math.random(12) / 2
   	generated = true
 end  
+
+function Game:isMouseMoving()
+    return ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY))
+end    
