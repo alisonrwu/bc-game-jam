@@ -79,8 +79,12 @@ function love.keypressed(key, u)
    if key == "rctrl" then
       debug.debug()
    end
-
-  if love.keyboard.isDown('escape') then
-  	 love.event.push('quit')
-  end
+    
+   if key == "lctrl" then
+        setState(Start)
+    end    
+    
+   if key == "escape" then
+        love.event.push('quit')
+    end   
 end
