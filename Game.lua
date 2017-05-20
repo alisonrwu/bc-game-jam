@@ -108,9 +108,9 @@ function Game:update(dt)
 			comboBonus = comboBonus + 0.05
 			table.insert(scoreTable, {x = mouseX, y = mouseY, score = currentScore, alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY})
 			displayScore()
-            remainingTimeAtLastScoring = remainingTime
-            generated = false
-            mouseDown = false
+      remainingTimeAtLastScoring = remainingTime
+      generated = false
+      mouseDown = false
 			scored = true
     end           
 		toBeRemoved = {}
@@ -154,47 +154,47 @@ function Game:draw()
 	love.graphics.draw(textBubble, 10, 10)
 	drawTextBubble(currentScore)
 	displayScore()
-		love.graphics.setColor(255, 255, 255, 255)
-		love.graphics.print("Paycheck: " .. player.score, width - 275, height - 50)
-		love.graphics.print("Target: " .. scoreThreshold, width - 220, 55)
-		love.graphics.draw(scale, 30, height - 125)      
+  love.graphics.setColor(255, 255, 255, 255)
+  love.graphics.print("Paycheck: " .. player.score, width - 275, height - 50)
+  love.graphics.print("Target: " .. scoreThreshold, width - 220, 55)
+  love.graphics.draw(scale, 30, height - 125)      
 end    
 
 function Game:load()
-    currentScore = 0
-    scoreThreshold = 100
-    drawing = {}
-    player = {}
-    player.score = 0
-    toBeRemoved = {}
-    scoreTable = {}
-    drawing = {}
-	toBeRemoved = {}
-    player = {}
-	player.score = 0
-    remainingTime = 10
-    remainingTimeAtLastScoring = 60
-    comboBonus = 1
-	heartbeat = false
-     targetUpOld = 0
+  currentScore = 0
+  scoreThreshold = 100
+  drawing = {}
+  player = {}
+  player.score = 0
+  toBeRemoved = {}
+  scoreTable = {}
+  drawing = {}
+  toBeRemoved = {}
+  player = {}
+  player.score = 0
+  remainingTime = 10
+  remainingTimeAtLastScoring = 60
+  comboBonus = 1
+  heartbeat = false
+  targetUpOld = 0
   targetUp = 0
   addOvals = false
   pickOval = false
   pickRect = true
-    resetTime = 50
-	scoreThreshold = 100
-	extraScore = 0
-    rand1 = 0
-	rand2 = 0
-	currentScore = 0
-    mouseDown = false
-    mouseReleased = true
-	angle = 0
-	indexToRemoveTo = 0
-	isDrawing = true
-    scored = true
-	scoreTable = {}
-	generated = false
+  resetTime = 50
+  scoreThreshold = 100
+  extraScore = 0
+  rand1 = 0
+  rand2 = 0
+  currentScore = 0
+  mouseDown = false
+  mouseReleased = true
+  angle = 0
+  indexToRemoveTo = 0
+  isDrawing = true
+  scored = true
+  scoreTable = {}
+  generated = false
 end    
 
 function Game:mouseRelease(x, y, button, istouch)
@@ -203,7 +203,7 @@ function Game:mouseRelease(x, y, button, istouch)
     if(not mouseReleased and button == 1) then
         mouseReleased = true
     end
-end    
+end
 
 function Game:mousePressed(x, y, button, istouch)    
 	if (button == 1 and scored == true) then 
@@ -215,4 +215,3 @@ function Game:mousePressed(x, y, button, istouch)
 		scored = false
 	end
 end
-

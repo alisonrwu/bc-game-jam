@@ -14,6 +14,7 @@ function Start:draw()
 end
 
 function Start:load()
+    -- Credits.TEXT = love.system.getOS()
     Credits.TEXT = "Made by: Trevin \"terb\" Wong, Alison \"arwu\" Wu, Sean \"sdace\" Allen and Ryan \"PROWNE\" Wirth"
     Credits.X = 5
     Credits.Y = height - 80
@@ -33,7 +34,7 @@ end
 function Start:mouseRelease(x, y, button, istouch)
   TEsound.play("Sounds/SFX/Click.mp3", "click")
     Fade:fadeToState(Instructions)
-end    
+end
 
 function Start:mousePressed(x, y, button, istouch)    
 end

@@ -10,9 +10,12 @@ require "GameOver"
 
 ScoreManager = require "ScoreManager"
 Scissors = require "Scissors"
-
     
 function love.load()
+    if love.system.getOS() == ("Android" or "iOS") then
+        love.window.setFullscreen(true)
+    end
+
     loadImages()
     loadGraphics()
     
