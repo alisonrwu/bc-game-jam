@@ -31,9 +31,12 @@ end
 function drawTargetShape()
     if gameOver then return end
     
-    if pickRect then
+    local PR = scoreTable[#scoreTable].pickRect
+    local PO = scoreTable[#scoreTable].pickOval
+    
+    if PR then
         ScoreManager.drawRectangle()
-    elseif pickOval then
+    elseif PO then
         ScoreManager.drawOval()
     else
         ScoreManager.drawRectangle()
