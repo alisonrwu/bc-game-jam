@@ -25,18 +25,15 @@ function Game:update(dt)
   lastMouseY = mouseY
   mouseX = love.mouse.getX()
   mouseY = love.mouse.getY()
-
   
     -- main drawing mechanic
-    if mouseDown and Game:isMouseMoving() then
-    	if (isDrawing) then
-    		table.insert(drawing, {x = mouseX, y = mouseY, lastX = lastMouseX, lastY = lastMouseY})
-    	end
+    if isDrawing and Game:isMouseMoving() then
+        table.insert(drawing, {x = mouseX, y = mouseY, lastX = lastMouseX, lastY = lastMouseY})
+        
     -- main intersection mechanic
     for i = 1, #drawing - 10 do
     	if drawing[i].x and drawing[i].y and drawing[i].lastX and drawing[i].lastY then
     		if isIntersecting(drawing[i].x, drawing[i].y, drawing[i].lastX, drawing[i].lastY, mouseX, mouseY, lastMouseX, lastMouseY, true, true) then
-    			print("I am running")
     			isDrawing = false
                 canPlaySound = true
                 TEsound.play("Sounds/SFX/Snip.ogg", "snip")        
@@ -67,7 +64,7 @@ function Game:update(dt)
 
 		if (drawing[#drawing] and intersectionX and intersectionY) then
 			intersectionPoint2 = {x = intersectionX, y = intersectionY, lastX = drawing[#drawing].x, lastY = drawing[#drawing].y}
-			table.insert(drawing, intersectionPoint2)
+			table.insert(drawing, intersectionPoint2)    
 		end
           
 		if (drawing[1] and intersectionX and intersectionY) then
@@ -108,7 +105,7 @@ function Game:update(dt)
                 
             remainingTimeAtLastScoring = remainingTime
             generated = false
-            mouseDown = false
+            isDrawing = false
 			scored = true
     end           
 		toBeRemoved = {}
@@ -135,7 +132,7 @@ function Game:draw()
   end
 
   	--draw scissors
-	Scissors.draw(mouseX, mouseY, lastMouseX, lastMouseY, drawing, mouseDown)
+	Scissors.draw(mouseX, mouseY, lastMouseX, lastMouseY, drawing, isDrawing)
 
 	--Draw UI elements
 	love.graphics.setColor(255, 255, 255, 255)
@@ -177,11 +174,10 @@ function Game:load()
     rand1 = 0
 	rand2 = 0
 	currentScore = 0
-    mouseDown = false
+    isDrawing = false
     mouseReleased = true
 	angle = 0
 	indexToRemoveTo = 0
-	isDrawing = true
     scored = true
 	scoreTable = {}
 	generated = false
@@ -197,7 +193,6 @@ end
 
 function Game:mousePressed(x, y, button, istouch)    
 	if (button == 1 and scored == true) then 
-		mouseDown = true
 		isDrawing = true
 		drawing = {}
 		TEsound.playLooping("Sounds/SFX/Cutting.ogg", "cutting")

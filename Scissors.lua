@@ -16,12 +16,12 @@ local function draw(mouseX, mouseY, lastMouseX, lastMouseY, drawing, mouseDown)
 	love.graphics.setColor(255, 255, 255, 255)
 	if (frameCounter < 11) then
 		love.graphics.draw(scissors1, love.mouse.getX(), love.mouse.getY(), angle, 1, 1, scissors1:getWidth()/2, scissors1:getHeight()/2) 
-		if (mouseDown) and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY))  then
+		if mouseDown and Game:isMouseMoving()  then
 			frameCounter = frameCounter + 1
 		end
 	else
 		love.graphics.draw(scissors2, love.mouse.getX(), love.mouse.getY(), angle, 1, 1, scissors2:getWidth()/2, scissors2:getHeight()/2)
-		if (mouseDown) and ((mouseX ~= lastMouseX) or (mouseY ~= lastMouseY))  then
+		if mouseDown and Game:isMouseMoving()  then
 			frameCounter = frameCounter + 1
 			if (frameCounter >= 21) then
 				frameCounter = 0
