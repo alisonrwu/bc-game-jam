@@ -1,8 +1,7 @@
 Game = {}
 
 function Game:update(dt)
-  love.mouse.setVisible(false)
-  Scissors:update(mouse, drawing, isDrawing, Game:isMouseMoving(), dt)
+  Scissors:update(drawing, isDrawing, Game:isMouseMoving(), dt)
 
 
 	-- decrement Timer
@@ -22,12 +21,7 @@ function Game:update(dt)
   if (generated == false) then Game:generateProblem() end
   if targetUp > 2 then addOvals = true end
   Game:pickShape()      
-    
-  mouse.lastX = mouse.X 
-  mouse.lastY = mouse.Y    
-  mouse.X = love.mouse.getX()
-  mouse.Y = love.mouse.getY()
-    
+  Game:updateMouse()
   
     -- main drawing mechanic
     if isDrawing and Game:isMouseMoving() then
@@ -59,22 +53,18 @@ function Game:update(dt)
   end    
 
   -- remove the beginning part of the shape
-  if (not isDrawing) then
-  	for i = 1, #toBeRemoved do 
-			-- print("to be removed index: ", i)
-			table.remove(drawing, 1)
-		end
-		table.remove(drawing, #drawing)
-
-		if (drawing[#drawing] and intersectionX and intersectionY) then
-			intersectionPoint2 = {x = intersectionX, y = intersectionY, lastX = drawing[#drawing].x, lastY = drawing[#drawing].y}
-			table.insert(drawing, intersectionPoint2)    
+ if (not isDrawing) then
+    Game:cleanUpShape()
+    intersectionX = Math:getLastIntersectionX()
+    intersectionY = Math:getLastIntersectionY()        
+	
+         if (intersectionX and intersectionY) then
+            startToIntersectionPoint = {x = intersectionX, y = intersectionY, lastX = drawing[1].lastX, lastY = drawing[1].lastY}  
+            endToIntersectionPoint = {x = intersectionX, y = intersectionY, lastX = drawing[#drawing].x, lastY = drawing[#drawing].y}             
+			table.insert(drawing, 1, startToIntersectionPoint)
+			table.insert(drawing, endToIntersectionPoint)    
 		end
           
-		if (drawing[1] and intersectionX and intersectionY) then
-			intersectionPoint1 = {x = drawing[1].lastX, y = drawing[1].lastY, lastX = intersectionX, lastY = intersectionY}
-			table.insert(drawing, 1, intersectionPoint1)
-		end
             
     if scored == false then
 			local score = 0
@@ -134,7 +124,7 @@ function Game:draw()
     end    
 
   	--draw scissors
-	Scissors:draw()
+	Scissors:draw(mouse)
 
 	--Draw UI elements
 	love.graphics.setColor(255, 255, 255, 255)
@@ -152,6 +142,7 @@ function Game:draw()
 end    
 
 function Game:load()
+    love.mouse.setVisible(false)
     Scissors:load()
     mouse = {}
     currentScore = 0
@@ -227,4 +218,18 @@ end
 
 function Game:isMouseMoving()
     return ((mouse.X ~= mouse.lastX) or (mouse.Y ~= mouse.lastY))
+end    
+
+function Game:updateMouse()
+    mouse.lastX = mouse.X 
+    mouse.lastY = mouse.Y    
+    mouse.X = love.mouse.getX()
+    mouse.Y = love.mouse.getY()
+end    
+
+function Game:cleanUpShape()
+  	for i = 1, #toBeRemoved do 
+        table.remove(drawing, 1)
+    end
+		table.remove(drawing, #drawing)
 end    

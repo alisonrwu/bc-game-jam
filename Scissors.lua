@@ -4,10 +4,8 @@ Scissors = {
 
 frameCounter = 0
 
-function Scissors:update(mouse, drawing, isDrawing, isMouseMoving, dt)
+function Scissors:update(drawing, isDrawing, isMouseMoving, dt)
     shouldAnimate = isDrawing and isMouseMoving
-    self.mouse = mouse
-
     if (shouldAnimate) then
         self.counter = self.counter + dt
         
@@ -23,11 +21,11 @@ function Scissors:update(mouse, drawing, isDrawing, isMouseMoving, dt)
 end    
     
 
-function Scissors:draw()
+function Scissors:draw(mouse)
 	if (self.shouldScissorsOpen) then
-        Graphics:drawWithRotationAndOffset(self.openedScissors, self.mouse.X, self.mouse.Y, self.angle, self.openedScissors:getWidth()/2, self.openedScissors:getHeight()/2, Graphics.NORMAL)
+        Graphics:drawWithRotationAndOffset(self.openedScissors, mouse.X, mouse.Y, self.angle, self.openedScissors:getWidth()/2, self.openedScissors:getHeight()/2, Graphics.NORMAL)
 	else
-        Graphics:drawWithRotationAndOffset(self.closedScissors, self.mouse.X, self.mouse.Y, self.angle, self.closedScissors:getWidth()/2, self.closedScissors:getHeight()/2, Graphics.NORMAL)
+        Graphics:drawWithRotationAndOffset(self.closedScissors, mouse.X, mouse.Y, self.angle, self.closedScissors:getWidth()/2, self.closedScissors:getHeight()/2, Graphics.NORMAL)
 	end
 end
 
