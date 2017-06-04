@@ -7,9 +7,9 @@ require "Game"
 require "UI"
 require "Math"
 require "GameOver"
+require "Scissors"
 
 ScoreManager = require "ScoreManager"
-Scissors = require "Scissors"
 
     
 function love.load()
@@ -20,7 +20,7 @@ function love.load()
     Game:load()
     GameOver:load()
 
-    setState(Start)
+    setState(Game)
         
 	TEsound.play("Sounds/Music/Paper Cut Title.ogg", "menuTheme")
 	TEsound.volume("menuTheme", 0.8)

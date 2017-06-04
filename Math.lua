@@ -12,9 +12,13 @@ end
 ------------------------------------------------------------------- Checks if two lines intersect (or line segments if seg is true)
 ------------------------------------------------------------------- Lines are given as four numbers (two coordinates)
 
-function checkIntersection(drawing, mouse, i)
+function Math:checkMouseIntersection(drawing, mouse, i)
     return isIntersecting(drawing[i].x, drawing[i].y, drawing[i].lastX, drawing[i].lastY, mouse.X, mouse.Y, mouse.lastX, mouse.lastY, true, true)
 end
+
+function Math:findMouseAngle(drawing, mouse, i)
+    return math.angle(mouse.X, mouse.Y, drawing[i].x, drawing[i].y)
+end    
 
 function isIntersecting(l1p1x,l1p1y, l1p2x,l1p2y, l2p1x,l2p1y, l2p2x,l2p2y, seg1, seg2)
 	local a1,b1,a2,b2 = l1p2y-l1p1y, l1p1x-l1p2x, l2p2y-l2p1y, l2p1x-l2p2x

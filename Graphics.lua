@@ -2,7 +2,8 @@ Graphics = {
     NORMAL = { 255, 255, 255, 255 },
     RED = { 200, 80, 80, 255 },
     FADED = { 255, 255, 255, 100 },
-    BLACK = { 0, 0, 0, 255 }
+    BLACK = { 0, 0, 0, 255 },
+    GRAY = { 126, 126, 126, 255 }
 }
 
 function Graphics:setColor(c)    
@@ -24,7 +25,17 @@ end
 
 function Graphics:draw(drawable, x, y, c)
   if c then self:setColor(c) end
-    love.graphics.draw(drawable, x, y, 0, windowScale, windowScale)
+    love.graphics.draw(drawable, x, y, nil, windowScale, windowScale)
 end      
+
+function Graphics:drawWithRotationAndOffset(drawable, x, y, r, ox, oy, c)
+  if c then self:setColor(c) end
+    love.graphics.draw(drawable, x, y, r, windowScale, windowScale, ox, oy)
+end  
+
+function Graphics:drawLine(x, y, lastX, lastY, c)
+  if c then self:setColor(c) end
+    love.graphics.line(x, y, lastX, lastY)
+end
 
 return Graphics

@@ -2,6 +2,8 @@ Game = {}
 
 function Game:update(dt)
   love.mouse.setVisible(false)
+  Scissors:update(mouse, drawing, isDrawing, Game:isMouseMoving(), dt)
+
 
 	-- decrement Timer
 	remainingTime = remainingTime - dt
@@ -29,17 +31,18 @@ function Game:update(dt)
   
     -- main drawing mechanic
     if isDrawing and Game:isMouseMoving() then
-        table.insert(drawing, {x = mouse.X, y = mouse.Y, lastX = mouse.lastX, lastY = mouse.lastY})
+        point = {x = mouse.X, y = mouse.Y, lastX = mouse.lastX, lastY = mouse.lastY}
+        table.insert(drawing, point)
         
     -- main intersection mechanic
     for i = 1, #drawing - 10 do
     	if drawing[i].x and drawing[i].y and drawing[i].lastX and drawing[i].lastY then
-    		if checkIntersection(drawing, mouse, i) then
+    		if Math:checkMouseIntersection(drawing, mouse, i) then
     			isDrawing = false
                 canPlaySound = true
                 TEsound.play("Sounds/SFX/Snip.ogg", "snip")        
     			TEsound.stop("cutting", false)
-    			Scissors.setFrameCounter(20)
+    			Scissors:closeScissors()
     			for j = 1, i do
     				table.insert(toBeRemoved, i)
 	    		end
@@ -119,36 +122,37 @@ end
 ------------------------------------------------------------------- Called on every frame to draw the Game
 function Game:draw()
   love.graphics.setColor(255, 255, 255, 255)
-  love.graphics.draw(BG, 0, 0, 0, windowScale, windowScale)
+  Graphics:draw(BG, 0, 0, NORMAL)
 
   --Draw all the lines the user has drawn already
-  if (isDrawing) then
-  	love.graphics.setColor(126, 126, 126, 255)
-  else
-  	love.graphics.setColor(0, 0, 0, 255)
-  end
-
   for i,v in ipairs(drawing) do
-  	love.graphics.line(v.x, v.y, v.lastX, v.lastY)
-  end
+    if (isDrawing) then
+            Graphics:drawLine(v.x, v.y, v.lastX, v.lastY, Graphics.GRAY)
+        else
+            Graphics:drawLine(v.x, v.y, v.lastX, v.lastY, Graphics.BLACK)
+        end
+    end    
 
   	--draw scissors
-	Scissors.draw(mouse.X, mouse.Y, mouse.lastX, mouse.lastY, drawing, isDrawing)
+	Scissors:draw()
 
 	--Draw UI elements
 	love.graphics.setColor(255, 255, 255, 255)
 	drawTimer(player.score, scoreThreshold)
-	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.draw(textBubble, 10, 10)
+    Graphics:draw(textBubble, 10, 10, Graphics.NORMAL)
 	drawTextBubble(currentScore)
 	displayScore()
-		love.graphics.setColor(255, 255, 255, 255)
-		love.graphics.print("Paycheck: " .. player.score, width - 275, height - 50)
-		love.graphics.print("Target: " .. scoreThreshold, width - 220, 55)
-		love.graphics.draw(scale, 30 * windowScale, height - 105 * windowScale)      
+    love.graphics.setColor(255, 255, 255, 255)
+    
+    love.graphics.print("Paycheck: " .. player.score, width - 275, height - 50)
+    love.graphics.print("Target: " .. scoreThreshold, width - 220, 55)
+    love.graphics.draw(scale, 30 * windowScale, height - 105 * windowScale)    
+    
+    
 end    
 
 function Game:load()
+    Scissors:load()
     mouse = {}
     currentScore = 0
     scoreThreshold = 100
@@ -165,11 +169,11 @@ function Game:load()
     remainingTimeAtLastScoring = 60
     comboBonus = 1
 	heartbeat = false
-     targetUpOld = 0
-  targetUp = 0
-  addOvals = false
-  pickOval = false
-  pickRect = true
+    targetUpOld = 0
+    targetUp = 0
+    addOvals = false
+    pickOval = false
+    pickRect = true
     resetTime = 50
 	scoreThreshold = 100
 	extraScore = 0

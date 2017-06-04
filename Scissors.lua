@@ -1,40 +1,44 @@
-local Scissors = {}
+Scissors = {
+}
 
-scissors1 = love.graphics.newImage("Graphics/UI/Scissors.png")
-scissors2 = love.graphics.newImage("Graphics/UI/Scissors2.png")
+
 frameCounter = 0
 
+function Scissors:update(mouse, drawing, isDrawing, isMouseMoving, dt)
+    shouldAnimate = isDrawing and isMouseMoving
+    self.mouse = mouse
 
-local function draw(mouseX, mouseY, lastMouseX, lastMouseY, drawing, mouseDown)
-
-	-- Determining angle for the scissors
-	if ((lastMouseY ~= mouseY or lastMouseX ~= mouseX) and drawing[#drawing - 10] ~= nil and mouseDown) then
-		angle = math.angle(mouseX, mouseY, drawing[#drawing - 5].x, drawing[#drawing - 5].y)
+    if (shouldAnimate) then
+        self.counter = self.counter + dt
+        
+        if (drawing[#drawing - 10] ~= nil) then
+            self.angle = Math:findMouseAngle(drawing, mouse, #drawing - 5);
+        end    
 	end
+    
+    if (self.counter >= self.WAIT_TIME) then
+        self.counter = 0
+        self.shouldScissorsOpen = not self.shouldScissorsOpen
+    end
+end    
+    
 
-	-- Draw the scissors
-	love.graphics.setColor(255, 255, 255, 255)
-	if (frameCounter < 11) then
-		love.graphics.draw(scissors1, love.mouse.getX(), love.mouse.getY(), angle, 1, 1, scissors1:getWidth()/2, scissors1:getHeight()/2) 
-		if mouseDown and Game:isMouseMoving()  then
-			frameCounter = frameCounter + 1
-		end
+function Scissors:draw()
+	if (self.shouldScissorsOpen) then
+        Graphics:drawWithRotationAndOffset(self.openedScissors, self.mouse.X, self.mouse.Y, self.angle, self.openedScissors:getWidth()/2, self.openedScissors:getHeight()/2, Graphics.NORMAL)
 	else
-		love.graphics.draw(scissors2, love.mouse.getX(), love.mouse.getY(), angle, 1, 1, scissors2:getWidth()/2, scissors2:getHeight()/2)
-		if mouseDown and Game:isMouseMoving()  then
-			frameCounter = frameCounter + 1
-			if (frameCounter >= 21) then
-				frameCounter = 0
-			end
-		end
+        Graphics:drawWithRotationAndOffset(self.closedScissors, self.mouse.X, self.mouse.Y, self.angle, self.closedScissors:getWidth()/2, self.closedScissors:getHeight()/2, Graphics.NORMAL)
 	end
 end
 
-local function setFrameCounter(number)
-	frameCounter = number
+function Scissors:load()
+    self.WAIT_TIME = 0.3
+    self.counter = 0 
+    self.shouldScissorsOpen = false
+    self.openedScissors = love.graphics.newImage("Graphics/Sprites/OpenedScissors.png") 
+    self.closedScissors = love.graphics.newImage("Graphics/Sprites/ClosedScissors.png")
 end
 
-Scissors.draw = draw
-Scissors.setFrameCounter = setFrameCounter
-
-return Scissors
+function Scissors:closeScissors()
+    self.shouldScissorsOpen = false
+end
