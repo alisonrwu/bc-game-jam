@@ -61,25 +61,26 @@ function Game:update(dt)
          if (intersectionX and intersectionY) then
             startToIntersectionPoint = {x = intersectionX, y = intersectionY, lastX = drawing[1].lastX, lastY = drawing[1].lastY}  
             endToIntersectionPoint = {x = intersectionX, y = intersectionY, lastX = drawing[#drawing].x, lastY = drawing[#drawing].y}             
+                -- BUG where if scissors double back on itself and create an intersection with a straight line
+                -- game crashes line 62 (haven't been able to replicate yet)
+                
 			table.insert(drawing, 1, startToIntersectionPoint)
 			table.insert(drawing, endToIntersectionPoint)    
 		end
           
             
     if scored == false then
-			local score = 0
 			if pickRect then
-				score = math.floor(ScoreManager.rectangleScoring(drawing, rand1, rand2))
+				pointsForShape = math.floor(ScoreManager:rectangleScoring(drawing, rand1, rand2))
 			elseif pickOval then
-				score = math.floor(ScoreManager.ovalScoring(drawing, rand1, rand2))
+				pointsForShape = math.floor(ScoreManager:ovalScoring(drawing, rand1, rand2))
 			end
-			player.score = player.score + score
-			currentScore = score * comboBonus
-			comboBonus = comboBonus + 0.05
-            
-            
+                
+			playerScore = playerScore + pointsForShape
+			
+              
             showTargetUp = false
-            if (player.score >= scoreThreshold) then
+            if (playerScore >= scoreThreshold) then
                 showTargetUp = true
                 remainingTime = resetTime
                 remainingTimeAtLastScoring = resetTime
@@ -93,7 +94,7 @@ function Game:update(dt)
                 end
             end
                 
-			table.insert(scoreTable, {x = mouse.X, y = mouse.Y, score = currentScore, alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY, targetUp = showTargetUp, pickRect = pickRect, pickOval = pickOval})
+			table.insert(scoreTable, {x = mouse.X, y = mouse.Y, score = pointsForShape, alpha = 255, boxWidth = intersectionX, boxHeight = intersectionY, targetUp = showTargetUp, pickRect = pickRect, pickOval = pickOval})
             
 			displayScore(showTargetUp)
                 
@@ -101,6 +102,8 @@ function Game:update(dt)
             generated = false
             isDrawing = false
 			scored = true
+                
+
     end           
 		toBeRemoved = {}
 	end
@@ -111,32 +114,30 @@ end
 
 ------------------------------------------------------------------- Called on every frame to draw the Game
 function Game:draw()
-  love.graphics.setColor(255, 255, 255, 255)
-  Graphics:draw(BG, 0, 0, NORMAL)
+  Graphics:draw(BG, 0, 0, Graphics.NORMAL)
 
-  --Draw all the lines the user has drawn already
   for i,v in ipairs(drawing) do
-    if (isDrawing) then
+    if isDrawing then
             Graphics:drawLine(v.x, v.y, v.lastX, v.lastY, Graphics.GRAY)
         else
             Graphics:drawLine(v.x, v.y, v.lastX, v.lastY, Graphics.BLACK)
         end
     end    
 
-  	--draw scissors
 	Scissors:draw(mouse)
 
 	--Draw UI elements
 	love.graphics.setColor(255, 255, 255, 255)
-	drawTimer(player.score, scoreThreshold)
+	drawTimer()
     Graphics:draw(textBubble, 10, 10, Graphics.NORMAL)
-	drawTextBubble(currentScore)
+	drawTextBubble(pointsForShape)
 	displayScore()
     love.graphics.setColor(255, 255, 255, 255)
+
     
-    love.graphics.print("Paycheck: " .. player.score, width - 275, height - 50)
-    love.graphics.print("Target: " .. scoreThreshold, width - 220, 55)
-    love.graphics.draw(scale, 30 * windowScale, height - 105 * windowScale)    
+    Graphics:drawText("Paycheck: " .. playerScore, width - 275, height - 50, width - 275, middle, Graphics.NORMAL)
+    Graphics:drawText("Target: " .. scoreThreshold, width - 220, 55, width - 275, middle, Graphics.NORMAL)
+    Graphics:draw(scale, 30 * windowScale, height - 105 * windowScale, Graphics.NORMAL)
     
     
 end    
@@ -145,17 +146,11 @@ function Game:load()
     love.mouse.setVisible(false)
     Scissors:load()
     mouse = {}
-    currentScore = 0
     scoreThreshold = 100
     drawing = {}
-    player = {}
-    player.score = 0
     toBeRemoved = {}
     scoreTable = {}
-    drawing = {}
-	toBeRemoved = {}
-    player = {}
-	player.score = 0
+	playerScore = 0
     remainingTime = 50
     remainingTimeAtLastScoring = 60
     comboBonus = 1
@@ -170,13 +165,11 @@ function Game:load()
 	extraScore = 0
     rand1 = 0
 	rand2 = 0
-	currentScore = 0
     isDrawing = false
     mouseReleased = true
 	angle = 0
 	indexToRemoveTo = 0
     scored = true
-	scoreTable = {}
 	generated = false
 end    
 

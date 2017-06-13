@@ -8,8 +8,7 @@ require "UI"
 require "Math"
 require "GameOver"
 require "Scissors"
-
-ScoreManager = require "ScoreManager"
+require "ScoreManager"
 
     
 function love.load()

@@ -2,30 +2,29 @@ UI = {}
 
 function displayScore()
 	for i,v in ipairs(scoreTable) do
-		love.graphics.setColor(255, 255, 255, v.alpha)
-		if v.score <= 0 then
-			love.graphics.setColor(255, 127, 127, v.alpha)
-			love.graphics.print(math.floor(v.score), v.boxWidth, v.boxHeight)
+    	if v.score <= 0 then
+            Graphics:drawText(math.floor(v.score), v.boxWidth, v.boxHeight, width, left, {255, 127, 127, v.alpha})
 		else
-			love.graphics.setColor(127, 255, 127, v.alpha)
-			love.graphics.print("+" .. math.floor(v.score), v.boxWidth, v.boxHeight)
-      love.graphics.setColor(255, 255, 255, v.alpha)
-      love.graphics.print("x" .. comboBonus, v.boxWidth + 1, v.boxHeight + 27, 0, 0.9, 0.9)  
-      if (comboBonus >= 1.15) then
-      	love.graphics.draw(combo, v.boxWidth - 25, v.boxHeight + 24, 0, 0.175, 0.175) 
-      end
-      if (v.targetUp) then
-        love.graphics.setColor(230, 230, 130, v.alpha)    
-        love.graphics.print("Target Up!", v.boxWidth, v.boxHeight - 26, 0, 0.9, 0.9) 
-        love.graphics.setColor(255, 255, 255, v.alpha)    
-      end    
-		end
+            Graphics:drawText("+" .. math.floor(v.score), v.boxWidth, v.boxHeight, width, left, {127, 255, 127, v.alpha})
+        end
+        
+        Graphics:drawTextWithScale("x" .. comboBonus, v.boxWidth + 1, v.boxHeight + 27, width, left, 0.9, 0.9, {255, 255, 255, v.alpha})
+            
+        if (comboBonus >= 1.15) then
+            Graphics:drawWithScale(combo, v.boxWidth - 25, v.boxHeight + 24, 0.175, 0.175, {255, 255, 255, v.alpha})
+        end
+        
+        if (v.targetUp) then
+            Graphics:drawTextWithScale("Target Up!", v.boxWidth, v.boxHeight - 26, width, left, 0.9, 0.9, {230, 230, 130, v.alpha})   
+        end  
+		
 		v.alpha = v.alpha - 2
 		v.boxHeight = v.boxHeight - 2
-		if (v.alpha < 0) then
+		
+        if (v.alpha < 0) then
 			table.remove(v)
 		end
-	end
+    end    
 end
 
 function drawTargetShape()
@@ -116,7 +115,7 @@ function drawTextBubble(score)
     end
 end
 
-function drawTimer(currentScore)
+function drawTimer()
 	--Draw timer
 	if (remainingTime > 0) then
 		love.graphics.setColor(255, 255, 255, 255)

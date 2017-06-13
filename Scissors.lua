@@ -1,5 +1,4 @@
-Scissors = {
-}
+Scissors = {}
 
 
 frameCounter = 0
