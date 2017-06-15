@@ -3,7 +3,8 @@ Graphics = {
     RED = { 200, 80, 80, 255 },
     FADED = { 255, 255, 255, 100 },
     BLACK = { 0, 0, 0, 255 },
-    GRAY = { 126, 126, 126, 255 }
+    GRAY = { 126, 126, 126, 255 },
+    GREEN = { 127, 255, 127, 255 }
 }
 
 function Graphics:setColor(c)    
@@ -13,10 +14,21 @@ function Graphics:setColor(c)
   end
 end
 
-function Graphics:drawRect(x, y, w, h, c )
+function Graphics:drawRect(x, y, w, h, c)
   if c then self:setColor(c) end
     love.graphics.rectangle("fill", x, y, w, h )
 end
+
+function Graphics:drawLineRect(x, y, w, h, c)
+  if c then self:setColor(c) end
+    love.graphics.rectangle("line", x, y, w, h )
+end
+
+function Graphics:drawLineEllipse(x, y, w, h, c)
+  if c then self:setColor(c) end    
+	love.graphics.ellipse('line', x, y, w, h)
+end
+
 
 function Graphics:drawText(text, x, y, limit, align, c)
   if c then self:setColor(c) end

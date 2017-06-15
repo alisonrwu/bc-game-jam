@@ -39,13 +39,15 @@ local oval = {
 }
 
 function ScoreManager:calculateComboBonus(score)
+    multipliedScore = score * ScoreManager.comboMultiplier
+    
     if (score >= ScoreManager.pointsToContinueCombo) then
         ScoreManager.comboMultiplier = ScoreManager.comboMultiplier + 0.5
     else
         ScoreManager.comboMultiplier = 1
     end
     
-    return score * ScoreManager.comboMultiplier
+    return multipliedScore
 end    
 
 -- Scores a rectangle by calculating the 4 corner points of a
@@ -245,8 +247,7 @@ function ScoreManager:createInterpolatedOval()
 end
 
 function ScoreManager:drawRectangle()
-	love.graphics.setColor(70, 230, 70, 125)
-	love.graphics.rectangle('line', (prevBox.x+(prevBox.w/2))-(rect.width/2), (prevBox.y+(prevBox.h/2))-(rect.height/2), rect.width, rect.height)
+    Graphics:drawLineRect((prevBox.x+(prevBox.w/2))-(rect.width/2), (prevBox.y+(prevBox.h/2))-(rect.height/2), rect.width, rect.height, Graphics.GREEN)
 
 	-- for debugging, prints 4 points that are compared
 	--love.graphics.setColor(255, 0, 0, 255)
@@ -257,13 +258,7 @@ function ScoreManager:drawRectangle()
 end
 
 function ScoreManager:drawOval()
-	love.graphics.setColor(100, 230, 100, 125)
-	love.graphics.ellipse('line', (prevBox.x+(prevBox.w/2)), (prevBox.y+(prevBox.h/2)), oval.xRad, oval.yRad)
-end
-
-function ScoreManager:drawBox()
-	love.graphics.setColor(200, 200, 200, 255)
-	love.graphics.rectangle('line', prevBox.x, prevBox.y, prevBox.w, prevBox.h)
+    Graphics:drawLineEllipse((prevBox.x+(prevBox.w/2)), (prevBox.y+(prevBox.h/2)), oval.xRad, oval.yRad)
 end
 
 function ScoreManager:reset()

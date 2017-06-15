@@ -22,7 +22,7 @@ function GameOver:draw()
     Graphics:drawRect(0, 0, width, height, Graphics.BLACK)
     Graphics:drawText("GAME OVER", 0, height / 2, width, "center", Graphics.NORMAL)
     
-    drawTimer(player.score, scoreThreshold)
+    drawTimer(playerScore, scoreThreshold)
     displayScore()
     
     if (self.blink) then
