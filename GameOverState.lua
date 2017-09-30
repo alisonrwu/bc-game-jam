@@ -1,15 +1,10 @@
-GameOver = {}
+GameOverState = {}
 
 
-function GameOver:update(dt)
+function GameOverState:update(dt)
     love.mouse.setVisible(true)
-    TEsound.pitch("music", 0.9)
-    TEsound.stop("heartbeat")
-    drawing = {}
-    ScoreManager.reset()
-    mouseDown = false
-    TEsound.stop("cutting")
-    
+    TEsound.pitch("gameTheme", 0.9)
+
     self.counter = self.counter + dt
     
     if (self.counter >= self.WAIT_TIME) then
@@ -18,12 +13,9 @@ function GameOver:update(dt)
     end
 end                            
     
-function GameOver:draw()  
+function GameOverState:draw()  
     Graphics:drawRect(0, 0, width, height, Graphics.BLACK)
     Graphics:drawText("GAME OVER", 0, height / 2, width, "center", Graphics.NORMAL)
-    
-    drawTimer(playerScore, scoreThreshold)
-    displayScore()
     
     if (self.blink) then
         Graphics:drawText("Play Again?", 0, height * (3/4), width, 'center', Graphics.FADED)
@@ -32,18 +24,17 @@ function GameOver:draw()
 	end
 end
 
-function GameOver:load()
+function GameOverState:load()
     self.WAIT_TIME = 0.5
     self.counter = 0 
     self.blink = false
 end    
 
-                    
-function GameOver:mouseRelease(x, y, button, istouch)
+
+function GameOverState:mouseRelease(x, y, button, istouch)
     TEsound.play("Sounds/SFX/Click.mp3", "click")
-    love.load()
-    ScoreManager.reset()
+    setState(GameState)
 end    
 
-function GameOver:mousePressed(x, y, button, istouch)    
+function GameOverState:mousePressed(x, y, button, istouch)    
 end

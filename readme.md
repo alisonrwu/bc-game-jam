@@ -9,6 +9,7 @@ Lua, Love2d, Paint.NET, OpenMPT, Synth1 and our brains.
 - Trevin Wong (Programmer)
 - Sean Allen (Programmer, Artist, Sound Guy)
 - Alison Wu (Programmer)
+- Ryan Wirth (Programmer)
 
 ### Made at [BC Game Jam 2017](http://bcgamejam.com/)
 - Winner of the Volunteer's Choice Award - First Place

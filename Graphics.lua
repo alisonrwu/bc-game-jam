@@ -4,7 +4,8 @@ Graphics = {
     FADED = { 255, 255, 255, 100 },
     BLACK = { 0, 0, 0, 255 },
     GRAY = { 126, 126, 126, 255 },
-    GREEN = { 127, 255, 127, 255 }
+    GREEN = { 127, 255, 127, 255 },
+    YELLOW = {230, 230, 130, 255 }
 }
 
 function Graphics:setColor(c)    
@@ -12,6 +13,10 @@ function Graphics:setColor(c)
     self.lastColor = c
     love.graphics.setColor(c)
   end
+end
+
+function Graphics:modifyColorAlpha(color, alpha)
+  return {color[1], color[2], color[3], alpha}
 end
 
 function Graphics:drawRect(x, y, w, h, c)
