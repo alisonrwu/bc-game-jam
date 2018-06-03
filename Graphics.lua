@@ -1,11 +1,11 @@
 Graphics = {
-    NORMAL = { 255, 255, 255, 255 },
-    RED = { 200, 80, 80, 255 },
-    FADED = { 255, 255, 255, 100 },
-    BLACK = { 0, 0, 0, 255 },
-    GRAY = { 126, 126, 126, 255 },
-    GREEN = { 127, 255, 127, 255 },
-    YELLOW = {230, 230, 130, 255 }
+    NORMAL = { 1, 1, 1, 1 },
+    RED = { 0.75, 0.25, 0.25, 1 },
+    FADED = { 1, 1, 1, 0.25 },
+    BLACK = { 0, 0, 0, 1 },
+    GRAY = { 0.5, 0.5, 0.5, 1 },
+    GREEN = { 0.25, 0.75, 0.25, 1 },
+    YELLOW = {0.75, 0.75, 0.25, 1 }
 }
 
 function Graphics:setColor(c)    
@@ -31,9 +31,8 @@ end
 
 function Graphics:drawLineEllipse(x, y, w, h, c)
   if c then self:setColor(c) end    
-	love.graphics.ellipse('line', x, y, w, h)
+    love.graphics.ellipse('line', x, y, w, h)
 end
-
 
 function Graphics:drawText(text, x, y, limit, align, c)
   if c then self:setColor(c) end
@@ -42,22 +41,22 @@ end
     
 function Graphics:drawTextWithScale(text, x, y, limit, align, sx, sy, c)
   if c then self:setColor(c) end
-    love.graphics.printf(text, x, y, limit, align, nil, sx * windowScale, sy * windowScale, nil, nil, nil, nil)
+    love.graphics.printf(text, x, y, limit, align, nil, sx, sy, nil, nil, nil, nil)
 end     
 
 function Graphics:draw(drawable, x, y, c)
   if c then self:setColor(c) end
-    love.graphics.draw(drawable, x, y, nil, windowScale, windowScale)
+    love.graphics.draw(drawable, x, y, nil)
 end      
 
 function Graphics:drawWithScale(drawable, x, y, sx, sy, c)
   if c then self:setColor(c) end
-    love.graphics.draw(drawable, x, y, nil, sx * windowScale, sy * windowScale, nil, nil, nil, nil)
+    love.graphics.draw(drawable, x, y, nil, sx, sy, nil, nil, nil, nil)
  end    
 
 function Graphics:drawWithRotationAndOffset(drawable, x, y, r, ox, oy, c)
   if c then self:setColor(c) end
-    love.graphics.draw(drawable, x, y, r, windowScale, windowScale, ox, oy)
+    love.graphics.draw(drawable, x, y, r, 1, 1, ox, oy)
 end  
 
 function Graphics:drawLine(x, y, lastX, lastY, c)

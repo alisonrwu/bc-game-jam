@@ -24,13 +24,12 @@ function StartState:load()
   startButtonX = width/3
   startButtonY = height/2
   
-  SoundManager:playMusic("Sounds/Music/Paper Cut Title.ogg", "startTheme")
-  TEsound.volume("menuTheme", 0.8)
+  SoundManager:createAndPlay("Sounds/Music/Paper Cut Title.ogg", "bgm", true, "stream")
 end    
 
 
 function StartState:mouseRelease(x, y, button, istouch)
-  TEsound.play("Sounds/SFX/Click.mp3", "click")
+  SoundManager:createAndPlay("Sounds/SFX/Click.mp3", "click")
   setState(InstructionState)
 end    
 

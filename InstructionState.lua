@@ -29,7 +29,7 @@ function InstructionState:load()
 end
   
 function InstructionState:mouseRelease(x, y, button, istouch)
-  TEsound.play("Sounds/SFX/Click.mp3", "click")
+  SoundManager:play("Sounds/SFX/Click.mp3", "click")
   setState(GameState)
 end    
 

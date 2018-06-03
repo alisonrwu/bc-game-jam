@@ -9,6 +9,7 @@ GameState = {}
 --    Refactor displayPtsForShape()
 --    Refactor AnimationManager/SoundManager, playing sounds
 --    Optimize scoring/display
+--    Load all sfx in sources first
 
 -- New features to add:
 --    Let players know when ovals are added
@@ -21,19 +22,21 @@ GameState = {}
 --    Change the scissors graphic
 --    Create a shader for the lines
 --    Port to android
+--    Add some flashing to scissors (or grey it out) to indicate that you cannot cut right now
+--    High score system
+--    Fix obscuring scissors
 
 function GameState:update(dt)
   GameState:updateTimer(dt)
   GameState:updateCurrentLine()
   GameState:updateEnabledShapes()
-  SoundManager:playMusic("Sounds/Music/Paper Cutter.ogg", "gameTheme")
   
   if DrawingUpdater:getDrawingDone() == false and GameState:isMouseMoving() and mouseDown then
-    TEsound.resume("cuttingSound")
+    SoundManager:play("cuttingSound")
     DrawingUpdater:update(currentLine, currentDrawing)
     AnimationManager:update(currentLine, currentDrawing)
   else
-    TEsound.pause("cuttingSound")
+    SoundManager:pause("cuttingSound")
   end
   
   if problemGenerated == false then
@@ -43,7 +46,7 @@ function GameState:update(dt)
   end 
   
   if DrawingUpdater:getDrawingDone() == true and drawingScored == false then
-    TEsound.play("Sounds/SFX/Snip.ogg", "snip") 
+    SoundManager:play("Sounds/SFX/Snip.ogg", "snip") 
     if currentProblem.type == "rectangle" then
       score = ScoreGenerator:rectangleScoring(currentDrawing, currentProblem.width, currentProblem.length)
     elseif currentProblem.type == "oval" then
@@ -52,28 +55,27 @@ function GameState:update(dt)
     drawingScored = true
     currentFeedback = {text = score.text, color = score.color}
     playerScore = playerScore + score.points
-    TEsound.play(score.sound.path, score.sound.name)
+    SoundManager:createAndPlay(score.sound.path, score.sound.name)
     local targetUp = false
   
     if (playerScore >= targetScore) then
       targetUp = true
       GameState:updateTimeAndScore()    
-      TEsound.play("Sounds/SFX/newTarget.ogg", "newTarget")
+      SoundManager:createAndPlay("Sounds/SFX/newTarget.ogg", "newTarget")
     end
     
-    table.insert(pointsTable, {points = score.points, x = love.mouse.getX(), y = love.mouse.getY(), color = score.color, alpha = 255, targetUp = targetUp})
+    worldX, worldY = Utilities:getWorldMouseCoordinates()
+    table.insert(pointsTable, {points = score.points, x = worldX, y = worldY, color = score.color, alpha = 255, targetUp = targetUp})
   end
   
   if drawingScored == true then
     GameState:updateForNewProblem(dt, 1.5)
   end
-  
-  TEsound.cleanup()
 end
 
 function GameState:draw()
   Graphics:draw(BG, 0, 0, Graphics.NORMAL)
-  Graphics:draw(scale, 30 * windowScale, height - 105 * windowScale, Graphics.NORMAL)
+  Graphics:draw(scale, 30, height - 105, Graphics.NORMAL)
   Graphics:draw(speechBubble, 10, 10, Graphics.NORMAL)
   GameState:displayDrawing()
   GameState:displayHUD()
@@ -93,6 +95,7 @@ function GameState:load()
   -- Game Configuration
   STARTING_TIME = 120
   INITIAL_TARGET = 100
+  TARGET_UPS_TO_NEXT_SHAPE = 2
   
    -- Loading Managers
   DrawingUpdater:load()
@@ -113,7 +116,8 @@ function GameState:load()
   currentFeedback = {text = "Left click to start!", color = Graphics.NORMAL}
   currentProblem = {text = "", color = Graphics.NORMAL, type = "rectangle"}
   love.mouse.setVisible(false)
-  TEsound.playLooping("Sounds/SFX/Cutting.ogg", "cuttingSound")
+  SoundManager:createAndPlay("Sounds/SFX/Cutting.ogg", "cuttingSound", true, "stream")
+  SoundManager:createAndPlay("Sounds/Music/Paper Cutter.ogg", "bgm", true, "stream")
   timerForNewProblem = 0
 end
 
@@ -122,6 +126,7 @@ end
 function GameState:mousePressed(x, y, button, istouch)    
 	if button == 1 then 
     mouseDown = true
+    currentLine.lastX, currentLine.lastY = Utilities:getWorldMouseCoordinates()
 	end
 end
 
@@ -158,21 +163,22 @@ end
 function GameState:updateCurrentLine()
     currentLine.lastX = currentLine.x 
     currentLine.lastY = currentLine.y    
-    currentLine.x = love.mouse.getX()
-    currentLine.y = love.mouse.getY()
+    currentLine.x, currentLine.y = Utilities:getWorldMouseCoordinates()
 end    
 
 function GameState:updateEnabledShapes()
-  if targetUpCounter > 2 then
+  if targetUpCounter > TARGET_UPS_TO_NEXT_SHAPE then
     ProblemGenerator:enableOvals()
   end
 end
 
 function GameState:updateTimer(dt)
+  timer.color = Graphics.NORMAL
   timer.time = timer.time - dt
+  
   if timer.time <= 15 then
     timer.color = Graphics.RED
-    TEsound.pitch("gameTheme", 1.15)
+    SoundManager:setPitch("gameTheme", 1.15)
 	end
   
   if timer.time <= 0 then

@@ -1,17 +1,18 @@
-require "TEsound"
 require "SoundManager"
-
 require "StartState"
 require "InstructionState"
 require "GameState"
 require "GameOverState"
-
 require "Graphics"
+require "Utilities"
+scaleinator = require("scaleinator").create()
 
-function love.load()
+function love.load(arg)
+  --if arg[#arg] == "-debug" then require("mobdebug").start() end
+  loadScaling()
   loadImages()
   loadGraphics()
-  setState(GameState)
+  setState(StartState)
 end  
 
 function love.update(dt)
@@ -19,8 +20,45 @@ function love.update(dt)
 end
 
 function love.draw()
+  --love.graphics.translate(translationX, translationY)
+  --love.graphics.scale(scaleX, scaleY)
   state:draw()
 end    
+
+function loadScaling()
+  scaleinator:newmode("4:3", 640, 480)
+	scaleinator:update(love.graphics.getWidth(), love.graphics.getHeight())
+  scaleX = scaleinator:getFactor() 
+  scaleY = scaleX -- scaleX == scaleY because we can't scale greater than the limiting dimension
+  translationX, translationY = scaleinator:getTranslation() -- after scaling, x and y required to center screen
+end
+
+function loadImages()
+  icon = love.image.newImageData("Graphics/UI/Icon.png")
+  menuBG = love.graphics.newImage("Graphics/Menu/Background.png")
+  combo = love.graphics.newImage("Graphics/UI/combo.png") 
+  BG = love.graphics.newImage("Graphics/UI/Background.png")
+  scale = love.graphics.newImage("Graphics/UI/Scale.png")
+  speechBubble = love.graphics.newImage("Graphics/UI/TextBubble.png")
+end
+
+function loadGraphics()
+  love.window.setIcon(icon)	
+	love.graphics.setPointSize(5)
+  love.graphics.setLineWidth(3)
+  width = 640
+	height = 480
+  font = love.graphics.newImageFont("Graphics/UI/Imagefont.png",
+	" abcdefghijklmnopqrstuvwxyz" ..
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZ0" ..
+  "123456789.,!?-+/():;%&`'*#=[]\"")
+  love.graphics.setFont(font)              
+end    
+
+function setState(s)
+  state = s
+  state:load()
+end   
 
 function love.mousepressed(x, y, button, istouch)    
   state:mousePressed(x, y, button, istouch)
@@ -39,36 +77,13 @@ function love.keypressed(key, u)
     setState(StartState)
   end    
   
+  if key == "t" then
+    targetUpCounter = targetUpCounter + 1
+  end
+  
   if key == "escape" then
     love.event.push('quit')
   end   
 end
-
-function loadImages()
-  icon = love.graphics.newImage("Graphics/UI/Icon.png")
-  menuBG = love.graphics.newImage("Graphics/Menu/Background.png")
-  combo = love.graphics.newImage("Graphics/UI/combo.png") 
-  BG = love.graphics.newImage("Graphics/UI/Background.png")
-  scale = love.graphics.newImage("Graphics/UI/Scale.png")
-  speechBubble = love.graphics.newImage("Graphics/UI/TextBubble.png")
-end
-
-function loadGraphics()
-  love.window.setIcon(icon:getData())	
-	love.graphics.setBackgroundColor(255,255,255)
-	love.graphics.setPointSize(5)
-  love.graphics.setLineWidth(3)
-  width = love.graphics.getWidth()
-	height = love.graphics.getHeight() 
-  font = love.graphics.newImageFont("Graphics/UI/Imagefont.png",
-	" abcdefghijklmnopqrstuvwxyz" ..
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZ0" ..
-  "123456789.,!?-+/():;%&`'*#=[]\"")
-  love.graphics.setFont(font)              
-end    
-
-function setState(s)
-  state = s
-  state:load()
-end    
+ 
 

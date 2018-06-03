@@ -3,7 +3,7 @@ ProblemGenerator = {}
 function ProblemGenerator:createProblem()
   local randWidth = love.math.random(12) / 2
   local randLength = love.math.random(12) / 2
-  local shape = shapeTable[love.math.random(0, #shapeTable)]
+  local shape = shapeTable[love.math.random(1, #shapeTable)]
 
   if shape == "rectangle" then
     problemText = ProblemGenerator:createRectangleProblem(randWidth, randLength)
@@ -19,13 +19,13 @@ function ProblemGenerator:createRectangleProblem(w, l)
 end
 
 function ProblemGenerator:createOvalProblem(w, l)
-  return {width = w, length = l, color = Graphics.NORMAL, type = "rectangle"}
+  return {width = w, length = l, color = Graphics.NORMAL, type = "oval"}
 end
 
 function ProblemGenerator:enableOvals()
-  shapeTable[1] = "oval"
+  shapeTable[2] = "oval"
 end
 
 function ProblemGenerator:load()
-  shapeTable = {[0] = "rectangle"}
+  shapeTable = {"rectangle"}
 end

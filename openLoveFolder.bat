@@ -1,1 +1,0 @@
-%SystemRoot%\explorer.exe "C:\Program Files\LOVE"

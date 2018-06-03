@@ -33,7 +33,7 @@ end
 
 function GameOverState:mouseRelease(x, y, button, istouch)
     TEsound.play("Sounds/SFX/Click.mp3", "click")
-    setState(GameState)
+    setState(StartState)
 end    
 
 function GameOverState:mousePressed(x, y, button, istouch)    

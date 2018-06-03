@@ -102,8 +102,8 @@ function ScoreGenerator:ovalScoring(drawing, x, y)
     local sP = drawing
     local cP = ScoreGenerator:createInterpolatedOval()
     
-    local successPercentage = calculateSuccessPercentage(sP, cP, oval.left.x, oval.right.x, oval.top.y, oval.bot.y)
-    local score = transformSuccessPercentage(successPercentage, oval.xRad * oval.yRad * math.pi)
+    local successPercentage = ScoreGenerator:calculateSuccessPercentage(sP, cP, oval.left.x, oval.right.x, oval.top.y, oval.bot.y)
+    local score = ScoreGenerator:transformSuccessPercentage(successPercentage, oval.xRad * oval.yRad * math.pi)
     
     local comboMultipliedScore = ScoreGenerator:calculateComboBonus(score)
     
@@ -292,6 +292,8 @@ function ScoreGenerator:reset()
 end
 
 function ScoreGenerator:updateCacheValues(drawing)
+  
+  
 	for i,v in ipairs(drawing) do
 		if v.x < ScoreGenerator.minX then
 			ScoreGenerator.minX = v.x
@@ -323,5 +325,5 @@ function ScoreGenerator:drawRectangle()
 end
 
 function ScoreGenerator:drawOval()
-    Graphics:drawLineEllipse((prevBox.x+(prevBox.w/2)), (prevBox.y+(prevBox.h/2)), oval.xRad, oval.yRad)
+    Graphics:drawLineEllipse((prevBox.x+(prevBox.w/2)), (prevBox.y+(prevBox.h/2)), oval.xRad, oval.yRad, Graphics.GREEN)
 end
