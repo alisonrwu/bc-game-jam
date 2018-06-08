@@ -17,7 +17,6 @@ GameState = {}
 --    Let players know that the point is to survive as long as possible
 --    Let players know that real inches are not used (change the measurement system)
 --    Let players know that they do not need to left click to finish cutting (simply intersect)
---    Show players correct dimension orders (width by length)
 --    Support for triangles
 --    Change the scissors graphic
 --    Create a shader for the lines
@@ -85,8 +84,12 @@ function GameState:draw()
   GameState:displayHUD()
   GameState:displayFeedback()
   GameState:displayPtsForShape()
-  AnimationManager:draw()
-  
+  scissorsColor = Graphics.NORMAL
+  if DrawingUpdater:getDrawingDone() == true then
+    scissorsColor = Graphics.FADED
+  end
+  AnimationManager:draw(scissorsColor)
+
   if drawingScored == true then
     if currentProblem.type == "rectangle" then
       ScoreGenerator:drawRectangle()

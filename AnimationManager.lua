@@ -17,8 +17,8 @@ function AnimationManager:update(currentLine, currentDrawing)
   end
 end
 
-function AnimationManager:draw()
-  Graphics:drawWithRotationAndOffset(SCISSORS_CURRENT_FRAME, currentLine.x, currentLine.y, angle, SCISSORS_CURRENT_FRAME:getWidth()/2, SCISSORS_CURRENT_FRAME:getHeight()/2, Graphics.NORMAL)
+function AnimationManager:draw(color)
+  Graphics:drawWithRotationAndOffset(SCISSORS_CURRENT_FRAME, currentLine.x, currentLine.y, angle, SCISSORS_CURRENT_FRAME:getWidth()/2, SCISSORS_CURRENT_FRAME:getHeight()/2, color)
 end
 
 function AnimationManager:load()
