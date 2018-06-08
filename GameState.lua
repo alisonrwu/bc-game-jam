@@ -41,7 +41,11 @@ function GameState:update(dt)
   
   if problemGenerated == false then
     currentProblem = ProblemGenerator:createProblem()
-    currentFeedback = {text = "I need a " .. currentProblem.width .. " x " .. currentProblem.length .. " " .. currentProblem.type .. "!", color =  currentProblem.color}
+    
+      coloredtext = {{1, 0, 0, 1}, "Test", {0, 1, 0, 1}, "Hello"}
+  love.graphics.print( coloredtext, 0, 0 )
+  
+    currentFeedback = {text = "I need a " .. currentProblem.width .. "W" .. " x " .. currentProblem.length .. "L" .. " " .. currentProblem.type .. "!", color = currentProblem.color}
     problemGenerated = true
   end 
   
@@ -82,6 +86,7 @@ function GameState:draw()
   GameState:displayFeedback()
   GameState:displayPtsForShape()
   AnimationManager:draw()
+  
   if drawingScored == true then
     if currentProblem.type == "rectangle" then
       ScoreGenerator:drawRectangle()
