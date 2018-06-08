@@ -8,20 +8,20 @@ function StartState:draw()
   Graphics:draw(menuBG, 0, 0, Graphics.NORMAL)
   Graphics:draw(titleButtonImage, titleButtonX, titleButtonY, Graphics.NORMAL)
   Graphics:draw(startButtonImage, startButtonX, startButtonY, Graphics.NORMAL)
-  Graphics:drawText(creditsText, creditsX, creditsY, width, center, Graphics.NORMAL)
+  --Graphics:drawText(creditsText, creditsX, creditsY, width, center, Graphics.NORMAL)
 end
 
 function StartState:load()
   creditsText = "Made by: Trevin \"terb\" Wong, Alison \"arwu\" Wu, Sean \"sdace\" Allen and Ryan \"Rye\" Wirth"
   creditsX = 5
-  creditsY = height - 100
+  creditsY = 3 * height/4
   
   titleButtonImage = love.graphics.newImage("Graphics/Menu/testTitle.png")
-  titleButtonX = width/6
+  titleButtonX = width/2 - titleButtonImage:getWidth()/2
   titleButtonY = height/4
   
   startButtonImage = love.graphics.newImage("Graphics/Menu/startButton.png")
-  startButtonX = width/3
+  startButtonX = width/2 - startButtonImage:getWidth()/2
   startButtonY = height/2
   
   SoundManager:createAndPlay("Sounds/Music/Paper Cut Title.ogg", "bgm", true, "stream")

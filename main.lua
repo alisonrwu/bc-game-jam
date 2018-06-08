@@ -12,7 +12,7 @@ function love.load(arg)
   loadScaling()
   loadImages()
   loadGraphics()
-  setState(StartState)
+  setState(GameState)
 end  
 
 function love.update(dt)
@@ -26,7 +26,7 @@ function love.draw()
 end    
 
 function loadScaling()
-  scaleinator:newmode("4:3", 640, 480)
+  scaleinator:newmode("16:9", 853, 480)
 	scaleinator:update(love.graphics.getWidth(), love.graphics.getHeight())
   scaleX = scaleinator:getFactor() 
   scaleY = scaleX -- scaleX == scaleY because we can't scale greater than the limiting dimension
@@ -35,24 +35,23 @@ end
 
 function loadImages()
   icon = love.image.newImageData("Graphics/UI/Icon.png")
-  menuBG = love.graphics.newImage("Graphics/Menu/Background.png")
+  menuBG = love.graphics.newImage("Graphics/Menu/Background/Background16x9.png")
   combo = love.graphics.newImage("Graphics/UI/combo.png") 
-  BG = love.graphics.newImage("Graphics/UI/Background.png")
+  BG = love.graphics.newImage("Graphics/UI/Background/Background16x9.png")
   scale = love.graphics.newImage("Graphics/UI/Scale.png")
   speechBubble = love.graphics.newImage("Graphics/UI/TextBubble.png")
 end
 
 function loadGraphics()
   love.window.setIcon(icon)	
-	love.graphics.setPointSize(5)
   love.graphics.setLineWidth(3)
-  width = 640
-	height = 480
+  width = love.graphics.getWidth()
+	height = love.graphics.getHeight()
   font = love.graphics.newImageFont("Graphics/UI/Imagefont.png",
 	" abcdefghijklmnopqrstuvwxyz" ..
   "ABCDEFGHIJKLMNOPQRSTUVWXYZ0" ..
   "123456789.,!?-+/():;%&`'*#=[]\"")
-  love.graphics.setFont(font)              
+  love.graphics.setFont(font)    
 end    
 
 function setState(s)
