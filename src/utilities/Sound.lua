@@ -1,4 +1,4 @@
-SoundManager = {
+Sound = {
   sources = {}
 }
 
@@ -6,9 +6,9 @@ SoundManager = {
 --    Perhaps be called on every update to loop through unused sources and delete them for performance reasons (?)
 
 -- Create and play a source.
-function SoundManager:createAndPlay(source, tag, loop, soundType)
-  SoundManager:create(source, tag, loop, soundType)
-  SoundManager:play(tag)
+function Sound:createAndPlay(source, tag, loop, soundType)
+  Sound:create(source, tag, loop, soundType)
+  Sound:play(tag)
 end    
 
 -- Create a source. If the tag already exists, the current source will be killed and overwritten.
@@ -16,7 +16,7 @@ end
 -- @param tag The tag assigned to the audio.
 -- @param loop Whether or not the audio will loop.
 -- @param soundType The sound type you want to use. If left empty, static will be used by default.
-function SoundManager:create(source, tag, loop, soundType)
+function Sound:create(source, tag, loop, soundType)
   if soundType then
     src = love.audio.newSource(source, soundType) -- you should use "static" for sounds, and "stream" for bgm
   else
@@ -25,43 +25,43 @@ function SoundManager:create(source, tag, loop, soundType)
   
   if loop then src:setLooping(loop) end
   
-  if SoundManager.sources[tag] then
-    SoundManager.sources[tag]:stop()
-    SoundManager.sources[tag]:release()
+  if Sound.sources[tag] then
+    Sound.sources[tag]:stop()
+    Sound.sources[tag]:release()
   end
   
-  SoundManager.sources[tag] = src
+  Sound.sources[tag] = src
 end    
 
 -- Plays a source by its tag.
 -- @param tag The tag assigned to the source.
-function SoundManager:play(tag)
-  if SoundManager.sources[tag] then
-    SoundManager.sources[tag]:play()
+function Sound:play(tag)
+  if Sound.sources[tag] then
+    Sound.sources[tag]:play()
   end
 end  
 
 -- Stops a source by its tag and cleans it up, freeing it from memory.
 -- @param tag The tag assigned to the source.
-function SoundManager:stop(tag)
-  if SoundManager.sources[tag] then
-    SoundManager.sources[tag]:stop()
+function Sound:stop(tag)
+  if Sound.sources[tag] then
+    Sound.sources[tag]:stop()
   end
 end  
 
 -- Pauses a source by its tag.
 -- @param tag The tag assigned to the source.
-function SoundManager:pause(tag)
-  if SoundManager.sources[tag] then
-    SoundManager.sources[tag]:pause()
+function Sound:pause(tag)
+  if Sound.sources[tag] then
+    Sound.sources[tag]:pause()
   end
 end  
 
 -- Sets a sources pitch by its tag.
 -- @param tag The tag assigned to the source.
-function SoundManager:setPitch(tag, pitch)
-  if SoundManager.sources[tag] then
-    SoundManager.sources[tag]:setPitch(pitch)
+function Sound:setPitch(tag, pitch)
+  if Sound.sources[tag] then
+    Sound.sources[tag]:setPitch(pitch)
   end
 end  
 
