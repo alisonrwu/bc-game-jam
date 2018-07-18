@@ -100,7 +100,19 @@ function Level:increaseDifficulty()
 end
 
 function Level:addNewShape()
-  if self.shapes[2] == nil then self.shapes[2] = "oval" return end
-  if self.shapes[3] == nil then self.shapes[3] = "triangle" return end
+  local mouseCoord = Scale:getWorldMouseCoordinates()
+  mouseCoord.y = mouseCoord.y + 40 -- avoid overlap with other pop-ups
+  if self.shapes[2] == nil then 
+    self.shapes[2] = "oval" 
+    local ovalAddedPopUp = TextPopUp("Ovals added!", Graphics.NORMAL, 1.1, mouseCoord)
+    table.insert(self.popUps, ovalAddedPopUp)
+    return 
+  end
+  if self.shapes[3] == nil then 
+    self.shapes[3] = "triangle" 
+    local triangleAddedPopUp = TextPopUp("Triangles added!", Graphics.NORMAL, 1.1, mouseCoord)
+    table.insert(self.popUps, triangleAddedPopUp)
+    return 
+  end
 end
 
