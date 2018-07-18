@@ -13,7 +13,7 @@ function Timer:update(dt)
 		state = GameOver()  
 	elseif self.time <= Timer.DANGER_TIME_LEFT then
     self.color = Timer.DANGER_COLOR
-    Sound:setPitch("gameTheme", Timer.DANGER_PITCH)
+    Sound:setPitch("bgm", Timer.DANGER_PITCH)
 	end
 end
 

@@ -12,7 +12,7 @@ function GameOver:init()
   self.playAgain:setBelow(self.gameOver, 20)
   
   love.mouse.setVisible(true)
-  Sound:setPitch("gameTheme", GameOver.PITCH)  
+  Sound:setPitch("bgm", GameOver.PITCH)  
 end
 
 function GameOver:update(dt)
