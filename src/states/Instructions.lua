@@ -33,6 +33,6 @@ function Instructions:mousePressed(x, y, button, isTouch)
 end
 
 function Instructions:mouseRelease(x, y, button, istouch)
-  Sound:play("click")
+  Sound:createAndPlay("assets/audio/sfx/sfx_click.mp3", "click")
   state = Game()
 end    

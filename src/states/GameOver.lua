@@ -30,6 +30,6 @@ function GameOver:mousePressed(x, y, button, isTouch)
 end
 
 function GameOver:mouseRelease(x, y, button, istouch)
-  Sound:play("Sounds/SFX/Click.mp3", "click")
+  Sound:createAndPlay("assets/audio/sfx/sfx_click.mp3", "click")
   state = MainMenu()
 end    
