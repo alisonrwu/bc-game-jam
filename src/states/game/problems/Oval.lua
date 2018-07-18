@@ -25,7 +25,7 @@ function Oval:points(centre)
 end
 
 function Oval:pointRepresentation()
-  local pointOval = {}
+  local rep = {}
   local numOfSteps = 10
   local width, height = self.dimensions.width, self.dimensions.height
   local widthStep = width / numOfSteps
@@ -38,14 +38,14 @@ function Oval:pointRepresentation()
   local halfH = height * 0.5
   
   for i = 0, width, widthStep do
-    pointOval[#pointOval + 1] = {x = self.left.x + i, y = self.top.y + halfH - ellipseFunctionY(i - halfW)}
+    rep[#rep + 1] = {x = self.left.x + i, y = self.top.y + halfH - ellipseFunctionY(i - halfW)}
   end
   
   for i = 0, width, widthStep do
-    pointOval[#pointOval + 1] = {x = self.right.x - i, y = self.top.y + halfH + ellipseFunctionY(i - halfW)} 
+    rep[#rep + 1] = {x = self.right.x - i, y = self.top.y + halfH + ellipseFunctionY(i - halfW)} 
   end
 
-  return pointOval
+  return rep
 end
 
 function Oval:area()

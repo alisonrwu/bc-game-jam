@@ -15,39 +15,39 @@ function Rectangle:score(drawing)
 end
 
 function Rectangle:corners(centre)
-  self.topL = {x = centre.x - self.dimensions.width/2, y = centre.y - self.dimensions.height/2}
-  self.topR = {x = centre.x + self.dimensions.width/2, y = centre.y - self.dimensions.height/2}
-  self.botL = {x = centre.x - self.dimensions.width/2, y = centre.y + self.dimensions.height/2}
-  self.botR = {x = centre.x + self.dimensions.width/2, y = centre.y + self.dimensions.height/2}   
+  self.topL = {x = centre.x - self.dimensions.width * 0.5, y = centre.y - self.dimensions.height * 0.5}
+  self.topR = {x = centre.x + self.dimensions.width * 0.5, y = centre.y - self.dimensions.height * 0.5}
+  self.botL = {x = centre.x - self.dimensions.width * 0.5, y = centre.y + self.dimensions.height * 0.5}
+  self.botR = {x = centre.x + self.dimensions.width * 0.5, y = centre.y + self.dimensions.height * 0.5}   
 end
 
 function Rectangle:pointRepresentation()
-  local pointRect = {}
+  local rep = {}
   local numOfSteps = 10
   local width, height = self.dimensions.width, self.dimensions.height
   local widthStep, heightStep = width / numOfSteps, height / numOfSteps
   
   -- Top line
   for i = 0, width, widthStep do
-      pointRect[#pointRect+1] = Point(self.topL.x + i, self.topL.y)
+    rep[#rep+1] = Point(self.topL.x + i, self.topL.y)
   end
   
   -- Right line
   for i = 0, height, heightStep do
-      pointRect[#pointRect+1] = Point(self.topR.x, self.topR.y + i)
+    rep[#rep+1] = Point(self.topR.x, self.topR.y + i)
   end
   
   -- Bottom line
   for i = 0, width, widthStep do
-      pointRect[#pointRect+1] = Point(self.botR.x - i, self.botL.y)
+    rep[#rep+1] = Point(self.botR.x - i, self.botL.y)
   end
   
   -- Left line
   for i = 0, height, heightStep do
-      pointRect[#pointRect+1] = Point(self.botL.x, self.botL.y - i)
+    rep[#rep+1] = Point(self.botL.x, self.botL.y - i)
   end
   
-  return pointRect
+  return rep
 end
 
 function Rectangle:area()

@@ -8,8 +8,9 @@ function Level:init()
   self.popUps = {}
   self.speech = Speech()
   self.difficulty = 1
-  self.problem = false
   self.shapes = {"rectangle"}
+  self.problem = false
+  self:generateProblem()
 end
 
 function Level:update(dt)

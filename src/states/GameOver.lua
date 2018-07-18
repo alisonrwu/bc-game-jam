@@ -1,6 +1,7 @@
 GameOver = State:extend("GameOver", {PITCH = 0.9, CYCLE = 15})
 
 function GameOver:init()
+  love.mouse.setVisible(true)
   self.counter = 0
   
   self.gameOver = TextPlaceable("GAME OVER")

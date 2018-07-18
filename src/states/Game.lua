@@ -1,4 +1,4 @@
-Game = State:extend("Game")
+Game = State:extend("Game", {WAIT_DURATION = 1.5})
 
 function Game:update(dt)
   self.level:update(dt)
@@ -44,9 +44,7 @@ function Game:init()
   love.mouse.setVisible(false)
   self.mode = "ready"
   self.waitTimer = 0
-  self.waitDuration = 1.5
   self.level = Level()
-  self.level:generateProblem()
   self.drawing = Polygon()
   self.cursor = Cursor()
   Sound:createAndPlay("assets/audio/music/bgm_papercutter.ogg", "bgm", true, "stream")
@@ -62,7 +60,7 @@ end
 function Game:wait(dt)
   self.waitTimer = self.waitTimer + dt
   
-  if self.waitTimer >= self.waitDuration then
+  if self.waitTimer >= Game.WAIT_DURATION then
     self.waitTimer = 0
     self.mode = "ready"
     self.drawing = Polygon()
