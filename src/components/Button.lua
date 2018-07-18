@@ -6,7 +6,10 @@ function Button:init(onClick, position)
 end
 
 function Button:update(dt)
-  if self:isMouseWithinButton() and love.mouse.isDown(1) then self:onClick() end      
+end
+
+function Button:mouseRelease(x, y, button, isTouch)
+  if self.bounds:isWithin(Point(x, y)) then self:onClick() end      
 end
 
 function Button:draw()
