@@ -10,7 +10,7 @@ function Timer:update(dt)
   self.time = self.time - dt
   
   if self.time <= 0 then
-		state = GameOverState  
+		state = GameOver()  
 	elseif self.time <= Timer.DANGER_TIME_LEFT then
     self.color = Timer.DANGER_COLOR
     Sound:setPitch("gameTheme", Timer.DANGER_PITCH)
