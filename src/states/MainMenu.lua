@@ -24,7 +24,6 @@ function MainMenu:init()
 end
 
 function MainMenu:update(dt)
-  self.startButton:update(dt)
 end
 
 function MainMenu:draw()
@@ -37,6 +36,7 @@ function MainMenu:draw()
 end
 
 function MainMenu:mouseRelease(x, y, button, isTouch) 
+  self.startButton:mouseRelease(x, y, button, isTouch)
 end
 
 function MainMenu:mousePressed(x, y, button, isTouch)

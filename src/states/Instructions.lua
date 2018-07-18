@@ -30,9 +30,9 @@ function Instructions:draw()
 end
 
 function Instructions:mousePressed(x, y, button, isTouch)
-  Sound:play("click")
-  state = Game()
 end
 
 function Instructions:mouseRelease(x, y, button, istouch)
+  Sound:play("click")
+  state = Game()
 end    
