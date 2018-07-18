@@ -29,6 +29,8 @@ require "src/states/game/Level"
 
 require "src/states/game/problems/Shape"
 require "src/states/game/problems/Rectangle"
+require "src/states/game/problems/Oval"
+require "src/states/game/problems/Triangle"
 
 require "src/states/GameOver"
 require "src/states/Instructions"
