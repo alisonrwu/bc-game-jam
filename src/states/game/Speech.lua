@@ -1,4 +1,4 @@
-Speech = class("Speech", {bubble = ImagePlaceable("assets/graphics/game/hud/hud_speechbubble.png", Point(10,10))})
+Speech = class("Speech", {BUBBLE = ImagePlaceable("assets/graphics/game/hud/hud_speechbubble.png", Point(10,10))})
 
 function Speech:init(text, color)
   self.text = text or ""
@@ -7,6 +7,6 @@ function Speech:init(text, color)
 end
 
 function Speech:draw()
-  Speech.bubble:draw()
+  Speech.BUBBLE:draw()
   Graphics:drawText(self.text, self.position.x, self.position.y, "left", self.color) 
 end

@@ -11,6 +11,8 @@ function Level:init()
   self.shapes = {"rectangle"}
   self.problem = false
   self:generateProblem()
+  self.scoreCounter = TextPlaceable("Score: ", Point(baseRes.width * 0.6, baseRes.height * 0.9))
+  self.targetCounter = TextPlaceable("Target: ", Point(baseRes.width * 0.2, baseRes.height * 0.9))
 end
 
 function Level:update(dt)
@@ -19,6 +21,8 @@ function Level:update(dt)
     if popUp.alpha < 0 then table.remove(self.popUps, i) end
   end
   self.timer:update(dt)
+  self.scoreCounter:update("Score: " .. self.total)
+  self.targetCounter:update("Target: " .. self.target)
 end
 
 function Level:draw()
@@ -28,8 +32,8 @@ function Level:draw()
   end
   self.problem:draw()
   self.timer:draw()
-  Graphics:drawText("Score: " .. self.total, baseRes.width * 0.6, baseRes.height * 0.9, "left", Graphics.NORMAL)
-  Graphics:drawText("Target: " .. self.target, baseRes.width * 0.2, baseRes.height * 0.9, "left", Graphics.NORMAL)
+  self.scoreCounter:draw()
+  self.targetCounter:draw()
 end
 
 
@@ -60,7 +64,6 @@ function Level:scoreDrawing(drawing)
     targetUpPopUp.position.x = scorePopUp.position.x
     targetUpPopUp:setBelow(scorePopUp)
     table.insert(self.popUps, targetUpPopUp)
-    
     self.timer:resetTimer()
     self:increaseTarget()
     self:increaseDifficulty()
@@ -100,18 +103,22 @@ function Level:increaseDifficulty()
 end
 
 function Level:addNewShape()
-  local mouseCoord = Scale:getWorldMouseCoordinates()
-  mouseCoord.y = mouseCoord.y + 40 -- avoid overlap with other pop-ups
+  local function addPopUpAboveTarget(popUp)
+    popUp:setAbove(self.targetCounter)
+    popUp:setCentreHorizontal(self.targetCounter)
+    table.insert(self.popUps, popUp)
+  end
+  
   if self.shapes[2] == nil then 
     self.shapes[2] = "oval" 
     local ovalAddedPopUp = TextPopUp("Ovals added!", Graphics.NORMAL, 1.1, mouseCoord)
-    table.insert(self.popUps, ovalAddedPopUp)
+    addPopUpAboveTarget(ovalAddedPopUp)
     return 
   end
   if self.shapes[3] == nil then 
     self.shapes[3] = "triangle" 
     local triangleAddedPopUp = TextPopUp("Triangles added!", Graphics.NORMAL, 1.1, mouseCoord)
-    table.insert(self.popUps, triangleAddedPopUp)
+    addPopUpAboveTarget(triangleAddedPopUp)
     return 
   end
 end

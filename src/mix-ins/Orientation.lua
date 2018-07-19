@@ -27,6 +27,12 @@ function Orientation:setRight(relative, offset)
   if self.bounds then self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) end
 end
 
+function Orientation:setAlignLeftHorizontal(relative)
+  Orientation:check(self, relative)
+  self.position.x = relative.position.x
+  if self.bounds then self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) end
+end
+
 function Orientation:setCentreHorizontal(relative)
   Orientation:check(self, relative)
   self.position = Graphics:centreHorizontalRelative(self, relative)

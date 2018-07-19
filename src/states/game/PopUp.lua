@@ -1,4 +1,4 @@
-PopUp = class("PopUp", {RISE = 2, FADE = 1/60}):with(Orientation)
+PopUp = class("PopUp", {RISE = 2, FADE = 1/80}):with(Orientation)
 
 function PopUp:init(color, scale, position) 
   self.color = color or Graphics.NORMAL

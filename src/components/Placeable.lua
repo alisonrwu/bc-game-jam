@@ -4,6 +4,10 @@ function Placeable:init(position)
   self.position = position or Point()
 end
 
+function Placeable:update()
+  error("Cannot update an unspecified Placeable!")
+end
+
 function Placeable:draw()
   error("Cannot draw an unspecified Placeable!")
 end
@@ -29,6 +33,10 @@ function TextPlaceable:init(text, position, align, color)
   self.dimensions = Dimensions(font:getWidth(self.text), font:getHeight(self.text))
   self.align = align or "left"
   self.color = color or Graphics.NORMAL 
+end
+
+function TextPlaceable:update(text)
+  self.text = text
 end
 
 function TextPlaceable:draw()

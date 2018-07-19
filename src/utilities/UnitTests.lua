@@ -98,7 +98,7 @@ function UnitTests:shapeTests()
   local s = Shape(3, 4, 100)
   local cf = Shape.CONVERSION_FACTOR
   local mf = Shape.MAX_SIZE_FACTOR
-  assert(s.maxScore == 100, "shape.maxScore should have the initializd max score")
+  assert(s.maxScore == 100, "shape.maxScore should have the initialized max score")
   assert(s.bounds:instanceOf(Bounds), "shape.bounds should be Bounds object")
   assert(s.dimensionsInGameUnits == Dimensions(3, 4), "shape.dimensionsInGameUnits aren't correct")
   assert(s.dimensions == Dimensions(3 * cf, 4 * cf), "shape.dimensions aren't correct") 
