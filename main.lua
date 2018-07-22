@@ -4,6 +4,7 @@ require "src/utilities/Math"
 require "src/utilities/Scale"
 require "src/utilities/Sound"
 require "src/utilities/UnitTests"
+require "src/utilities/HighScore"
 
 require "src/mix-ins/Orientation"
 
@@ -33,9 +34,6 @@ require "src/states/GameOver"
 require "src/states/Instructions"
 require "src/states/MainMenu"
 
--- Later:
--- optimize by using locals for all utilities
--- optimize by using local for 30log
 
 function love.load(arg)
   --if arg[#arg] == "-debug" then require("mobdebug").start() end
@@ -49,7 +47,8 @@ function love.load(arg)
   love.graphics.setFont(font)  
   love.graphics.setLineWidth(3)
   baseRes = Dimensions(853, 480) -- the original resolution of the game, before scaling
-  state = Game()
+  if love.filesystem.getInfo("data_highscores") ~= nil then HighScore:loadScores() end
+  state = MainMenu()
   --runAllTests()
 end  
 

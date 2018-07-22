@@ -102,6 +102,47 @@ function UnitTests:shapeTests()
   assert(s.bounds:instanceOf(Bounds), "shape.bounds should be Bounds object")
   assert(s.dimensionsInGameUnits == Dimensions(3, 4), "shape.dimensionsInGameUnits aren't correct")
   assert(s.dimensions == Dimensions(3 * cf, 4 * cf), "shape.dimensions aren't correct") 
-  assert(s.maxSizeDimensions == Dimensions(3 * cf * mf, 4 * cf * mf), "shape.maxSizeDimensions aren't correct")
+  -- Testing out change to limit size of shape to 400 by 400.
+  --assert(s.maxSizeDimensions == Dimensions(3 * cf * mf, 4 * cf * mf), "shape.maxSizeDimensions aren't correct")
+end
+
+function UnitTests:highScoreTests()
+  local function isSame(table1, table2)
+    if #table1 ~= #table2 then return false end
+    for i = 1, #table1 do
+      if table1[i] ~= table2[i] then return false end
+    end
+    return true
+  end
+
+  HighScore:attemptToAddScore(1)
+  assert(isSame(HighScore.scores, {1}), "1 should be added")
+  HighScore:attemptToAddScore(4)
+  assert(isSame(HighScore.scores, {4, 1}), "4 should be added in the front")
+  HighScore:attemptToAddScore(3)
+  assert(isSame(HighScore.scores, {4, 3, 1}), "3 should be added in between")
+  HighScore:attemptToAddScore(2)
+  assert(isSame(HighScore.scores, {4, 3, 2}), "2 should be added at the back")
+  HighScore:attemptToAddScore(5)
+  assert(isSame(HighScore.scores, {5, 4, 3}), "5 should be added to the front")
+  HighScore:attemptToAddScore(0)  
+  assert(isSame(HighScore.scores, {5, 4, 3}), "0 should not be added")
+  
+  
+  HighScore.scores = {}
+  HighScore:attemptToAddScore(1)  
+  assert(isSame(HighScore.scores, {1}), "1 should be added")
+  HighScore:attemptToAddScore(1)  
+  assert(isSame(HighScore.scores, {1, 1}), "1 should be added")
+  HighScore:attemptToAddScore(1)  
+  assert(isSame(HighScore.scores, {1, 1, 1}), "1 should be added")
+  
+  HighScore.scores = {}
+  HighScore:attemptToAddScore(5)  
+  assert(isSame(HighScore.scores, {5}), "5 should be added")
+  HighScore:attemptToAddScore(4)  
+  assert(isSame(HighScore.scores, {5, 4}), "4 should be added")
+  HighScore:attemptToAddScore(3)  
+  assert(isSame(HighScore.scores, {5, 4, 3}), "3 should be added")
 end
 
