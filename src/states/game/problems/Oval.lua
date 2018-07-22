@@ -4,7 +4,8 @@ function Oval:init(widthInGameUnits, heightInGameUnits, maxScore)
   Oval.super:init(widthInGameUnits, heightInGameUnits, maxScore)
   self.xRad, self.yRad = self.dimensions.width * 0.5, self.dimensions.height * 0.5
   self.left, self.top, self.right, self.bot = Point(), Point(), Point(), Point()
-  self.centre = Point()
+  local default = Point(baseRes.width * 0.5 - self.dimensions.width * 0.5, baseRes.height * 0.5 - self.dimensions.height * 0.5)
+  self.centre = default
 end
 
 function Oval:draw()

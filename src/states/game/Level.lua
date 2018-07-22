@@ -1,9 +1,11 @@
-Level = class("Level", {MAX_SCORE = 160, INITIAL_TARGET = 500, EVERY_X_DIFFICULTY = 3, STARTING_TIME = 60, MAX_SHAPE_DIMEN = 6})
+Level = class("Level", {MAX_SCORE = 200, INITIAL_TARGET = 500, EVERY_X_DIFFICULTY = 3, STARTING_TIME = 60, MAX_SHAPE_DIMEN = 6, POINTS_TO_END_TUTORIAL = 400})
 
 function Level:init()
   self.total = 0
+  self.tutorial = true
   self.target = Level.INITIAL_TARGET
   self.timer = Timer()
+  self.timer:registerObserver(self)
   self.combo = Combo()
   self.popUps = {}
   self.speech = Speech()
@@ -59,6 +61,7 @@ function Level:scoreDrawing(drawing)
 
   self.total = self.total + comboMultipliedScore
   
+  if self:isTutorialOver() then self.tutorial = false end
   if self:isTargetAchieved() then
     local targetUpPopUp = TextPopUp("Target Up!", Graphics.YELLOW, 1, false)
     targetUpPopUp.position.x = scorePopUp.position.x
@@ -68,14 +71,14 @@ function Level:scoreDrawing(drawing)
     self:increaseTarget()
     self:increaseDifficulty()
   end
-  
+
   self.problem.displayAnswer = true
   Sound:createAndPlay(rating.sound.path, rating.sound.name)
 end
 
 function Level:generateProblem()
-  local randWidth = love.math.random(Level.MAX_SHAPE_DIMEN) / 2
-  local randHeight = love.math.random(Level.MAX_SHAPE_DIMEN) / 2
+  local randWidth = love.math.random(Level.MAX_SHAPE_DIMEN)
+  local randHeight = love.math.random(Level.MAX_SHAPE_DIMEN)
   local shape = self.shapes[love.math.random(1, #self.shapes)]
 
   if shape == "rectangle" then
@@ -86,11 +89,20 @@ function Level:generateProblem()
     self.problem = Triangle(randWidth, randHeight, Level.MAX_SCORE)
   end
   
-  self.speech = Speech("I need a " .. randWidth .. "W" .. " x " .. randHeight .. "L" .. " " .. self.problem.name .. "!", Graphics.NORMAL)
+  if self.tutorial then 
+    self.problem.displayAnswer = true 
+    self.speech = Speech(("Cut this %iW x %iL %s!"):format(randWidth, randHeight, self.problem.name))
+  else
+    self.speech = Speech(("I need a %iW x %iL %s!"):format(randWidth, randHeight, self.problem.name))
+  end
 end
 
 function Level:isTargetAchieved()
   return self.total >= self.target 
+end
+
+function Level:isTutorialOver()
+  return self.total >= Level.POINTS_TO_END_TUTORIAL
 end
 
 function Level:increaseTarget()
@@ -120,6 +132,14 @@ function Level:addNewShape()
     local triangleAddedPopUp = TextPopUp("Triangles added!", Graphics.NORMAL, 1.1, mouseCoord)
     addPopUpAboveTarget(triangleAddedPopUp)
     return 
+  end
+end
+
+function Level:notify(event)
+  if event == Timer.OUT_OF_TIME then
+    HighScore:attemptToAddScore(self.total)
+    HighScore:saveScores()
+    state = GameOver()
   end
 end
 

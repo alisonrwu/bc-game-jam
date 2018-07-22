@@ -2,7 +2,8 @@ Rectangle = Shape:extend("Rectangle")
 
 function Rectangle:init(widthInGameUnits, heightInGameUnits, maxScore)
   Rectangle.super:init(widthInGameUnits, heightInGameUnits, maxScore)
-  self.topL, self.topR, self.botL, self.botR = Point(), Point(), Point(), Point()
+  local default = Point(baseRes.width * 0.5 - self.dimensions.width * 0.5, baseRes.height * 0.5 - self.dimensions.height * 0.5)
+  self.topL, self.topR, self.botL, self.botR = default, Point(), Point(), Point()
 end
 
 function Rectangle:draw()
