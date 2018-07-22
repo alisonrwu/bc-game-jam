@@ -16,9 +16,14 @@ function MainMenu:init()
   self.startButton:setCentreHorizontal(self.title)
   self.startButton:setBelow(self.title, 50)
   
-  self.credits = TextPlaceable("Made by: Trevin \"terb\" Wong, Alison \"arwu\" Wu, Sean \"sdace\" Allen and Ryan \"Rye\" Wirth")
-  self.credits.position.x = 5
-  self.credits:setBelow(self.startButton, 100)
+  self.credits_1 = TextPlaceable("Made by:", nil, "center")
+  self.credits_1:setBelow(self.startButton, 60)
+    
+  self.credits_2 = TextPlaceable("Trevin Wong   Ryan Wirth", nil, "center")
+  self.credits_2:setBelow(self.credits_1)
+  
+  self.credits_3 = TextPlaceable("Alison Wu     Sean Allen", nil, "center")
+  self.credits_3:setBelow(self.credits_2)
   
   Sound:createAndPlay("assets/audio/music/bgm_mainmenu.ogg", "bgm", true, "stream")
 end
@@ -32,7 +37,9 @@ function MainMenu:draw()
   self.startButton:draw()
   --local dimensions = Dimensions.ofBounds(self.startButton.bounds)
   --Graphics:drawRect(self.startButton.bounds.minX, self.startButton.bounds.minY, dimensions.width, dimensions.height)
-  self.credits:draw()      
+  self.credits_1:draw()
+  self.credits_2:draw()
+  self.credits_3:draw()
 end
 
 function MainMenu:mouseRelease(x, y, button, isTouch) 
