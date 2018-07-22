@@ -1,10 +1,10 @@
 Graphics = {
     NORMAL = { 1, 1, 1, 1 },
-    RED = { 0.75, 0.25, 0.25, 1 },
+    RED = { 0.75, 0.3, 0.3, 1 },
     FADED = { 1, 1, 1, 0.25 },
     BLACK = { 0, 0, 0, 1 },
     GRAY = { 0.5, 0.5, 0.5, 1 },
-    GREEN = { 0.25, 0.75, 0.25, 1 },
+    GREEN = { 0.3, 0.75, 0.3, 1 },
     YELLOW = {0.75, 0.75, 0.25, 1 }
 }
 
@@ -96,14 +96,14 @@ end
 
 function Graphics:centreHorizontalRelative(object, relative)  
   local offset = relative.dimensions.width * 0.5 - object.dimensions.width * 0.5
-  local centred = Point(relative.position.x + offset, object.position.y)
+  local centred = Point(math.floor(relative.position.x + offset), math.floor(object.position.y))
 
   return centred
 end
 
 function Graphics:centreVerticalRelative(object, relative)  
   local offset = relative.dimensions.height * 0.5 - object.dimensions.height * 0.5
-  local centred = Point(object.position.x, relative.position.y + offset)
+  local centred = Point(math.floor(object.position.x), math.floor(relative.position.y + offset))
 
   return centred
 end
