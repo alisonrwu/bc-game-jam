@@ -1,14 +1,18 @@
 RatingFactory = {}
 
 function RatingFactory:rate(score)
-  if score <= 0 then
+  if score <= -Level.MAX_SCORE * 0.4 then
     return BadRating("Are you a monkey?")
+  elseif score <= -Level.MAX_SCORE * 0.2 then
+    return BadRating("My poor paper!")
+  elseif score <= 0 then
+    return BadRating("That's coming out your paycheck.")
   elseif score <= Level.MAX_SCORE * 0.2 then
-    return GoodRating("Throw away this trash!")
-  elseif score <= Level.MAX_SCORE * 0.4 then
-    return GoodRating("Still not good enough.")
-  elseif score <= Level.MAX_SCORE * 0.6 then
     return GoodRating("Barely passable...")
+  elseif score <= Level.MAX_SCORE * 0.4 then
+    return GoodRating("Don't start slacking!")
+  elseif score <= Level.MAX_SCORE * 0.6 then
+    return GoodRating("That'll do.")
   elseif score <= Level.MAX_SCORE * 0.9 then
     return GoodRating("Don't get cocky kid.")
   else
