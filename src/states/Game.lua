@@ -34,7 +34,8 @@ function Game:update(dt)
 end
 
 function Game:draw()
-  self:drawBG()
+  local gameBG = love.graphics.newImage("assets/graphics/game/bg/bg_game16x9.png")
+  Graphics:draw(gameBG, 0, 0, Graphics.NORMAL)
   self.level:draw()
   self.drawing:draw()
   self.cursor:draw(self.mode)
@@ -48,13 +49,6 @@ function Game:init()
   self.drawing = Polygon()
   self.cursor = Cursor()
   Sound:createAndPlay("assets/audio/music/bgm_papercutter.ogg", "bgm", true, "stream")
-end
-
-function Game:drawBG()
-  local gameBG = love.graphics.newImage("assets/graphics/game/bg/bg_game16x9.png")
-  local scale = love.graphics.newImage("assets/graphics/game/hud/hud_scale.png")
-  Graphics:draw(gameBG, 0, 0, Graphics.NORMAL)
-  Graphics:draw(scale, 30, baseRes.height - 105, Graphics.NORMAL)  
 end
 
 function Game:wait(dt)
