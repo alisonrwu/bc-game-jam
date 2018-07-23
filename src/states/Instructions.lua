@@ -26,7 +26,7 @@ function Instructions:setUpScreen1()
   
   local speechBubble = ImagePlaceable("assets/graphics/game/hud/hud_speechbubble.png")
   speechBubble:setCentreHorizontal(self.menuBG)
-  speechBubble:setBelow(i1, 20)
+  speechBubble:setBelow(i1, 60)
   
   local example = TextPlaceable("I want a 3W x 2L Rectangle!")
   example:setCentreHorizontal(self.menuBG)
@@ -35,16 +35,28 @@ function Instructions:setUpScreen1()
   local i2 = TextPlaceable("W = width   L = length", nil, "center")
   i2:setBelow(example, 20)
   
+  local mouseRelease = function()
+    self:setUpScreen2()
+  end
+  
+  local i6 = FlashingTextPlaceable("Press to continue!", nil, "center")
+  i6:setBelow(i2, 65)
+  
+  self.placeables = {i1, i2, speechBubble, example, i6}
+  self.onMouseRelease = mouseRelease
+end
+
+function Instructions:setUpScreen2()
   local i3 = TextPlaceable("The closer you are, the more points you get!", nil, "center")
-  i3:setBelow(i2, 60)
+  i3.position.y = baseRes.height * 0.09
 
   local i4 = TextPlaceable("Collect points to gain more time!", nil, "center")
-  i4:setBelow(i3, 10)
+  i4:setBelow(i3, 70)
   
   local i5 = TextPlaceable("If you run out of time, you're fired!", nil, "center", Graphics.RED)
-  i5:setBelow(i4, 10)
+  i5:setBelow(i4, 30)
   
-  local i6 = FlashingTextPlaceable("Click to start!", nil, "center")
+  local i6 = FlashingTextPlaceable("Press to start!", nil, "center")
   i6:setBelow(i5, 65)
   
   local mouseRelease = function()
@@ -52,7 +64,7 @@ function Instructions:setUpScreen1()
     state = Game()
   end
   
-  self.placeables = {i1, i2, speechBubble, example, i3, i4, i5, i6}
+  self.placeables = { i3, i4, i5, i6}
   self.onMouseRelease = mouseRelease
 end
 

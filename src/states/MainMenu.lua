@@ -5,7 +5,7 @@ function MainMenu:init()
 
   self.title = ImagePlaceable("assets/graphics/menu/logo_title.png")
   self.title:setCentreHorizontal(self.menuBG)
-  self.title.position.y = baseRes.height * 0.1
+  self.title.position.y = baseRes.height * 0.05
   
   local start = function() 
     Sound:createAndPlay("assets/audio/sfx/sfx_click.mp3", "click")
@@ -14,10 +14,10 @@ function MainMenu:init()
   
   self.startButton = ImageButton("assets/graphics/menu/button_start.png", start)
   self.startButton:setCentreHorizontal(self.title)
-  self.startButton:setBelow(self.title, 50)
+  self.startButton:setBelow(self.title, 20)
   
   self.credits_1 = TextPlaceable("Made by:", nil, "center")
-  self.credits_1:setBelow(self.startButton, 60)
+  self.credits_1:setBelow(self.startButton, 10)
     
   self.credits_2 = TextPlaceable("Trevin Wong   Ryan Wirth", nil, "center")
   self.credits_2:setBelow(self.credits_1)

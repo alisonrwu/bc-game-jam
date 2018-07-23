@@ -1,4 +1,4 @@
-Level = class("Level", {MAX_SCORE = 200, INITIAL_TARGET = 500, EVERY_X_DIFFICULTY = 5, STARTING_TIME = 60, MAX_SHAPE_DIMEN = 6, POINTS_TO_END_TUTORIAL = 400})
+Level = class("Level", {MAX_SCORE = 200, INITIAL_TARGET = 500, EVERY_X_DIFFICULTY = 5, STARTING_TIME = 2, MAX_SHAPE_DIMEN = 6, POINTS_TO_END_TUTORIAL = 400})
 
 function Level:init()
   self.total = 0
@@ -116,8 +116,8 @@ end
 
 function Level:addNewShape()
   local function addPopUpAboveTarget(popUp)
-    popUp:setAbove(self.targetCounter)
-    popUp:setCentreHorizontal(self.targetCounter)
+    popUp:setBelow(self.popUps[#self.popUps])
+    popUp.position.x = self.popUps[#self.popUps].position.x
     table.insert(self.popUps, popUp)
   end
   
