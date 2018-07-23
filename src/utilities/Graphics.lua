@@ -34,6 +34,11 @@ function Graphics:drawLineEllipse(x, y, w, h, c)
     love.graphics.ellipse('line', x, y, w, h)
 end
 
+function Graphics:drawLineTriangle(v1, v2, v3, c)
+  if c then self:setColor(c) end
+    love.graphics.polygon('line', v1.x, v1.y, v2.x, v2.y, v3.x, v3.y)
+end
+
 function Graphics:drawText(text, x, y, a, c)
   if c then self:setColor(c) end
     love.graphics.printf(text, x, y, baseRes.width, a) 

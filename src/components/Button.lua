@@ -21,6 +21,12 @@ function Button:isMouseWithinButton()
   return self.bounds:isWithin(mouseCoord)      
 end
 
+function Button:setPosition(pos)
+  self.position = pos
+  self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions)
+  self.bounds = Scale:worldToScreenBounds(self.bounds)
+end
+
 ImageButton = Button:extend("ImageButton")
 
 function ImageButton:init(path, onClick, position)
@@ -34,3 +40,18 @@ function ImageButton:draw()
   if not self.image then error("ImageButton does not have an image.") end
   Graphics:draw(self.image, self.position.x, self.position.y, Graphics.NORMAL)
 end
+
+TextOnImageButton = ImageButton:extend("TextOnImageButton")
+
+function TextOnImageButton:init(path, onClick, position, text)
+  TextOnImageButton.super.init(self, path, onClick, position)
+  self.text = text and TextPlaceable(text) or TextPlaceable()
+end
+
+function TextOnImageButton:draw()
+  TextOnImageButton.super.draw(self)
+  self.text:setCentreHorizontal(self)
+  self.text:setCentreVertical(self)
+  self.text:draw()
+end
+

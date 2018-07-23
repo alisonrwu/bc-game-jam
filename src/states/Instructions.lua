@@ -36,7 +36,7 @@ function Instructions:setUpScreen1()
   i2:setBelow(example, 20)
   
   local i3 = TextPlaceable("The closer you are, the more points you get!", nil, "center")
-  i3:setBelow(i2, 45)
+  i3:setBelow(i2, 60)
 
   local i4 = TextPlaceable("Collect points to gain more time!", nil, "center")
   i4:setBelow(i3, 10)
@@ -45,7 +45,7 @@ function Instructions:setUpScreen1()
   i5:setBelow(i4, 10)
   
   local i6 = FlashingTextPlaceable("Click to start!", nil, "center")
-  i6:setBelow(i5, 50)
+  i6:setBelow(i5, 65)
   
   local mouseRelease = function()
     Sound:createAndPlay("assets/audio/sfx/sfx_click.mp3", "click")

@@ -1,8 +1,8 @@
 local static = {}
 static.ofBounds = function (bounds)
-           local width = bounds.maxX - bounds.minX
-        local height = bounds.maxY - bounds.minY
-        return Dimensions(width, height) 
+  local width = bounds.maxX - bounds.minX
+  local height = bounds.maxY - bounds.minY
+  return Dimensions(width, height) 
 end
 
 Dimensions = class("Dimensions", static)

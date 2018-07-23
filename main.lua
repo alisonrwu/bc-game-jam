@@ -29,6 +29,8 @@ require "src/states/game/Level"
 
 require "src/states/game/problems/Shape"
 require "src/states/game/problems/Rectangle"
+require "src/states/game/problems/Oval"
+require "src/states/game/problems/Triangle"
 
 require "src/states/GameOver"
 require "src/states/Instructions"
@@ -36,7 +38,7 @@ require "src/states/MainMenu"
 
 
 function love.load(arg)
-  --if arg[#arg] == "-debug" then require("mobdebug").start() end
+  -- if arg[#arg] == "-debug" then require("mobdebug").start() end
   -- io.stdout:setvbuf("no")
   icon = love.image.newImageData("assets/graphics/icon.png")
   love.window.setIcon(icon)	
@@ -46,7 +48,8 @@ function love.load(arg)
   "123456789.,!?-+/():;%&`'*#=[]\"")
   love.graphics.setFont(font)  
   love.graphics.setLineWidth(3)
-  baseRes = Dimensions(853, 480) -- the original resolution of the game, before scaling
+  baseRes = Dimensions(960, 540) -- the original resolution of the game, before scaling
+  Scale:init()
   if love.filesystem.getInfo("data_highscores") ~= nil then HighScore:loadScores() end
   state = MainMenu()
   --runAllTests()

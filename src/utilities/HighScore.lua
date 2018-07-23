@@ -34,7 +34,7 @@ function HighScore:loadScores()
 end
 
 function HighScore:createScorePlaceables(startY)
-  local scoreTitlePlaceable = TextPlaceable("HIGH SCORES", nil, nil, nil, 1.2)
+  local scoreTitlePlaceable = TextPlaceable("HIGH SCORES", nil, nil, nil, 1)
   scoreTitlePlaceable.position.x = (baseRes.width * 0.5) - (scoreTitlePlaceable.dimensions.width * 0.5)
   scoreTitlePlaceable.position.y = startY
   table.insert(HighScore.scorePlaceables, scoreTitlePlaceable)
@@ -51,4 +51,8 @@ function HighScore:createScorePlaceables(startY)
     scorePlaceable:setBelow(HighScore.scorePlaceables[i], 20)
     table.insert(HighScore.scorePlaceables, scorePlaceable)
   end
+end
+
+function HighScore:endY()
+  return HighScore.scorePlaceables[#HighScore.scorePlaceables].position.y
 end
