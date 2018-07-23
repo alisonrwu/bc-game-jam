@@ -47,8 +47,9 @@ function love.load(arg)
   love.graphics.setFont(font)  
   love.graphics.setLineWidth(3)
   baseRes = Dimensions(960, 540) -- the original resolution of the game, before scaling
+  Scale:init()
   if love.filesystem.getInfo("data_highscores") ~= nil then HighScore:loadScores() end
-  state = GameOver()
+  state = MainMenu()
   --runAllTests()
 end  
 

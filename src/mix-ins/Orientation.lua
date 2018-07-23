@@ -5,44 +5,65 @@ Orientation = {}
 function Orientation:setAbove(relative, offset)
   Orientation:check(self, relative)
   self.position = Graphics:positionRelative("above", self, relative, offset)
-  if self.bounds then self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) end
+  if self.bounds then 
+    self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) 
+    self.bounds = Scale:worldToScreenBounds(self.bounds)
+  end
 end
 
 -- TO-DO: Account for text wrapping.
 function Orientation:setBelow(relative, offset)
   Orientation:check(self, relative)
   self.position = Graphics:positionRelative("below", self, relative, offset) 
-  if self.bounds then self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) end
+  if self.bounds then 
+    self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) 
+    self.bounds = Scale:worldToScreenBounds(self.bounds)
+  end
 end
 
 function Orientation:setLeft(relative, offset) 
   Orientation:check(self, relative)
   self.position = Graphics:positionRelative("left", self, relative, offset) 
-  if self.bounds then self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) end
+  if self.bounds then 
+    self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) 
+    self.bounds = Scale:worldToScreenBounds(self.bounds)
+  end
 end
 
 function Orientation:setRight(relative, offset) 
   Orientation:check(self, relative)
   self.position = Graphics:positionRelative("right", self, relative, offset)  
-  if self.bounds then self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) end
+  if self.bounds then 
+    self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) 
+    self.bounds = Scale:worldToScreenBounds(self.bounds)
+  end
 end
 
 function Orientation:setAlignLeftHorizontal(relative)
   Orientation:check(self, relative)
   self.position.x = relative.position.x
-  if self.bounds then self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) end
+  if self.bounds then 
+    self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) 
+    self.bounds = Scale:worldToScreenBounds(self.bounds)
+  end
 end
 
 function Orientation:setCentreHorizontal(relative)
   Orientation:check(self, relative)
   self.position = Graphics:centreHorizontalRelative(self, relative)
-  if self.bounds then self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) end
+  if self.bounds then 
+    self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) 
+    self.bounds = Scale:worldToScreenBounds(self.bounds)
+  end
 end
 
 function Orientation:setCentreVertical(relative)
   Orientation:check(self, relative)
   self.position = Graphics:centreVerticalRelative(self, relative)
-  if self.bounds then self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) end
+  if self.bounds then 
+    self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) 
+    self.bounds = Scale:worldToScreenBounds(self.bounds)
+  end
 end
 
 function Orientation:check(object, relative) 

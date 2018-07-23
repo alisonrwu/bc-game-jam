@@ -19,10 +19,10 @@ function GameOver:init()
     state = MainMenu()
   end
   
-  local retry = TextOnImageButton("assets/graphics/gameover/button_generic.png", onClickRetry, nil, "Retry")
+  local retry = TextOnImageButton("assets/graphics/gameover/button_thick.png", onClickRetry, nil, "Retry")
   retry:setPosition(Point(baseRes.width * 0.35 - retry.dimensions.width * 0.5, HighScore:endY() + 70))
 
-  local menu = TextOnImageButton("assets/graphics/gameover/button_generic.png", onClickMenu, nil, "Menu")
+  local menu = TextOnImageButton("assets/graphics/gameover/button_thick.png", onClickMenu, nil, "Menu")
   menu:setPosition(Point(baseRes.width * 0.65 - retry.dimensions.width * 0.5, HighScore:endY() + 70))
 
   self.placeables = {gameOver, retry, menu}
@@ -34,7 +34,6 @@ function GameOver:update(dt)
 end                            
 
 function GameOver:draw()  
-  Graphics:drawRect(0, 0, baseRes.width, baseRes.height, Graphics.BLACK)
   HighScore:draw()
   for _, v in ipairs(self.placeables) do
     v:draw()

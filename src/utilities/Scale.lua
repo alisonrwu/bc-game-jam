@@ -18,13 +18,22 @@ function Scale:draw()
   love.graphics.scale(Scale.scalingFactor)
 end
 
-function Scale:screenToWorldCoordinates(screenCoordinates)
-  local x = (screenCoordinates.x - Scale.translationX) / Scale.scalingFactor
-  local y = (screenCoordinates.y - Scale.translationY) / Scale.scalingFactor
+function Scale:worldToScreenBounds(bounds)
+  local minX = (bounds.minX * Scale.scalingFactor) + Scale.translationX
+  local maxX = (bounds.maxX * Scale.scalingFactor) + Scale.translationX
+  local minY = (bounds.minY * Scale.scalingFactor) + Scale.translationY
+  local maxY = (bounds.maxY * Scale.scalingFactor) + Scale.translationY
+  return Bounds(minX, maxX, minY, maxY)
+end
+
+function Scale:screenToWorldCoordinates(coordinates)
+  local x = (coordinates.x - Scale.translationX) / Scale.scalingFactor
+  local y = (coordinates.y - Scale.translationY) / Scale.scalingFactor
   return Point(x, y)
 end
 
 function Scale:getWorldMouseCoordinates()
   local screenCoordinates = Point(love.mouse.getX(), love.mouse.getY())
-  return Scale:screenToWorldCoordinates(screenCoordinates)
+  return screenCoordinates
+  --return Scale:screenToWorldCoordinates(screenCoordinates)
 end

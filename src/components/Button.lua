@@ -24,6 +24,7 @@ end
 function Button:setPosition(pos)
   self.position = pos
   self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions)
+  self.bounds = Scale:worldToScreenBounds(self.bounds)
 end
 
 ImageButton = Button:extend("ImageButton")
