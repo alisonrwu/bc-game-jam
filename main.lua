@@ -38,7 +38,7 @@ require "src/states/MainMenu"
 
 
 function love.load(arg)
-  --if arg[#arg] == "-debug" then require("mobdebug").start() end
+  if arg[#arg] == "-debug" then require("mobdebug").start() end
   -- io.stdout:setvbuf("no")
   icon = love.image.newImageData("assets/graphics/icon.png")
   love.window.setIcon(icon)	
@@ -51,8 +51,9 @@ function love.load(arg)
   baseRes = Dimensions(640, 360) -- the original resolution of the game, before scaling
   center = Point(baseRes.width * 0.5, baseRes.height * 0.5)
   Scale:init()
+  love.filesystem.setIdentity("paper-cut")
   dir = love.filesystem.getSaveDirectory()
-  if love.filesystem.getInfo("data_highscores") ~= nil then HighScore:loadScores() end
+  if love.filesystem.getRealDirectory("data_highscores") ~= nil then HighScore:loadScores() end
   state = Game()
   --runAllTests()
 end  
