@@ -93,6 +93,7 @@ function Math:calculateSuccessPercentage(attempt, correct, bounds)
     end
     
     local successPercentage = successes / pointsChecked
+    if successPercentage ~= successPercentage then successPercentage = 0 end -- nan is the only value that does not equal itself
     
     print("SuccessP = ", successPercentage)
     
