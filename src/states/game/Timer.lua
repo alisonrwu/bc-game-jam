@@ -17,7 +17,10 @@ function Timer:update(dt)
 	elseif self.time <= Timer.DANGER_TIME_LEFT then
     self.color = Timer.DANGER_COLOR
     Sound:setPitch("bgm", Timer.DANGER_PITCH)
-	end
+	else 
+    self.color = Graphics.NORMAL
+    Sound:setPitch("bgm", 1)
+  end
 end
 
 function Timer:registerObserver(observer)
