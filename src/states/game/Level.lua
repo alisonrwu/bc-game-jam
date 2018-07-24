@@ -1,4 +1,4 @@
-Level = class("Level", {MAX_SCORE = 200, INITIAL_TARGET = 500, EVERY_X_DIFFICULTY = 5, STARTING_TIME = 60, MAX_SHAPE_DIMEN = 6, POINTS_TO_END_TUTORIAL = 400})
+Level = class("Level", {MAX_SCORE = 200, INITIAL_TARGET = 500, EVERY_X_DIFFICULTY = 5, STARTING_TIME = 30, MAX_SHAPE_DIMEN = 6, POINTS_TO_END_TUTORIAL = 400, TARGET_MULTIPLIER = 0.5})
 
 function Level:init()
   self.total = 0
@@ -106,7 +106,7 @@ function Level:isTutorialOver()
 end
 
 function Level:increaseTarget()
-  self.target = self.target + self.target * 0.5
+  self.target = math.floor(self.target + self.target * Level.TARGET_MULTIPLIER)
 end
 
 function Level:increaseDifficulty()

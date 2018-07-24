@@ -1,4 +1,4 @@
-Shape = class("Shape", {CONVERSION_FACTOR = 40, REDUCTION_FACTOR = 0.5, MAX_SIZE_FACTOR = 2})
+Shape = class("Shape", {CONVERSION_FACTOR = 40, REDUCTION_FACTOR = 0.5, MAX_SIZE_FACTOR = 2, CORRECT_THRESHOLD = 0.5})
 
 function Shape:init(widthInGameUnits, heightInGameUnits, maxScore)
   self.maxScore = maxScore 
@@ -32,13 +32,13 @@ function Shape:pointRepresentation()
 end
 
 function Shape:transformSuccessPercentage(successPercentage)
-  local transformedPercentage = successPercentage - 0.5
+  local transformedPercentage = successPercentage - Shape.CORRECT_THRESHOLD
   if transformedPercentage >= 0 then transformedPercentage = 2 * transformedPercentage end
 
   local score = transformedPercentage * self.maxScore
   if score > self.maxScore then score = self.maxScore end
   
-  return score
+  return math.floor(score)
 end
 
 function Shape:area()
