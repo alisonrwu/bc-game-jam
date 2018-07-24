@@ -5,9 +5,12 @@ function Combo:init()
 end
 
 function Combo:multiply(score) 
-  local multiplied = score * self.multiplier
-  self:update(multiplied)
-  return multiplied
+  self:update(score)
+  if score > 0 then 
+    return score * self.multiplier
+  else
+    return score
+  end
 end
 
 function Combo:update(score)
