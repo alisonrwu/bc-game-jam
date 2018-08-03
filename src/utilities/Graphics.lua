@@ -3,9 +3,12 @@ Graphics = {
     RED = { 0.75, 0.3, 0.3, 1 },
     FADED = { 1, 1, 1, 0.25 },
     BLACK = { 0, 0, 0, 1 },
+    WHITE = { 1, 1, 1, 1 },
     GRAY = { 0.5, 0.5, 0.5, 1 },
+    DARKGRAY = {0.25, 0.25, 0.25, 1},
     GREEN = { 0.3, 0.75, 0.3, 1 },
-    YELLOW = {0.75, 0.75, 0.25, 1 }
+    YELLOW = {0.85, 0.85, 0.2, 1 },
+    GONE = {0, 0, 0, 0 }
 }
 
 function Graphics:setColor(c)    
@@ -37,6 +40,11 @@ end
 function Graphics:drawLineTriangle(v1, v2, v3, c)
   if c then self:setColor(c) end
     love.graphics.polygon('line', v1.x, v1.y, v2.x, v2.y, v3.x, v3.y)
+end
+
+function Graphics:drawPolygon(points, c)
+  if c then self:setColor(c) end
+    love.graphics.polygon('line', points)  
 end
 
 function Graphics:drawText(text, x, y, a, c)

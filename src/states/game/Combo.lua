@@ -1,7 +1,9 @@
-Combo = class("Combo", {baseMultiplier = 1, increase = 0.5})
+Combo = class("Combo")
+Combo.static.BASE_MULTIPLIER = 1
+Combo.static.INCREASE = 0.5
 
-function Combo:init()
-  self.multiplier = Combo.baseMultiplier
+function Combo:initialize()
+  self.multiplier = Combo.BASE_MULTIPLIER
 end
 
 function Combo:multiply(score) 
@@ -15,8 +17,8 @@ end
 
 function Combo:update(score)
   if score >= Level.MAX_SCORE * 0.5 then
-    self.multiplier = self.multiplier + Combo.increase
+    self.multiplier = self.multiplier + Combo.INCREASE
   else
-    self.multiplier = Combo.baseMultiplier
+    self.multiplier = Combo.BASE_MULTIPLIER
   end  
 end

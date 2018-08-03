@@ -22,20 +22,32 @@ end
 
 Rating = class("Rating")
 
-function Rating:init(text, color, sound)
+function Rating:initialize(text, color, sound)
   self.text = text or ""
   self.color = color or Graphics.NORMAL
   self.sound = sound or {}
 end
 
-GoodRating = Rating:extend("GoodRating")
-
-function GoodRating:init(text)
-  self.super.init(self, text, Graphics.GREEN, {path = "assets/audio/sfx/sfx_goodcut.wav", name = "correct"})
+function Rating:__tostring()
+  return "Rating"
 end
 
-BadRating = Rating:extend("BadRating")
+GoodRating = Rating:subclass("GoodRating")
 
-function BadRating:init(text)
-  self.super.init(self, text, Graphics.RED, {path = "assets/audio/sfx/sfx_badcut.wav", name = "wrong"})
+function GoodRating:initialize(text)
+  Rating.initialize(self, text, Graphics.GREEN, {path = "assets/audio/sfx/sfx_goodcut.wav", name = "correct"})
+end
+
+function GoodRating:__tostring()
+  return "GoodRating"
+end
+
+BadRating = Rating:subclass("BadRating")
+
+function BadRating:initialize(text)
+  Rating.initialize(self, text, Graphics.RED, {path = "assets/audio/sfx/sfx_badcut.wav", name = "wrong"})
+end
+
+function BadRating:__tostring()
+  return "BadRating"
 end

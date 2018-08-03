@@ -1,6 +1,10 @@
-Shape = class("Shape", {CONVERSION_FACTOR = 40, REDUCTION_FACTOR = 0.5, MAX_SIZE_FACTOR = 2, CORRECT_THRESHOLD = 0.5})
+Shape = class("Shape")
+Shape.static.CONVERSION_FACTOR = 40
+Shape.static.REDUCTION_FACTOR = 0.2
+Shape.static.MAX_SIZE_FACTOR = 2
+Shape.static.CORRECT_THRESHOLD = 0.5
 
-function Shape:init(widthInGameUnits, heightInGameUnits, maxScore)
+function Shape:initialize(widthInGameUnits, heightInGameUnits, maxScore)
   self.maxScore = maxScore 
   self.bounds = Bounds()
   self.dimensionsInGameUnits = Dimensions(widthInGameUnits, heightInGameUnits)
@@ -22,7 +26,7 @@ function Shape:score(drawing)
     local maxBounds = Math:calculateMaximumBounds(drawing.bounds, self.bounds)
     successPercentage = Math:calculateSuccessPercentageOptimized(drawing.points, self:pointRepresentation(), maxBounds, Shape.REDUCTION_FACTOR)
   end
-  
+
   score = self:transformSuccessPercentage(successPercentage)
   return score
 end

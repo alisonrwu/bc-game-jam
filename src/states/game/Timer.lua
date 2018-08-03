@@ -1,6 +1,10 @@
-Timer = class("Timer", {DANGER_TIME_LEFT = 15, DANGER_COLOR = Graphics.RED, DANGER_PITCH = 1.2, OUT_OF_TIME = "OUT_OF_TIME"})
+Timer = class("Timer")
+Timer.static.DANGER_TIME_LEFT = 15
+Timer.static.DANGER_PITCH = 1.2
+Timer.static.DANGER_COLOR = Graphics.RED
+Timer.static.OUT_OF_TIME = "OUT_OF_TIME"
 
-function Timer:init()
+function Timer:initialize()
   self.observers = {}
   self.color = Graphics.NORMAL
   self.time = Level.STARTING_TIME

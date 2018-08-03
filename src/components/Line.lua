@@ -1,6 +1,6 @@
 Line = class("Line")
 
-function Line:init(p1, p2)
+function Line:initialize(p1, p2)
   self.p1, self.p2 = p1 or Point(), p2 or Point()
 end
 

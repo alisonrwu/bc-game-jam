@@ -1,7 +1,7 @@
-Rectangle = Shape:extend("Rectangle")
+Rectangle = Shape:subclass("Rectangle")
 
-function Rectangle:init(widthInGameUnits, heightInGameUnits, maxScore)
-  Rectangle.super:init(widthInGameUnits, heightInGameUnits, maxScore)
+function Rectangle:initialize(widthInGameUnits, heightInGameUnits, maxScore)
+  Shape.initialize(self, widthInGameUnits, heightInGameUnits, maxScore)
   local default = Point(baseRes.width * 0.5 - self.dimensions.width * 0.5, baseRes.height * 0.5 - self.dimensions.height * 0.5)
   self.topL, self.topR, self.botL, self.botR = default, Point(), Point(), Point()
 end
@@ -49,8 +49,4 @@ function Rectangle:pointRepresentation()
   end
   
   return rep
-end
-
-function Rectangle:area()
-  return self.dimensions.width * self.dimensions.height
 end

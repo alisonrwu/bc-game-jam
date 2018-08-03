@@ -1,7 +1,7 @@
-Triangle = Shape:extend("Triangle")
+Triangle = Shape:subclass("Triangle")
 
-function Triangle:init(widthInGameUnits, heightInGameUnits, maxScore)
-  Triangle.super:init(widthInGameUnits, heightInGameUnits, maxScore)
+function Triangle:initialize(widthInGameUnits, heightInGameUnits, maxScore)
+  Shape.initialize(self, widthInGameUnits, heightInGameUnits, maxScore)
   self.vertice_1, self.vertice_2, self.vertice_3 = Point(), Point(), Point()
 end
 
@@ -15,9 +15,9 @@ function Triangle:score(drawing)
 end
 
 function Triangle:vertices(centre)
-  self.vertice_1 = {x = centre.x - self.dimensions.width * 0.5, y = centre.y + self.dimensions.height * 0.5}
-  self.vertice_2 = {x = centre.x, y = centre.y - self.dimensions.height * 0.5}
-  self.vertice_3 = {x = centre.x + self.dimensions.width * 0.5, y = centre.y + self.dimensions.height * 0.5}
+  self.vertice_1 = Point(centre.x - self.dimensions.width * 0.5, centre.y + self.dimensions.height * 0.5)
+  self.vertice_2 = Point(centre.x, centre.y - self.dimensions.height * 0.5)
+  self.vertice_3 = Point(centre.x + self.dimensions.width * 0.5, centre.y + self.dimensions.height * 0.5)
 end
 
 function Triangle:pointRepresentation()
@@ -46,11 +46,4 @@ function Triangle:pointRepresentation()
   end
   
   return rep
-end
-
-function Triangle:area()
-  local term_1 = self.vertice_1.x * (self.vertice_2.y - self.vertice_3.y) -- Ax(By - Cy)
-  local term_2 = self.vertice_2.x * (self.vertice_3.y - self.vertice_1.y) -- Ax(By - Cy)
-  local term_3 = self.vertice_3.x * (self.vertice_1.y - self.vertice_2.y) -- Ax(By - Cy)
-  return math.abs((term_1 + term_2 + term_3) * 0.5)
 end

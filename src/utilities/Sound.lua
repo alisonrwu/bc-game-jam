@@ -33,6 +33,10 @@ function Sound:create(source, tag, loop, soundType)
   Sound.sources[tag] = src
 end    
 
+function Sound:tagExists(tag)
+  return Sound.sources[tag]
+end
+
 -- Plays a source by its tag.
 -- @param tag The tag assigned to the source.
 function Sound:play(tag)
