@@ -49,6 +49,16 @@ function ImageButton:initialize(path, onClick, position, color, name)
   self.color = color or Graphics.NORMAL
 end
 
+function ImageButton:setColor(color)
+  self.color = color
+end
+
+function ImageButton:setImage(path)
+  self.image = path and love.graphics.newImage(path) or false
+  self.dimensions = self.image and Dimensions(self.image:getWidth(), self.image:getHeight()) or Dimensions()
+  self.bounds = self.image and Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) or Bounds()
+end
+
 function ImageButton:draw()
   if not self.image then error("ImageButton does not have an image.") end
   Graphics:draw(self.image, self.position.x, self.position.y, self.color)

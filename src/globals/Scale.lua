@@ -19,7 +19,7 @@ end
 function Scale:draw()
   love.graphics.scale(self.unflooredFactor)
   local stateName = tostring(state)
-  if stateName == "MainMenu" or stateName == "Instructions" or stateName == "Shop" or stateName == "Details" or stateName == "Achievements" then 
+  if stateName == "MainMenu" or stateName == "Instructions" or stateName == "Shop" or stateName == "Details" or stateName == "Achievements" or stateName == "Options" then 
     self.menuBG:draw()
   elseif stateName == "Game" then
     self.gameBG:draw()

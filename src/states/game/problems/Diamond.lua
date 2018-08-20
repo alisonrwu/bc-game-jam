@@ -59,3 +59,7 @@ function Diamond:pointRepresentation()
   return rep
 end
 
+function Diamond:__tostring()
+  return "Diamond"
+end
+

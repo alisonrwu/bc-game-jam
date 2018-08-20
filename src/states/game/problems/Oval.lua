@@ -48,3 +48,7 @@ function Oval:pointRepresentation()
 
   return rep
 end
+
+function Oval:__tostring()
+  return "Oval"
+end

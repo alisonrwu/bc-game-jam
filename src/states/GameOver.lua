@@ -5,7 +5,7 @@ GameOver.static.PITCH = 0.9
 
 function GameOver:initialize(score)
   local placeables = {}
-  local score = score or 100
+  local score = score or 0
   love.mouse.setVisible(true)
   Sound:stop("bgm")
   
@@ -39,11 +39,11 @@ function GameOver:initialize(score)
     state = MainMenu()
   end
   
-  local retry = TextOnImageButton("assets/graphics/gameover/button_thin.png", onClickRetry, nil, "Retry", Graphics.GONE)
-  retry:setPosition(Point(baseRes.width * 0.35 - retry.dimensions.width * 0.5, highScore:endY() + 45))
+  local retry = TextOnImageButton("assets/graphics/misc/button_thin.png", onClickRetry, nil, "Retry", Graphics.GONE)
+  retry:setPosition(Point(baseRes.width * 0.375 - retry.dimensions.width * 0.5, highScore:endY() + 45))
 
-  local menu = TextOnImageButton("assets/graphics/gameover/button_thin.png", onClickMenu, nil, "Menu", Graphics.GONE)
-  menu:setPosition(Point(baseRes.width * 0.65 - retry.dimensions.width * 0.5, highScore:endY() + 45))
+  local menu = TextOnImageButton("assets/graphics/misc/button_thin.png", onClickMenu, nil, "Menu", Graphics.GONE)
+  menu:setPosition(Point(baseRes.width * 0.625 - retry.dimensions.width * 0.5, highScore:endY() + 45))
   
   local placeables = {gameOver, yourScore, retry, menu}
   

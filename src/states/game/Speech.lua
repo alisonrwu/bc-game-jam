@@ -1,12 +1,14 @@
 Speech = class("Speech")
-Speech.static.BUBBLE = ImagePlaceable("assets/graphics/game/hud/hud_speechbubble.png", Point(10,10))
+Speech.static.BUBBLE = ImagePlaceable("assets/graphics/game/hud/hud_speechbubble.png", Point(6,8))
 
 function Speech:initialize(text, color)
   self.text = text or ""
   self.iteratedText = ""
+  Sound:create("assets/audio/sfx/sfx_blipmale_11.wav", "blipmale", false)
+  Sound:create("assets/audio/sfx/sfx_blipfemale_11.wav", "blipfemale", false)
   self.iterationIndex = 1
   self.blip = "male"
-  self.position = Point(20, 20)
+  self.position = Point(25, 17)
   self.color = color or Graphics.NORMAL
   self.iterate = true
 end

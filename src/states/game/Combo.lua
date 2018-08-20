@@ -6,8 +6,8 @@ function Combo:initialize()
   self.multiplier = Combo.BASE_MULTIPLIER
 end
 
-function Combo:multiply(score) 
-  self:update(score)
+function Combo:multiply(score, successPercentage) 
+  self:update(successPercentage)
   if score > 0 then 
     return score * self.multiplier
   else
@@ -15,10 +15,11 @@ function Combo:multiply(score)
   end
 end
 
-function Combo:update(score)
-  if score >= Level.MAX_SCORE * 0.5 then
+function Combo:update(successPercentage)
+  if successPercentage >= Shape.CORRECT_THRESHOLD then
     self.multiplier = self.multiplier + Combo.INCREASE
   else
     self.multiplier = Combo.BASE_MULTIPLIER
+    -- dropped multiplier sound
   end  
 end

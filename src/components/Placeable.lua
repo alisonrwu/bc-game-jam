@@ -68,7 +68,7 @@ end
 
 TextPlaceable = Placeable:subclass("TextPlaceable")
 
-function TextPlaceable:initialize(text, position, align, color, scale)
+function TextPlaceable:initialize(text, position, align, color, scale, limit)
   Placeable.initialize(self, position, scale)
   self.text = text or ""
   if self.text ~= "" then
@@ -81,6 +81,7 @@ function TextPlaceable:initialize(text, position, align, color, scale)
   self:updateBounds()
   self.align = align or "left"
   self.color = color or Graphics.NORMAL 
+  self.limit = limit or baseRes.width
 end
 
 function TextPlaceable:update(dt, text)
@@ -94,8 +95,26 @@ function TextPlaceable:update(dt, text)
   self:updateBounds()
 end
 
+function TextPlaceable:setText(text)
+  if text then 
+    self.text = text 
+    self.dimensions = Dimensions(font:getWidth(self.text) * self.scale, font:getHeight(self.text) * self.scale)
+    self.dimensions.height = self.dimensions.height + (self.dimensions.height * math.floor(self.dimensions.width / baseRes.width))
+    if self.dimensions.width >= baseRes.width then self.dimensions.width = baseRes.width end
+  end  
+  self:updateBounds()
+end
+
+function TextPlaceable:setLimit(limit)
+  self.limit = limit
+end
+
 function TextPlaceable:draw()
-  Graphics:drawTextWithScale(self.text, self.position.x, self.position.y, self.align, self.scale, self.color)
+  if self.limit then 
+    Graphics:drawTextWithScaleAndLimit(self.text, self.position.x, self.position.y, self.align, self.scale, self.limit, self.color) 
+  else
+    Graphics:drawTextWithScale(self.text, self.position.x, self.position.y, self.align, self.scale, self.color)  
+  end
 end
 
 FlashingTextPlaceable = TextPlaceable:subclass("FlashingTextPlaceable")

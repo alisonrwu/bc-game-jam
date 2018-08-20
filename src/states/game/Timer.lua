@@ -3,17 +3,17 @@ Timer.static.DANGER_TIME_LEFT = 15
 Timer.static.DANGER_PITCH = 1.2
 Timer.static.DANGER_COLOR = Graphics.RED
 Timer.static.OUT_OF_TIME = "OUT_OF_TIME"
+Timer.static.RESET_TIME = Level.STARTING_TIME
 
 function Timer:initialize()
   self.observers = {}
   self.color = Graphics.NORMAL
   self.time = Level.STARTING_TIME
-  self.position = Point(25, 55)
+  self.timePlayed = 0
+  self.position = Point(25, 56)
 end
 
 function Timer:update(dt)
-  self.time = self.time - dt
-  
   if self.time <= 0 then 
     for _, obs in ipairs(self.observers) do
       obs:notify(Timer.OUT_OF_TIME)
@@ -25,6 +25,8 @@ function Timer:update(dt)
     self.color = Graphics.NORMAL
     Sound:setPitch("bgm", 1)
   end
+  self.time = self.time - dt
+  self.timePlayed = self.timePlayed + dt
 end
 
 function Timer:registerObserver(observer)
@@ -36,5 +38,5 @@ function Timer:draw()
 end
 
 function Timer:resetTimer()
-  self.time = Level.STARTING_TIME
+  self.time = Timer.RESET_TIME
 end

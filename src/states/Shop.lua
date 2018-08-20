@@ -1,4 +1,5 @@
-Shop = State:subclass("Shop"):include(Observer)
+Shop = State:subclass("Shop"):include(Observer):include(Observable)
+Shop.static.BOUGHT_ITEM = "BOUGHT_ITEM"
 
 function Shop:initialize()
   self.items = {}
@@ -6,31 +7,35 @@ function Shop:initialize()
   self:loadItems()
   self.currentPage = 1
   self.pageLimit = math.ceil(#self.items / 4)
-  self.prevButton = ImageButton("assets/graphics/shop/hud_leftarrowbig.png", nil, nil, nil, "prevButton")
+  self.prevButton = ImageButton("assets/graphics/misc/hud_leftarrow.png", nil, nil, nil, "prevButton")
   self.prevButton:setRightOfPoint(Point(0, baseRes.height * 0.5 - self.prevButton.dimensions.height * 0.5), 20)
   self.prevButton:registerObserver(self)
-  self.nextButton = ImageButton("assets/graphics/shop/hud_rightarrowbig.png", nil, nil, nil, "nextButton")
+  self.nextButton = ImageButton("assets/graphics/misc/hud_rightarrow.png", nil, nil, nil, "nextButton")
   self.nextButton:setLeftOfPoint(Point(baseRes.width, baseRes.height * 0.5 - self.nextButton.dimensions.height * 0.5), 20 )
   self.nextButton:registerObserver(self)
-  self.title = TextPlaceable("SHOP")
+  self.title = TextPlaceable(("SHOP (%i/%i)"):format(self:getBoughtItems(), self:getMaxItems()))
   self.title:setCentreHorizontalScreen()
   self.title.position.y = 10
-  self.extraText = false
+  self.extraText = TextPlaceable("Click to buy!")
+  self.extraText:setCentreHorizontalScreen()
+  self.extraText.position.y = baseRes.height - self.extraText.dimensions.height - 5
   local goBack = function()
-    self:saveItems()
     state = MainMenu()
   end
-  self.backButton = ImageButton("assets/graphics/globals/hud_back.png", goBack)
+  self.backButton = ImageButton("assets/graphics/misc/hud_backarrow.png", goBack)
   self.backButton:setLeftOfPoint(Point(baseRes.width, 10), 15)
   self:updateButtonVisibility()
+  self:registerObserver(user)
 end
 
 function Shop:saveItems()
   local itemsData = {}
   for i = 1, #self.items do
     local item = self.items[i]
-    local itemData = item:getData()
-    itemsData[#itemsData + 1] = itemData
+    if tostring(item) == "Item" then
+      local itemData = item:getData()
+      itemsData[#itemsData + 1] = itemData
+    end
   end
   bitser.dumpLoveFile("data_shop", itemsData)
 end
@@ -41,16 +46,42 @@ function Shop:loadItems()
     local itemsData = bitser.loadLoveFile("data_shop") 
     for i = 1, #self.items do
       local item = self.items[i]
-      local data = itemsData[i]
-      item:setData(data)
+      if tostring(item) == "Item" then
+        local data = itemsData[i]
+        item:setData(data)
+      end
     end
   end
   self:positionItems()
 end
 
+function Shop:getBoughtItems()
+  local amount = 0
+  for i = 1, #self.items do
+    local item = self.items[i]
+    if tostring(item) == "Item" then
+      local bought = item.bought
+      if bought then amount = amount + 1 end
+    end
+  end
+  return amount
+end
+
+function Shop:getMaxItems()
+  local amount = 0
+  for i = 1, #self.items do
+    local item = self.items[i]
+    if tostring(item) == "Item" then
+      amount = amount + 1
+    end
+  end
+  return amount
+end
+
 function Shop:update(dt)
   salary:update(dt)
   if self.extraText then self.extraText:update(dt) end
+  self.title:setText(("SHOP (%i/%i)"):format(self:getBoughtItems(), self:getMaxItems()))
 end
 
 function Shop:draw()
@@ -84,15 +115,22 @@ end
 function Shop:updateButtonVisibility()
   if self.currentPage == 1 then
     self.prevButton.color = Graphics.GONE
+    self.nextButton.color = Graphics.NORMAL
   end 
   
   if self.currentPage == self.pageLimit then
+    self.prevButton.color = Graphics.NORMAL
     self.nextButton.color = Graphics.GONE
   end
   
   if self.currentPage ~= 1 and self.currentPage ~= self.pageLimit then
     self.prevButton.color = Graphics.NORMAL
     self.nextButton.color = Graphics.NORMAL
+  end
+  
+  if self.currentPage == 1 and self.currentPage == self.pageLimit then
+    self.prevButton.color = Graphics.GONE
+    self.nextButton.color = Graphics.GONE
   end
 end
 
@@ -112,6 +150,8 @@ function Shop:notify(event, args)
     print("Buy success")
     Sound:createAndPlay("assets/audio/sfx/sfx_buy.wav", "buy")
     self:setExtraText("Click to equip!", 2.5, Graphics.NORMAL)
+    self:saveItems()
+    self:notifyObservers(Shop.BOUGHT_ITEM, {boughtItems = self:getBoughtItems(), maxItems = self:getMaxItems()}) 
   elseif event == Item.static.BUY_FAIL then
     Sound:createAndPlay("assets/audio/sfx/sfx_error.wav", "error")   
     self:setExtraText("Not enough money!", 1.5, Graphics.RED)
@@ -134,9 +174,14 @@ end
 function Shop:positionItems()
   for i = 1, #self.items, 4 do
     local topLeft = self.items[i]
-    local topRight = self.items[i + 1] or ShapePlaceable("Rectangle", nil, Dimensions(190, 120), Graphics.GONE)
-    local botLeft = self.items[i + 2] or ShapePlaceable("Rectangle", nil, Dimensions(190, 120), Graphics.GONE)
-    local botRight = self.items[i + 3] or ShapePlaceable("Rectangle", nil, Dimensions(190, 120), Graphics.GONE)
+    
+    if self.items[i + 1] == nil then self.items[i + 1] = ShapePlaceable("Rectangle", nil, Dimensions(190, 120), Graphics.GONE) end
+    if self.items[i + 2] == nil then self.items[i + 2] = ShapePlaceable("Rectangle", nil, Dimensions(190, 120), Graphics.GONE) end
+    if self.items[i + 3] == nil then self.items[i + 3] = ShapePlaceable("Rectangle", nil, Dimensions(190, 120), Graphics.GONE) end  
+    
+    local topRight = self.items[i + 1]
+    local botLeft = self.items[i + 2]
+    local botRight = self.items[i + 3]
     
     if topRight.position == Point(0, 0) then
       topRight:setRight(topLeft, 20)

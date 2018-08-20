@@ -1,6 +1,6 @@
 PopUp = class("PopUp"):include(Orientation)
 PopUp.RISE = 2
-PopUp.FADE = 1/80
+PopUp.FADE = 1/90
 
 function PopUp:initialize(color, scale, position) 
   self.color = color or Graphics.NORMAL
@@ -11,8 +11,10 @@ end
 
 function PopUp:update()
   local oldPosition = self.position.y
-  self.position.y = self.position.y - PopUp.RISE
-  self.alpha = self.alpha - PopUp.FADE
+  local rise = self.rise and self.rise or PopUp.RISE
+  local fade = self.fade and self.fade or PopUp.FADE
+  self.position.y = self.position.y - rise
+  self.alpha = self.alpha - fade
 end
 
 function PopUp:draw()
@@ -21,6 +23,14 @@ end
 
 function PopUp:setPosition(position)
   self.position = position
+end
+
+function PopUp:setRise(rise)
+  self.rise = rise
+end
+
+function PopUp:setFade(fade)
+  self.fade = fade
 end
 
 TextPopUp = PopUp:subclass("TextPopUp")

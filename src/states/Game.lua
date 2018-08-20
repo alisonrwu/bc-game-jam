@@ -13,17 +13,18 @@ function Game:update(dt)
     if self.drawing.closed or not love.mouse.isDown(1) then 
       self.mode = "score" 
     elseif not self.drawing:isMouseAtSamePoint() then
-      Sound:play("sfx_cutting")
+      Sound:play("cutting")
+      local drawPt = self:getDrawPoint()
       self.cursor:update(self.drawing.lines)
-      local mouseCoord = scale:getWorldMouseCoordinates()
-      self.drawing:insertPoint(mouseCoord)
+      self.drawing:insertPoint(drawPt)
     else
-      Sound:stop("sfx_cutting")
+      Sound:stop("cutting")
     end
   end
   
   if self.mode == "score" then
-    Sound:play("sfx_snip")
+    Sound:stop("cutting")
+    Sound:play("snip")
     self.drawing:updateValues()
     self.level:scoreDrawing(self.drawing) 
     self.mode = "wait"
@@ -40,17 +41,17 @@ function Game:draw()
   self.cursor:draw(self.mode)
 end
 
-function Game:initialize()  
+function Game:initialize(mode)
   love.mouse.setVisible(false)
   user:applyModifiers()
   self.mode = "ready"
   self.waitTimer = 0
   self.bg = ImagePlaceable("assets/graphics/game/bg/bg_game16x9.png")
-  self.level = Level()
+  self.level = Level(mode)
   self.drawing = Polygon()
   self.cursor = Cursor()
-  Sound:create("assets/audio/sfx/sfx_blipmale.wav", "blipmale", false)
-  Sound:create("assets/audio/sfx/sfx_blipfemale.wav", "blipfemale", false)
+  Sound:create("assets/audio/sfx/sfx_cutting.ogg", "cutting", false)
+  Sound:create("assets/audio/sfx/sfx_snip.ogg", "snip", false)
   Sound:createAndPlay("assets/audio/music/bgm_papercutter.ogg", "bgm", true, "stream")
 end
 
@@ -63,6 +64,11 @@ function Game:wait(dt)
     self.drawing = Polygon()
     self.level:generateProblem()
   end
+end
+
+function Game:getDrawPoint()
+  local mouseCoord = scale:getWorldMouseCoordinates()
+  return mouseCoord
 end
 
 function Game:mouseRelease(x, y, button, isTouch) 

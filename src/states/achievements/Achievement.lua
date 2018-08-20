@@ -1,7 +1,9 @@
-Achievement = class("Achievement"):include(Orientation):include(Observable)
+Achievement = class("Achievement"):include(Orientation):include(Observable):include(Observer)
+Achievement.static.UNLOCKED = "UNLOCKED"
+Achievement.static.LOCKED = "LOCKED"
 
-function Achievement:initialize(text, achievementIndex)
-  self.panel = ImagePlaceable("assets/graphics/detailbutton.png")
+function Achievement:initialize(text, description, notify, maxProgress)
+  self.panel = ImagePlaceable("assets/graphics/misc/button_achievement.png")
   self.panel.color = Graphics.DARKGRAY
   
   self.title = TextPlaceable(text, nil, nil, nil, 0.5)
@@ -9,21 +11,26 @@ function Achievement:initialize(text, achievementIndex)
   self.title:setCentreVertical(self.panel)
   self.title.color = Graphics.DARKGRAY
   
-  self.lockedText = TextPlaceable("LOCKED")
-  self.lock = ImagePlaceable("assets/graphics/shop/hud_lock.png") 
-  self.lock:setLeft(self.lockedText, 5)
-  self.lock:setCentreVertical(self.lockedText)
-  self.lockedDisplay = GroupPlaceable({self.lock, self.lockedText})
-  self.lockedDisplay.color = Graphics.NORMAL
-  self.lockedDisplay:setCentreHorizontal(self.panel)
-  self.lockedDisplay:setCentreVertical(self.panel)
+  self.description = description
+  self.notify = notify
+  
+--  self.lockedText = TextPlaceable("LOCKED")
+--  self.lock = ImagePlaceable("assets/graphics/misc/hud_lock.png") 
+--  self.lock:setLeft(self.lockedText, 5)
+--  self.lock:setCentreVertical(self.lockedText)
+--  self.lockedDisplay = GroupPlaceable({self.lock, self.lockedText})
+--  self.lockedDisplay.color = Graphics.NORMAL
+--  self.lockedDisplay:setCentreHorizontal(self.panel)
+--  self.lockedDisplay:setCentreVertical(self.panel)
+  
+  self.progress = 0
+  self.maxProgress = maxProgress
   
   self.dimensions = self.panel.dimensions
   self.bounds = Bounds.ofTopLeftAndDimensions(self.panel.position, self.dimensions)
   self.position = self.panel.position
 
   self.unlocked = false
-  self.achievementIndex = achievementIndex or 1
   
   self.observers = {}
   self.placeables = {self.panel, self.title, self.lockedDisplay}
@@ -37,18 +44,20 @@ end
 
 function Achievement:onClick()
   if self.unlocked then
-    self:notifyObservers(Achievement.UNLOCKED)
+    self:notifyObservers(Achievement.UNLOCKED, {description = self.description}) 
   else
-    self.notifyObservers(Achievement.LOCKED)
+    self:notifyObservers(Achievement.LOCKED, {description = self.description, progress = self.progress, maxProgress = self.maxProgress})
   end
 end
 
 function Achievement:setUnlocked(boolean)
   self.unlocked = boolean
   if not self.unlocked then
-    self.lockedDisplay:setColor(Graphics.NORMAL)
+--    self.lockedDisplay:setColor(Graphics.GONE)
   else
-    self.lockedDisplay:setColor(Graphics.GONE)
+--    self.lockedDisplay:setColor(Graphics.GONE)
+    self.panel.color = Graphics.NORMAL
+    self.title.color = Graphics.NORMAL
   end
 end
 
@@ -79,4 +88,31 @@ end
 
 function Achievement:setData(data)
   self:setUnlocked(data.unlocked)
+end
+
+function Achievement:addPopUp()
+  local unlockedPopUp = TextPopUp("Achievement Unlocked!", Graphics.YELLOW, 0.5)
+  local titlePopUp = TextPopUp(self.title.text, nil, 0.5)
+  local boxPopUp = ImagePopUp("assets/graphics/achievement_small.png")
+  boxPopUp:setCentreHorizontalScreen()
+  boxPopUp:setPosition(Point(boxPopUp.position.x, baseRes.height - boxPopUp.dimensions.height - 30))
+  unlockedPopUp:setCentreHorizontal(boxPopUp)
+  unlockedPopUp:setCentreVertical(boxPopUp)
+  unlockedPopUp:setPosition(Point(unlockedPopUp.position.x, unlockedPopUp.position.y - 12))
+  titlePopUp:setCentreHorizontal(boxPopUp)
+  titlePopUp:setBelow(unlockedPopUp, 5)
+  boxPopUp:setFade(1/120)
+  unlockedPopUp:setFade(1/120)
+  titlePopUp:setFade(1/120)
+  boxPopUp:setRise(0.1)
+  unlockedPopUp:setRise(0.1)
+  titlePopUp:setRise(0.1)
+  user:addPopUp(boxPopUp)
+  user:addPopUp(unlockedPopUp)
+  user:addPopUp(titlePopUp)
+  Sound:createAndPlay("assets/audio/sfx/sfx_achievement_unlocked.wav", "achievement_unlocked")
+end
+
+function Achievement:__tostring()
+  return "Achievement"
 end

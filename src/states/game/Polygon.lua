@@ -1,5 +1,5 @@
 Polygon = class("Polygon")
-Polygon.static.LEEWAY = 10
+Polygon.static.LEEWAY = 15
 
 function Polygon:initialize()
   self.points = {}
@@ -42,10 +42,21 @@ function Polygon:update()
     if intersection then 
       self:cleanUpIntersection(i)
       self:redrawToIntersection(intersection)
+      self:linesToPoints()
       self.closed = true
       return
     end
   end
+end
+
+function Polygon:linesToPoints()
+  local points = {}
+  for i = 1, #self.lines do
+    local line = self.lines[i]
+    local point = line.p1
+    points[#points + 1] = point
+  end
+  self.points = points
 end
 
 function Polygon:cleanUpIntersection(indexOfIntersectingLine)
@@ -78,6 +89,8 @@ function Polygon:updateValues()
   self.bounds = Bounds.ofPoints(self.points)
   self.dimensions = Dimensions.ofBounds(self.bounds)
   self.centre = Point.centreOf(self.bounds, self.dimensions)
+  
+  print(tostring(self.bounds), tostring(self.dimensions), tostring(self.centre))
 end
 
 function Polygon:isEmpty()

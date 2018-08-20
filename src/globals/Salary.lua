@@ -1,18 +1,20 @@
-Salary = class("Salary")
-Salary.static.MAX_AMOUNT = 99999
+Salary = class("Salary"):include(Observable)
+Salary.static.MAX_AMOUNT = 999999
+Salary.static.MONEY_ADDED = "MONEY_ADDED"
 
 function Salary:initialize()
   self.amount = 0
   self.iteratedAmount = 0
   self.differenceToIterate = 0
   self.iterate = false
-  self.position = Point(40, baseRes.height * 0.88)
-  self.dollarSign = ImagePlaceable("assets/graphics/globals/hud_dollarsign.png")
-  self.dollarSign:setLeftOfPoint(self.position, -4)
-  self.dollarSign.position.y = self.dollarSign.position.y - 5
+  self.position = Point(38, baseRes.height * 0.87)
+  self.dollarSign = ImagePlaceable("assets/graphics/misc/hud_dollarsign.png")
+  self.dollarSign:setLeftOfPoint(self.position, 2)
+  self.dollarSign.position.y = self.dollarSign.position.y
   self.toDraw = {}
   self.toUpdate = {}
   if love.filesystem.getRealDirectory("data_salary") ~= nil then self:loadAmount() end
+  self:registerObserver(user)
 end
 
 function Salary:add(amount)
@@ -37,8 +39,15 @@ function Salary:add(amount)
   table.insert(self.toDraw, amountPopUp)
   table.insert(self.toUpdate, amountPopUp)
   self:saveAmount()
-  self.differenceToIterate = math.ceil((self.amount - self.iteratedAmount) * 0.03)
+  self.differenceToIterate = (self.amount - self.iteratedAmount) * 0.03
+  if self.differenceToIterate > 0 then 
+    self.differenceToIterate = math.ceil(self.differenceToIterate) 
+  else 
+    self.differenceToIterate = math.floor(self.differenceToIterate)
+  end
+  
   self.iterate = true
+  self:notifyObservers(Salary.MONEY_ADDED, {amount = self.amount})
 end
 
 function Salary:update(dt)

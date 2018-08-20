@@ -1,15 +1,46 @@
-Level = class("Level")
+Level = class("Level"):include(Observable):include(Observer)
 Level.static.MAX_SCORE = 200
-Level.static.INITIAL_TARGET = 500
-Level.static.EVERY_X_DIFFICULTY = 4
+Level.static.INITIAL_TARGET = 600
+Level.static.EVERY_X_DIFFICULTY = 3
 Level.static.STARTING_TIME = 60
+Level.static.MIN_SHAPE_DIMEN = 1
 Level.static.MAX_SHAPE_DIMEN = 6
-Level.static.POINTS_TO_END_TUTORIAL = Level.static.INITIAL_TARGET
-Level.static.TARGET_MULTIPLIER = 0.4
+Level.static.POINTS_TO_END_TUTORIAL = 300
+Level.static.TARGET_MULTIPLIER = 0.50
+Level.static.SHAPE_COMPLETED = "SHAPE_COMPLETED"
+Level.static.START = "START"
+Level.static.UNLOCKED_SHAPE = "UNLOCKED_SHAPE"
 
-function Level:initialize()
+function Level:initialize(mode)
+  self.mode = mode or "Normal"
+  if self.mode == "Baby" then
+    self.tutorial = true
+    self.shapes = {"Rectangle"}
+    self.nextShape = "Oval"
+    Level.static.TARGET_MULTIPIER = 0.45
+    Level.static.INITIAL_TARGET = 500
+  end
+  
+  if self.mode == "Normal" then
+    self.tutorial = false
+    self.shapes = {"Rectangle"}
+    self.nextShape = "Oval"
+    Level.static.TARGET_MULTIPLIER = 0.5
+    Level.static.INITIAL_TARGET = 600
+  end
+  
+  if self.mode == "Veteran" then
+    self.tutorial = false
+    self.shapes = {"Rectangle", "Oval", "Triangle", "Diamond"}
+    self.nextShape = "none"
+    Level.static.TARGET_MULTIPLIER = 0.6
+    Level.static.INITIAL_TARGET = 800
+  end
   self.total = 0
-  self.tutorial = true
+  self.iteratedTotal = 0
+  self.iterate = false
+  self.differenceToIterate = 0
+  
   self.target = Level.INITIAL_TARGET
   self.timer = Timer()
   self.timer:registerObserver(self)
@@ -17,54 +48,82 @@ function Level:initialize()
   self.popUps = {}
   self.speech = Speech()
   self.difficulty = 1
-  self.shapes = {"Rectangle"}
   self.problem = false
-  self.nextShape = "Oval"
   self:generateProblem()
   self.targetsUntil = Level.static.EVERY_X_DIFFICULTY
-  self.scoreCounter = TextPlaceable("Score: ", Point(baseRes.width * 0.6, baseRes.height * 0.9))
+  self.scoreText = TextPlaceable("Score: ", Point(baseRes.width * 0.6, baseRes.height * 0.9))
+  self.scoreCounter = TextPlaceable("1")
+  self.scoreCounter:setRight(self.scoreText, 0)
+  self.scoreCounter:setPosition(Point(self.scoreCounter.position.x, baseRes.height * 0.9))
   self.targetCounter = TextPlaceable("Target: ", Point(baseRes.width * 0.2, baseRes.height * 0.9))
   self.targetsUntilShape = TextPlaceable(("%i targets till: %s"):format(self.targetsUntil, self.nextShape), nil, nil, nil, 0.5)
+  self:registerObserver(user)
+  self:notifyObservers(Level.START)
 end
 
 function Level:update(dt)
-  for i = 1, #self.popUps do
-    local popUp = self.popUps[i]
-    popUp:update()
-    if popUp.alpha < 0 then self.popUps[i] = nil end
-  end
   self.timer:update(dt)
-  self.speech:update(dt)
-  self.scoreCounter:update(dt, "Score: " .. self.total)
-  self.targetCounter:update(dt, "Target: " .. self.target)
   if self.nextShape == "none" then self.targetsUntilShape:update(dt, "All shapes added.") else 
     self.targetsUntilShape:update(dt, ("%i targets until: %s"):format(self.targetsUntil, self.nextShape))
   end
   self.targetsUntilShape:setLeftOfPoint(Point(baseRes.width * 0.95, 60))
+  for i = 1, #self.popUps do
+    local popUp = self.popUps[i]
+    if popUp ~= nil then 
+      popUp:update()
+      if popUp.alpha < 0 then self.popUps[i] = nil end
+    end
+  end
+  self.speech:update(dt)
+  
+  if self.iterate then 
+    self.iteratedTotal = self.iteratedTotal + self.differenceToIterate
+    if self.differenceToIterate > 0 then
+      if self.iteratedTotal >= self.total then 
+        self.iterate = false 
+        self.iteratedTotal = self.total
+        self.scoreCounter:setColor(Graphics.NORMAL)
+      end
+    else
+      if self.iteratedTotal <= self.total then 
+        self.iterate = false 
+        self.iteratedTotal = self.total
+        self.scoreCounter:setColor(Graphics.NORMAL)
+      end
+    end
+  end
+  
+  self.scoreCounter:update(dt, self.iteratedTotal)
+  self.scoreText:update()
+  self.targetCounter:update(dt, "Target: " .. self.target)
 end
 
 function Level:draw()
+  self.timer:draw()
   self.speech:draw()
   for i = 1, #self.popUps do
     local popUp = self.popUps[i]
-    popUp:draw()
+    if popUp ~= nil then popUp:draw() end
   end
   self.problem:draw()
-  self.timer:draw()
   self.scoreCounter:draw()  
+  self.scoreText:draw()
   self.targetCounter:draw()
   self.targetsUntilShape:draw()
 end
 
 function Level:scoreDrawing(drawing)
-  local score = self.problem:score(drawing)
-  local comboMultipliedScore = math.floor(self.combo:multiply(score))  
+  local score, successPercentage = self.problem:score(drawing)
+  local comboMultipliedScore = math.floor(self.combo:multiply(score, successPercentage))  
   local rating = RatingFactory:rate(comboMultipliedScore)
   self.speech = Speech(rating.text, rating.color)
   if (tostring(rating) == "BadRating" and self.tutorial) then
     self.speech:setText("(Trace the shape to get points!)")
     self.speech:setColor(Graphics.YELLOW)
   end
+  
+  self:onScore(comboMultipliedScore, tostring(self.problem), successPercentage)
+  comboMultipliedScore = self:modifyScore(comboMultipliedScore)
   
   local scorePopUp = NumberPopUp(comboMultipliedScore, rating.color, 1, scale:getWorldMouseCoordinates())
   local comboPopUp = TextPopUp("x" .. self.combo.multiplier, Graphics.NORMAL, 1, false)
@@ -80,11 +139,12 @@ function Level:scoreDrawing(drawing)
     table.insert(self.popUps, firePopUp)
   end
 
-  self.total = self.total + comboMultipliedScore
+  self:addScore(comboMultipliedScore)
+  local status = {shape = tostring(self.problem), accuracy = successPercentage * 100, tutorial = self.tutorial, points = score, targetUp = self:isTargetAchieved(), timeLeft = self.timer.time, rating = rating.text, timePlayed = self.timer.timePlayed, multiplier = self.combo.multiplier, targetUps = self.difficulty - 1}
   
   if self:isTutorialOver() then self.tutorial = false end
   if self:isTargetAchieved() then
-    Sound:createAndPlay("assets/audio/sfx/sfx_targetup.ogg", "targetup")
+    Sound:createAndPlay("assets/audio/sfx/sfx_targetup.wav", "targetup")
     local targetUpPopUp = TextPopUp("Target Up!", Graphics.YELLOW, 1, false)
     targetUpPopUp.position.x = scorePopUp.position.x
     targetUpPopUp:setBelow(scorePopUp)
@@ -96,11 +156,25 @@ function Level:scoreDrawing(drawing)
 
   self.problem.displayAnswer = true
   Sound:createAndPlay(rating.sound.path, rating.sound.name)
+  self:notifyObservers(Level.SHAPE_COMPLETED, status)
+end
+
+function Level:addScore(score)
+  self.total = self.total + score
+  self.differenceToIterate = (self.total - self.iteratedTotal) * 0.1
+  if self.differenceToIterate > 0 then self.differenceToIterate = math.ceil(self.differenceToIterate) else self.differenceToIterate = math.floor(self.differenceToIterate) end
+  if self.differenceToIterate > 0 then self.scoreCounter:setColor(Graphics.GREEN) else self.scoreCounter:setColor(Graphics.RED) end
+  self.iterate = true
+end
+
+function Level:generateWidthAndHeight()
+  local randWidth = love.math.random(Level.MIN_SHAPE_DIMEN, Level.MAX_SHAPE_DIMEN)
+  local randHeight = love.math.random(Level.MIN_SHAPE_DIMEN, Level.MAX_SHAPE_DIMEN)
+  return randWidth, randHeight
 end
 
 function Level:generateProblem()
-  local randWidth = love.math.random(Level.MAX_SHAPE_DIMEN)
-  local randHeight = love.math.random(Level.MAX_SHAPE_DIMEN)
+  local randWidth, randHeight = self:generateWidthAndHeight()
   local shape = self.shapes[love.math.random(1, #self.shapes)]
 
   if shape == "Rectangle" then
@@ -119,6 +193,14 @@ function Level:generateProblem()
   else
     self.speech = Speech(("I need a %iW x %iL %s!"):format(randWidth, randHeight, shape))
   end
+end
+
+function Level:onScore(score)
+  
+end
+
+function Level:modifyScore(score)
+  return score
 end
 
 function Level:isTargetAchieved()
@@ -143,14 +225,15 @@ end
 
 function Level:addNewShape()
   local shapesAdded = #self.shapes
+  self:notifyObservers(Level.UNLOCKED_SHAPE, {shape = self.nextShape})
   if shapesAdded == 1 then
-    self.shapes[2] = "Oval"
+    self.shapes[shapesAdded + 1] = "Oval"
     self.nextShape = "Triangle"
   elseif shapesAdded == 2 then
-    self.shapes[3] = "Triangle"
+    self.shapes[shapesAdded + 1] = "Triangle"
     self.nextShape = "Diamond"
   elseif shapesAdded == 3 then
-    self.shapes[4] = "Diamond"
+    self.shapes[shapesAdded + 1] = "Diamond"
     self.nextShape = "none"
   end
   
@@ -164,6 +247,7 @@ end
 
 function Level:notify(event)
   if event == Timer.OUT_OF_TIME then
+    self:notifyObservers(Timer.OUT_OF_TIME, {timePlayed = self.timer.timePlayed, totalScore = self.total})
     highScore:attemptToAddScore(self.total)
     highScore:saveScores()
     state = GameOver(self.total)

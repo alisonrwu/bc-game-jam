@@ -28,7 +28,7 @@ function Shape:score(drawing)
   end
 
   score = self:transformSuccessPercentage(successPercentage)
-  return score
+  return score, successPercentage
 end
 
 function Shape:pointRepresentation()
@@ -37,8 +37,8 @@ end
 
 function Shape:transformSuccessPercentage(successPercentage)
   local transformedPercentage = successPercentage - Shape.CORRECT_THRESHOLD
-  if transformedPercentage >= 0 then transformedPercentage = 2 * transformedPercentage end
-
+  transformedPercentage = 2 * transformedPercentage
+  
   local score = transformedPercentage * self.maxScore
   if score > self.maxScore then score = self.maxScore end
   

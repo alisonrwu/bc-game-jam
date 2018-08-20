@@ -50,3 +50,7 @@ function Rectangle:pointRepresentation()
   
   return rep
 end
+
+function Rectangle:__tostring()
+  return "Rectangle"
+end

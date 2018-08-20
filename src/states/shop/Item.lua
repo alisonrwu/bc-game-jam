@@ -6,7 +6,7 @@ Item.static.GO_TO_DETAILS = "DETAILS!"
 
 function Item:initialize(path, cost, effectIndex)
   self.imagePath = path
-  self.panel = ImagePlaceable("assets/graphics/shop/hud_panel.png")
+  self.panel = ImagePlaceable("assets/graphics/misc/hud_panel.png")
   self.panel.color = Graphics.DARKGRAY
   if path then 
     self.image = ImagePlaceable(path)
@@ -17,7 +17,7 @@ function Item:initialize(path, cost, effectIndex)
   if cost then
     self.cost = cost
     self.costDisplay = TextPlaceable(self.cost)
-    self.lock = ImagePlaceable("assets/graphics/shop/hud_lock.png") 
+    self.lock = ImagePlaceable("assets/graphics/misc/hud_lock.png") 
     self.lock:setLeft(self.costDisplay, 5)
     self.lock:setCentreVertical(self.costDisplay)
     self.lockedCost = GroupPlaceable({self.lock, self.costDisplay})
@@ -54,15 +54,13 @@ function Item:onClick()
   if not self.bought then
     if salary.amount >= self.cost then
       salary:add(-1 * self.cost)
-      self:notifyObservers(Item.BUY_SUCCESS)
       self:setBought(true)
+      self:notifyObservers(Item.BUY_SUCCESS)
     else
       self:notifyObservers(Item.BUY_FAIL)
     end
   else
-    if not self.equipped then
-      self:notifyObservers(Item.GO_TO_DETAILS, {item = self})
-    end
+    self:notifyObservers(Item.GO_TO_DETAILS, {item = self})
   end
 end
 
@@ -106,6 +104,10 @@ end
 function Item:updateBounds()
   self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) 
   self.bounds = scale:worldToScreenBounds(self.bounds)
+end
+
+function Item:__tostring()
+  return "Item"
 end
 
 function Item:getData()

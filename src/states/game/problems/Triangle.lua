@@ -47,3 +47,7 @@ function Triangle:pointRepresentation()
   
   return rep
 end
+
+function Triangle:__tostring()
+  return "Triangle"
+end

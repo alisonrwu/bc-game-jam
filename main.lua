@@ -25,8 +25,9 @@ require "src/states/game/Polygon"
 require "src/components/PopUp"
 require "src/states/game/Rating"
 require "src/states/game/Speech"
-require "src/states/game/Timer"
 require "src/states/game/Level"
+require "src/states/game/Timer"
+
 
 require "src/states/game/problems/Shape"
 require "src/states/game/problems/Rectangle"
@@ -47,6 +48,8 @@ require "src/states/Details"
 require "src/states/Achievements"
 require "src/states/achievements/Achievement"
 
+require "src/states/Options"
+
 require "src/globals/User"
 require "src/globals/Salary"
 require "src/globals/HighScore"
@@ -64,26 +67,27 @@ function love.load(args)
   love.window.setIcon(icon)	
   love.graphics.setFont(font) 
   love.graphics.setLineWidth(3)
-  love.filesystem.setIdentity("paper-cut")
   baseRes = determineResolution()
   centre, rowHeight = Point(baseRes.width * 0.5, baseRes.height * 0.5), baseRes.height / 10
   scale = Scale(baseRes)
   effects = loadEffects()
-  achievements = loadAchievements()
+  user = User()
   items = loadItems()
   salary = Salary()
-  user = User()
+  achievements = loadAchievements()
   highScore = HighScore()
-  state = Achievements()
+  state = MainMenu()
 end  
 
 function love.update(dt)
   state:update(dt)
+  user:updatePopUps(dt)
 end
 
 function love.draw()
   scale:draw()
   state:draw()
+  user:drawPopUps()
 end 
 
 function love.mousepressed(x, y, button, istouch)    
@@ -95,12 +99,17 @@ function love.mousereleased(x, y, button, istouch)
 end
 
 function love.keypressed(key, u)
- if key == "a" then
-    state.level.total = state.level.total + 500
+  if key == "b" then
+    local achievement = user.achievements[1]
+    achievement:addPopUp()
+  end
+  
+  if key == "a" then
+    state.level:addScore(10000)
   end
   
   if key == "rctrl" then
-    salary:add(2000)
+    salary:add(99000)
   end
   
   if key == "escape" then
@@ -160,9 +169,10 @@ function determineResolution()
   local _16x10 = {ratio = 16/10, resolution = {width = 768, height = 480, name = "16x10"}} -- -- 1.6
   local _5x3 = {ratio = 5/3, resolution = {width = 800, height = 480, name = "5x3"}} -- 1.67
   local _16x9 = {ratio = 16/9, resolution = {width = 640, height = 360, name = "16x9"}} -- 1.78
+  local _2x1 = {ratio = 2/1, resolution = {width = 720, height = 360, name = "2x1"}} -- 2
 
   
-  local aspects = {_4x3, _3x2, _16x10, _5x3, _16x9}
+  local aspects = {_4x3, _3x2, _16x10, _5x3, _16x9, _2x1}
   for i, curr in ipairs(aspects) do
     if ratio < curr.ratio then
       local smaller = aspects[i - 1]
@@ -172,7 +182,7 @@ function determineResolution()
       else
         local smallerDiff = ratio - smaller.ratio
         local currDiff = ratio - curr.ratio
-        if smallerDiff < currDiff then aspect = smaller else aspect = curr end
+        if math.abs(smallerDiff) < math.abs(currDiff) then aspect = smaller else aspect = curr end
         break
       end
     elseif ratio == curr.ratio then
