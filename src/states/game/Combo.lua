@@ -6,7 +6,7 @@ function Combo:initialize()
   self.multiplier = Combo.BASE_MULTIPLIER
 end
 
-function Combo:multiply(score, successPercentage) 
+function Combo:multiply(score) 
   self:update(score)
   if score > 0 then 
     return score * self.multiplier

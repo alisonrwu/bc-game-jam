@@ -53,6 +53,12 @@ function Sound:stop(tag)
   end
 end  
 
+function Sound:clearAll()
+  for _, sound in ipairs(Sound.sources) do
+    sound:stop()
+  end
+end
+
 -- Pauses a source by its tag.
 -- @param tag The tag assigned to the source.
 function Sound:pause(tag)

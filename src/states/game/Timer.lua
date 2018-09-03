@@ -26,6 +26,7 @@ function Timer:update(dt)
     Sound:setPitch("bgm", 1)
   end
   self.time = self.time - dt
+  if self.time <= 0 then self.time = 0 end
   self.timePlayed = self.timePlayed + dt
 end
 

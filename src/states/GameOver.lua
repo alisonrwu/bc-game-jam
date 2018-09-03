@@ -4,6 +4,7 @@ GameOver = State:subclass("GameOver")
 GameOver.static.PITCH = 0.9
 
 function GameOver:initialize(score)
+  Sound:clearAll()
   local placeables = {}
   local score = score or 0
   love.mouse.setVisible(true)

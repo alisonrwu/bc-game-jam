@@ -28,7 +28,7 @@ require "src/states/game/Speech"
 require "src/states/game/Level"
 require "src/states/game/Timer"
 require "src/states/game/Grid"
-
+require "src/states/game/Status"
 
 require "src/states/game/problems/Shape"
 require "src/states/game/problems/Rectangle"

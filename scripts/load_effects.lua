@@ -16,41 +16,46 @@ function loadEffects()
     Cursor.static.FRAME1 = love.graphics.newQuad(0, 0, 82, 40, Cursor.SPRITESHEET:getDimensions())
     Cursor.static.FRAME2 = love.graphics.newQuad(0, 40, 82, 40, Cursor.SPRITESHEET:getDimensions())
     Cursor.static.OFFSET = {x = 11, y = 39}
-    Level.static.STATUS_TIMER = 3
-    Level.static.CURRENT_STATUS = ""
-    Level.onScore = function(self, score, problem, successPercentage)
-      if problem == "Rectangle" then
-        if score > 0 then
-          Level.static.CURRENT_STATUS = "PizzaBuff"
-          Level.static.STATUS_TIMER = 3
-          
-        else
-          Level.static.CURRENT_STATUS = "PizzaDebuff"
-          Level.static.STATUS_TIMER = 3         
-
-        end
-      end
+    
+    local buffImg = love.graphics.newImage('assets/graphics/game/player/buff_pizza.png')
+    local debuffImg = love.graphics.newImage('assets/graphics/game/player/debuff_pizza.png')
+    
+    psystem = love.graphics.newParticleSystem(buffImg, 32)
+    psystem:setParticleLifetime(1, 1.5) -- Particles live at least 2s and at most 5s.
+    psystem:setEmissionRate(6)
+    psystem:setSizeVariation(1)
+    psystem:setLinearAcceleration(-15, -200, 10, -200) -- Random movement in all directions.
+    psystem:setColors(255, 255, 255, 255, 255, 255, 255, 0) -- Fade to transparency.
+    psystem:setEmissionArea("borderrectangle", 25, 8, 0, false)
+    psystem:setRelativeRotation(true)
+    psystem:setSpread(math.pi / 2)
+    psystem:setRotation(math.pi / 4, math.pi)
+    psystem:setSpinVariation(1)
+    psystem:setSpin(math.pi, 2 * math.pi)
+    psystem:setSizes(0.76, 0.7, 0.8, 0.65, 0.86, 1)
+    
+    pizzaBuff = function(score)
+      if score > 0 then return score * 2 end
     end
-    Level.modifyScore = function(self, score)
-      if Level.STATUS_TIMER > 0 then
-        if Level.CURRENT_STATUS == "PizzaBuff" then
-          if score > 0 then return score * 2 end
+    
+    pizzaDebuff = function(score)
+      if score < 0 then return score * 2 end
+    end
+    
+    Level.onScore = function(self, score, problem, successPercentage)
+      if problem == "Triangle" then
+        if score > 0 then
+          psystem:setTexture(buffImg)
+          self.currentStatus = Status(psystem, 3, pizzaBuff)
+        else
+          psystem:setTexture(debuffImg)
+          self.currentStatus = Status(psystem, 3, pizzaDebuff)
         end
-        if Level.CURRENT_STATUS == "PizzaDebuff" then
-          if score < 0 then return score * 2 end
-        end
-        Level.static.STATUS_TIMER = Level.STATUS_TIMER - 1
-      else 
-        return score
       end
     end
   end
   local pizzacutterOnRemove = function()
     Level.onScore = function(self, score) end
-    Level.modifyScore = function(self, score)
-      return score
-    end
-
   end
   local pizzacutterDescription = "Pizza Cutter"
   local pizzacutterPros = "+ Cutting a good triangle doubles point gains for the next 3 shapes" 

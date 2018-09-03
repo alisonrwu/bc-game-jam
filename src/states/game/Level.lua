@@ -46,6 +46,31 @@ function Level:initialize(mode)
   self.target = Level.INITIAL_TARGET
   self.timer = Timer()
   self.timer:registerObserver(self)
+  
+      local buffImg = love.graphics.newImage('assets/graphics/game/player/buff_pizza.png')
+    local debuffImg = love.graphics.newImage('assets/graphics/game/player/debuff_pizza.png')
+    
+    psystem = love.graphics.newParticleSystem(buffImg, 32)
+    psystem:setParticleLifetime(1, 1.5) -- Particles live at least 2s and at most 5s.
+    psystem:setEmissionRate(6)
+    psystem:setSizeVariation(1)
+    psystem:setLinearAcceleration(-15, -200, 10, -200) -- Random movement in all directions.
+    psystem:setColors(255, 255, 255, 255, 255, 255, 255, 0) -- Fade to transparency.
+    psystem:setEmissionArea("borderrectangle", 25, 8, 0, false)
+    psystem:setRelativeRotation(true)
+    psystem:setSpread(math.pi / 2)
+    psystem:setRotation(math.pi / 4, math.pi)
+    psystem:setSpinVariation(1)
+    psystem:setSpin(math.pi, 2 * math.pi)
+    psystem:setSizes(0.76, 0.7, 0.8, 0.65, 0.86, 1)
+    
+    pizzaBuff = function(score)
+      if score > 0 then return score * 2 end
+    end
+              self.currentStatus = Status(psystem, 1, pizzaBuff)
+  
+  
+  --self.currentStatus = false
   self.combo = Combo()
   self.popUps = {}
   self.speech = Speech()
@@ -98,6 +123,10 @@ function Level:update(dt)
   self.scoreCounter:update(dt, self.iteratedTotal)
   self.scoreText:update()
   self.targetCounter:update(dt, "Target: " .. self.target)
+  
+  if self.currentStatus then
+    self.currentStatus:update(dt)
+  end
 end
 
 function Level:draw()
@@ -113,22 +142,31 @@ function Level:draw()
   self.scoreText:draw()
   self.targetCounter:draw()
   self.targetsUntilShape:draw()
+  if self.currentStatus then self.currentStatus:draw() end
 end
 
 function Level:scoreDrawing(drawing)
   local score, successPercentage = self.problem:score(drawing)
   local comboMultipliedScore = math.floor(self.combo:multiply(score, successPercentage))  
-  local rating = RatingFactory:rate(comboMultipliedScore)
+  modifiedScore = self:modifyScore(comboMultipliedScore)
+  if self.currentStatus then 
+    self.currentStatus:decrementTimer() 
+    if self.currentStatus.timer == 0 then 
+      self.currentStatus = nil 
+    else
+      modifiedScore = self.currentStatus:modifyScore(modifiedScore)
+    end
+  end
+  local rating = RatingFactory:rate(modifiedScore)
   self.speech = Speech(rating.text, rating.color)
   if (tostring(rating) == "BadRating" and self.tutorial) then
     self.speech:setText("(Trace the shape to get points!)")
     self.speech:setColor(Graphics.YELLOW)
   end
   
-  self:onScore(comboMultipliedScore, tostring(self.problem), successPercentage)
-  comboMultipliedScore = self:modifyScore(comboMultipliedScore)
+  self:onScore(modifiedScore, tostring(self.problem), successPercentage)
   
-  local scorePopUp = NumberPopUp(comboMultipliedScore, rating.color, 1, Point.centreOf(self.problem.bounds, self.problem.dimensions))
+  local scorePopUp = NumberPopUp(modifiedScore, rating.color, 1, Point.centreOf(self.problem.bounds, self.problem.dimensions))
   local comboPopUp = TextPopUp("x" .. self.combo.multiplier, Graphics.NORMAL, 1, false)
   comboPopUp.position.x = scorePopUp.position.x
   comboPopUp:setAbove(scorePopUp)
@@ -143,8 +181,8 @@ function Level:scoreDrawing(drawing)
     table.insert(self.popUps, firePopUp)  
   end
           
-  self:addScore(comboMultipliedScore)
-  local status = {shape = tostring(self.problem), accuracy = successPercentage * 100, tutorial = self.tutorial, points = score, targetUp = self:isTargetAchieved(), timeLeft = self.timer.time, rating = rating.text, timePlayed = self.timer.timePlayed, multiplier = self.combo.multiplier, targetUps = self.difficulty - 1, mode = self.mode}
+  self:addScore(modifiedScore)
+  local status = {shape = tostring(self.problem), accuracy = successPercentage * 100, tutorial = self.tutorial, points = modifiedScore, targetUp = self:isTargetAchieved(), timeLeft = self.timer.time, rating = rating.text, timePlayed = self.timer.timePlayed, multiplier = self.combo.multiplier, targetUps = self.difficulty - 1, mode = self.mode}
   
   if self:isTutorialOver() then 
     self.tutorial = false 
@@ -152,7 +190,6 @@ function Level:scoreDrawing(drawing)
     end
   if self:isTargetAchieved() then
     Sound:createAndPlay("assets/audio/sfx/sfx_targetup.wav", "targetup")
-          
     local targetUpPopUp = TextPopUp("Target Up!", Graphics.YELLOW, 1, false)
     targetUpPopUp.position.x = scorePopUp.position.x
     targetUpPopUp:setBelow(scorePopUp)
