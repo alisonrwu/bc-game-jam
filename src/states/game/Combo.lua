@@ -7,7 +7,7 @@ function Combo:initialize()
 end
 
 function Combo:multiply(score, successPercentage) 
-  self:update(successPercentage)
+  self:update(score)
   if score > 0 then 
     return score * self.multiplier
   else
@@ -15,8 +15,8 @@ function Combo:multiply(score, successPercentage)
   end
 end
 
-function Combo:update(successPercentage)
-  if successPercentage >= Shape.CORRECT_THRESHOLD then
+function Combo:update(score)
+  if score > 0 then
     self.multiplier = self.multiplier + Combo.INCREASE
   else
     self.multiplier = Combo.BASE_MULTIPLIER

@@ -54,13 +54,13 @@ function Salary:update(dt)
   if self.iterate then 
     self.iteratedAmount = self.iteratedAmount + self.differenceToIterate
     if self.differenceToIterate > 0 then
-      Sound:createAndPlay("assets/audio/sfx/sfx_coin.wav", "click")
+      Sound:createAndPlay("assets/audio/sfx/sfx_salary_up.wav", "click")
       if self.iteratedAmount >= self.amount then 
         self.iterate = false 
         self.iteratedAmount = self.amount
       end
     else
-      Sound:createAndPlay("assets/audio/sfx/sfx_sounds_damage3.wav", "click")
+      Sound:createAndPlay("assets/audio/sfx/sfx_salary_down.wav", "click")
       if self.iteratedAmount <= self.amount then 
         self.iterate = false 
         self.iteratedAmount = self.amount

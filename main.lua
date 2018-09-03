@@ -27,6 +27,7 @@ require "src/states/game/Rating"
 require "src/states/game/Speech"
 require "src/states/game/Level"
 require "src/states/game/Timer"
+require "src/states/game/Grid"
 
 
 require "src/states/game/problems/Shape"
@@ -76,7 +77,7 @@ function love.load(args)
   salary = Salary()
   achievements = loadAchievements()
   highScore = HighScore()
-  state = MainMenu()
+  state = Game()
 end  
 
 function love.update(dt)

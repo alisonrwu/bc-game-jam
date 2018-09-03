@@ -59,9 +59,9 @@ function Options:initialize()
   
   playOnClick = function()
     if self.data.mode == "Baby" then
-      state = Instructions(self.data.mode)
+      state = Instructions()
     else
-      state = Game(self.data.mode)
+      state = Game()
     end
   end
   
@@ -94,19 +94,22 @@ function Options:setMode(mode)
   self.veteran:setImage("assets/graphics/options/button_veteran.png")
   if mode == "Baby" then
     self.baby:setImage("assets/graphics/options/button_baby_lightup.png")
-    self.extraText:setText("For first time players.")
+    self.extraText:setText("For first time players. Achievements cannot be unlocked in this mode.")
     self.extraText:setCentreHorizontalScreen()    
     self.data.mode = "Baby"
+    Game.static.MODE = "Baby"
   elseif mode == "Normal" then
     self.normal:setImage("assets/graphics/options/button_normal_lightup.png")
     self.extraText:setText("For players familiar with the game.")
     self.extraText:setCentreHorizontalScreen()   
     self.data.mode = "Normal"
+    Game.static.MODE = "Normal"
   else
     self.veteran:setImage("assets/graphics/options/button_veteran_lightup.png")
-    self.extraText:setText("For pro players only.")
+    self.extraText:setText("For players who want a challenge.")
     self.extraText:setCentreHorizontalScreen()   
     self.data.mode = "Veteran"
+    Game.static.MODE = "Veteran"
   end
   self:saveData()
 end

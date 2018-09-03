@@ -1,13 +1,15 @@
 Graphics = { 
     NORMAL = { 1, 1, 1, 1 },
-    RED = { 0.75, 0.3, 0.3, 1 },
+    RED = { 0.8, 0.3, 0.3, 1 },
     FADED = { 1, 1, 1, 0.20 },
     BLACK = { 0, 0, 0, 1 },
     WHITE = { 1, 1, 1, 1 },
     GRAY = { 0.5, 0.5, 0.5, 1 },
     DARKGRAY = {0.25, 0.25, 0.25, 1},
+    FADEDGRAY = { 0.4, 0.4, 0.4, 0.20},
     GREEN = { 0.3, 0.75, 0.3, 1 },
     YELLOW = {0.85, 0.85, 0.2, 1 },
+    BLUE = { 0.45, 0.45, 0.85, 1 },
     GONE = {0, 0, 0, 0 }
 }
 
@@ -66,6 +68,11 @@ function Graphics:draw(drawable, x, y, c)
   if c then self:setColor(c) end
     love.graphics.draw(drawable, x, y, nil)
 end      
+
+function Graphics:drawPsystem(psystem, c)
+  if c then self:setColor(c) end
+    love.graphics.draw(psystem)
+end
 
 function Graphics:drawWithScale(drawable, x, y, s, c)
   if c then self:setColor(c) end

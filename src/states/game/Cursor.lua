@@ -7,24 +7,31 @@ Cursor.static.EXTRA_ROT = 0
 Cursor.static.NO_CUT = love.graphics.newImage("assets/graphics/game/player/cursor_unabletocut.png")
 Cursor.static.CYCLE = 15
 
-local math = Math
-
 function Cursor:initialize()
   self.frame = Cursor.FRAME1
   self.counter = 0
   self.angle = 0
+  self.psystem = false
 end
 
-function Cursor:update(lines)
-  self.counter = self.counter + 1
+function Cursor:update(dt, lines, mode)
+  if self.psystem then
+    local mouseCoord = scale:getWorldMouseCoordinates()
+    self.psystem:setPosition(mouseCoord.x, mouseCoord.y)
+    self.psystem:update(dt) 
+  end
   
-  if lines[#lines - 10] ~= nil then 
-    self.angle = math:calculateAngleOfTwoLines(lines[#lines], lines[#lines - 5]) 
-  end    
+  if mode == "cut" then
+    self.counter = self.counter + 1
   
-  if self.counter == Cursor.CYCLE then
-    self.counter = 0
-    if self.frame == Cursor.FRAME1 then self.frame = Cursor.FRAME2 else self.frame = Cursor.FRAME1 end
+    if lines[#lines - 10] ~= nil then 
+      self.angle = Math:calculateAngleOfTwoLines(lines[#lines], lines[#lines - 5]) 
+    end    
+    
+    if self.counter == Cursor.CYCLE then
+      self.counter = 0
+      if self.frame == Cursor.FRAME1 then self.frame = Cursor.FRAME2 else self.frame = Cursor.FRAME1 end
+    end   
   end
 end
 
@@ -32,6 +39,14 @@ function Cursor:draw(mode)
   local mouse = scale:getWorldMouseCoordinates()
   local frame = self.frame
   
+  if self.psystem then
+    if mode == "cut" then
+      Graphics:drawPsystem(psystem, Graphics.FADED)
+    else
+      Graphics:drawPsystem(psystem, Graphics.NORMAL)
+    end
+  end
+
   if mode == "wait" then
     Graphics:drawQWithRotationAndOffset(Cursor.SPRITESHEET, frame, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, Cursor.OFFSET.x, Cursor.OFFSET.y, Graphics.NORMAL)
     Graphics:drawWithRotationAndOffset(Cursor.NO_CUT, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, Cursor.OFFSET.x, Cursor.OFFSET.y, Graphics.NORMAL)
@@ -40,4 +55,9 @@ function Cursor:draw(mode)
   elseif mode == "ready" or mode == "score" then
     Graphics:drawQWithRotationAndOffset(Cursor.SPRITESHEET, frame, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, Cursor.OFFSET.x, Cursor.OFFSET.y, Graphics.NORMAL)
   end
+
+end
+
+function Cursor:setPsystem(psystem)
+  self.psystem = psystem
 end

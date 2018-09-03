@@ -2,7 +2,10 @@ Rectangle = Shape:subclass("Rectangle")
 
 function Rectangle:initialize(widthInGameUnits, heightInGameUnits, maxScore)
   Shape.initialize(self, widthInGameUnits, heightInGameUnits, maxScore)
+  -- turn into dotted line
   local default = Point(baseRes.width * 0.5 - self.dimensions.width * 0.5, baseRes.height * 0.5 - self.dimensions.height * 0.5)
+  default.x = ((math.floor(default.x / Shape.CONVERSION_FACTOR)) * Shape.CONVERSION_FACTOR) - (Shape.CONVERSION_FACTOR / 2)
+  default.y = ((math.floor(default.y / Shape.CONVERSION_FACTOR)) * Shape.CONVERSION_FACTOR) + (Shape.CONVERSION_FACTOR / 2)
   self.topL, self.topR, self.botL, self.botR = default, Point(), Point(), Point()
 end
 

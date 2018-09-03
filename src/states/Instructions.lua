@@ -1,7 +1,6 @@
 Instructions = State:subclass("Instructions")
 
-function Instructions:initialize(mode)
-  self.mode = mode
+function Instructions:initialize()
   self.placeables = {}
   self.onMouseRelease = function() end
   self:setUpScreen1()
@@ -59,7 +58,7 @@ function Instructions:setUpScreen2()
   
   local mouseRelease = function()
     Sound:createAndPlay("assets/audio/sfx/sfx_click.mp3", "click")
-    state = Game(self.mode)
+    state = Game()
   end
   
   self.placeables = {group}

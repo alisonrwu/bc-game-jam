@@ -809,7 +809,7 @@ function loadAchievements()
       user:saveData()
     end
   end
-  local a49 = Achievement("Solid Game", "Cut ONLY shapes with >80% accuracy and have a total of over 10,000 in one session.", a49n, 1)
+  local a49 = Achievement("Solid Game", "Cut ONLY shapes with >80% accuracy and have a total of over 10,000 in one session on HARD mode.", a49n, 1)
   
   local a50n = function(self, event, args)
     if event == Level.START then
@@ -831,7 +831,7 @@ function loadAchievements()
       user:saveData()
     end
   end
-  local a50 = Achievement("Perfect Game", "Cut ONLY shapes with >90% accuracy and have a total of over 20,000 in one session.", a50n, 1)
+  local a50 = Achievement("Perfect Game", "Cut ONLY shapes with >90% accuracy and have a total of over 20,000 in one session on HARD mode.", a50n, 1)
   
   local a51n = function(self, event, args)
     if event == Level.START then
@@ -853,7 +853,7 @@ function loadAchievements()
       user:saveData()
     end
   end
-  local a51 = Achievement("TAS Bot", "Cut ONLY shapes with >95% accuracy and have a total of over 30,000 in one session.", a51n, 1)
+  local a51 = Achievement("TAS Bot", "Cut ONLY shapes with >95% accuracy and have a total of over 30,000 in one session on HARD mode.", a51n, 1)
   
   local a52n = function(self, event, args)
     if event == Shop.BOUGHT_ITEM and self.progress < self.maxProgress then

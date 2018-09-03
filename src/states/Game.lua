@@ -1,9 +1,11 @@
 Game = State:subclass("Game")
 Game.static.WAIT_DURATION = 1.5
+Game.static.MODE = "Normal"
 
 function Game:update(dt)
   self.level:update(dt)
-
+  self.cursor:update(dt, self.drawing.lines, self.mode)
+      
   if self.mode == "wait" then
     self:wait(dt)
   end
@@ -15,7 +17,6 @@ function Game:update(dt)
     elseif not self.drawing:isMouseAtSamePoint() then
       Sound:play("cutting")
       local drawPt = self:getDrawPoint()
-      self.cursor:update(self.drawing.lines)
       self.drawing:insertPoint(drawPt)
     else
       Sound:stop("cutting")
@@ -41,17 +42,17 @@ function Game:draw()
   self.cursor:draw(self.mode)
 end
 
-function Game:initialize(mode)
+function Game:initialize()
   love.mouse.setVisible(false)
   user:applyModifiers()
   self.mode = "ready"
   self.waitTimer = 0
   self.bg = ImagePlaceable("assets/graphics/game/bg/bg_game16x9.png")
-  self.level = Level(mode)
+  self.level = Level(Game.MODE)
   self.drawing = Polygon()
   self.cursor = Cursor()
-  Sound:create("assets/audio/sfx/sfx_cutting.ogg", "cutting", false)
-  Sound:create("assets/audio/sfx/sfx_snip.ogg", "snip", false)
+  Sound:create("assets/audio/sfx/cut.wav", "cutting", false)
+  Sound:create("assets/audio/sfx/snip_2.wav", "snip", false)
   Sound:createAndPlay("assets/audio/music/bgm_papercutter.ogg", "bgm", true, "stream")
 end
 

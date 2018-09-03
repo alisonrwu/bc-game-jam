@@ -5,15 +5,16 @@ Level.static.EVERY_X_DIFFICULTY = 3
 Level.static.STARTING_TIME = 60
 Level.static.MIN_SHAPE_DIMEN = 1
 Level.static.MAX_SHAPE_DIMEN = 6
-Level.static.POINTS_TO_END_TUTORIAL = 300
+Level.static.POINTS_TO_END_TUTORIAL = 800
 Level.static.TARGET_MULTIPLIER = 0.50
 Level.static.SHAPE_COMPLETED = "SHAPE_COMPLETED"
 Level.static.START = "START"
 Level.static.UNLOCKED_SHAPE = "UNLOCKED_SHAPE"
 
 function Level:initialize(mode)
-  self.mode = mode or "Normal"
+  self.mode = "Baby"
   if self.mode == "Baby" then
+    self.grid = Grid()
     self.tutorial = true
     self.shapes = {"Rectangle"}
     self.nextShape = "Oval"
@@ -41,6 +42,7 @@ function Level:initialize(mode)
   self.iterate = false
   self.differenceToIterate = 0
   
+  -- add status
   self.target = Level.INITIAL_TARGET
   self.timer = Timer()
   self.timer:registerObserver(self)
@@ -51,11 +53,11 @@ function Level:initialize(mode)
   self.problem = false
   self:generateProblem()
   self.targetsUntil = Level.static.EVERY_X_DIFFICULTY
-  self.scoreText = TextPlaceable("Score: ", Point(baseRes.width * 0.6, baseRes.height * 0.9))
+  self.scoreText = TextPlaceable("Score: ", Point(baseRes.width * 0.05, baseRes.height * 0.8))
   self.scoreCounter = TextPlaceable("1")
   self.scoreCounter:setRight(self.scoreText, 0)
-  self.scoreCounter:setPosition(Point(self.scoreCounter.position.x, baseRes.height * 0.9))
-  self.targetCounter = TextPlaceable("Target: ", Point(baseRes.width * 0.2, baseRes.height * 0.9))
+  self.scoreCounter:setPosition(Point(self.scoreCounter.position.x, baseRes.height * 0.8))
+  self.targetCounter = TextPlaceable("Target: ", Point(baseRes.width * 0.05, baseRes.height * 0.9))
   self.targetsUntilShape = TextPlaceable(("%i targets till: %s"):format(self.targetsUntil, self.nextShape), nil, nil, nil, 0.5)
   self:registerObserver(user)
   self:notifyObservers(Level.START)
@@ -66,7 +68,7 @@ function Level:update(dt)
   if self.nextShape == "none" then self.targetsUntilShape:update(dt, "All shapes added.") else 
     self.targetsUntilShape:update(dt, ("%i targets until: %s"):format(self.targetsUntil, self.nextShape))
   end
-  self.targetsUntilShape:setLeftOfPoint(Point(baseRes.width * 0.95, 60))
+  self.targetsUntilShape:setLeftOfPoint(Point(baseRes.width * 0.96, 60))
   for i = 1, #self.popUps do
     local popUp = self.popUps[i]
     if popUp ~= nil then 
@@ -99,6 +101,7 @@ function Level:update(dt)
 end
 
 function Level:draw()
+  if self.grid then self.grid:draw() end
   self.timer:draw()
   self.speech:draw()
   for i = 1, #self.popUps do
@@ -125,26 +128,31 @@ function Level:scoreDrawing(drawing)
   self:onScore(comboMultipliedScore, tostring(self.problem), successPercentage)
   comboMultipliedScore = self:modifyScore(comboMultipliedScore)
   
-  local scorePopUp = NumberPopUp(comboMultipliedScore, rating.color, 1, scale:getWorldMouseCoordinates())
+  local scorePopUp = NumberPopUp(comboMultipliedScore, rating.color, 1, Point.centreOf(self.problem.bounds, self.problem.dimensions))
   local comboPopUp = TextPopUp("x" .. self.combo.multiplier, Graphics.NORMAL, 1, false)
   comboPopUp.position.x = scorePopUp.position.x
   comboPopUp:setAbove(scorePopUp)
   table.insert(self.popUps, scorePopUp)
   table.insert(self.popUps, comboPopUp)
-  
+
   if self.combo.multiplier > 2 then
-    local firePopUp = ImagePopUp("assets/graphics/game/hud/icon_combo.png", Graphics.NORMAL, 0.30, false)
+    local firePopUp = ImagePopUp("assets/graphics/game/hud/icon_combo.png", Graphics.NORMAL, 1, false)
     firePopUp:setLeft(comboPopUp, 0)
     firePopUp:setCentreVertical(comboPopUp)
-    table.insert(self.popUps, firePopUp)
+    firePopUp:setPosition(Point(firePopUp.position.x, firePopUp.position.y - 5))
+    table.insert(self.popUps, firePopUp)  
   end
-
+          
   self:addScore(comboMultipliedScore)
-  local status = {shape = tostring(self.problem), accuracy = successPercentage * 100, tutorial = self.tutorial, points = score, targetUp = self:isTargetAchieved(), timeLeft = self.timer.time, rating = rating.text, timePlayed = self.timer.timePlayed, multiplier = self.combo.multiplier, targetUps = self.difficulty - 1}
+  local status = {shape = tostring(self.problem), accuracy = successPercentage * 100, tutorial = self.tutorial, points = score, targetUp = self:isTargetAchieved(), timeLeft = self.timer.time, rating = rating.text, timePlayed = self.timer.timePlayed, multiplier = self.combo.multiplier, targetUps = self.difficulty - 1, mode = self.mode}
   
-  if self:isTutorialOver() then self.tutorial = false end
+  if self:isTutorialOver() then 
+    self.tutorial = false 
+    self.grid = false
+    end
   if self:isTargetAchieved() then
     Sound:createAndPlay("assets/audio/sfx/sfx_targetup.wav", "targetup")
+          
     local targetUpPopUp = TextPopUp("Target Up!", Graphics.YELLOW, 1, false)
     targetUpPopUp.position.x = scorePopUp.position.x
     targetUpPopUp:setBelow(scorePopUp)
@@ -156,7 +164,9 @@ function Level:scoreDrawing(drawing)
 
   self.problem.displayAnswer = true
   Sound:createAndPlay(rating.sound.path, rating.sound.name)
-  self:notifyObservers(Level.SHAPE_COMPLETED, status)
+  if self.mode ~= "Baby" then
+    self:notifyObservers(Level.SHAPE_COMPLETED, status)   
+  end
 end
 
 function Level:addScore(score)

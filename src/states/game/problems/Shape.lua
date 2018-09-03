@@ -42,7 +42,7 @@ function Shape:transformSuccessPercentage(successPercentage)
   local score = transformedPercentage * self.maxScore
   if score > self.maxScore then score = self.maxScore end
   
-  return math.floor(score)
+  return math.ceil(score)
 end
 
 function Shape:area()

@@ -1,6 +1,6 @@
 PopUp = class("PopUp"):include(Orientation)
-PopUp.RISE = 2
-PopUp.FADE = 1/90
+PopUp.RISE = 1.9
+PopUp.FADE = 1/95
 
 function PopUp:initialize(color, scale, position) 
   self.color = color or Graphics.NORMAL

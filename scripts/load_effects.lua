@@ -16,45 +16,45 @@ function loadEffects()
     Cursor.static.FRAME1 = love.graphics.newQuad(0, 0, 82, 40, Cursor.SPRITESHEET:getDimensions())
     Cursor.static.FRAME2 = love.graphics.newQuad(0, 40, 82, 40, Cursor.SPRITESHEET:getDimensions())
     Cursor.static.OFFSET = {x = 11, y = 39}
+    Level.static.STATUS_TIMER = 3
+    Level.static.CURRENT_STATUS = ""
     Level.onScore = function(self, score, problem, successPercentage)
-      if problem == "Triangle" then
-        if successPercentage >= Shape.CORRECT_THRESHOLD then self.combo.multiplier = self.combo.multiplier + Combo.INCREASE * 3 end
+      if problem == "Rectangle" then
+        if score > 0 then
+          Level.static.CURRENT_STATUS = "PizzaBuff"
+          Level.static.STATUS_TIMER = 3
+          
+        else
+          Level.static.CURRENT_STATUS = "PizzaDebuff"
+          Level.static.STATUS_TIMER = 3         
+
+        end
       end
     end
     Level.modifyScore = function(self, score)
-      if problem == "Triangle" then
-        if score > 0 then
-          return score * 3
-        else 
-          return score
+      if Level.STATUS_TIMER > 0 then
+        if Level.CURRENT_STATUS == "PizzaBuff" then
+          if score > 0 then return score * 2 end
         end
+        if Level.CURRENT_STATUS == "PizzaDebuff" then
+          if score < 0 then return score * 2 end
+        end
+        Level.static.STATUS_TIMER = Level.STATUS_TIMER - 1
       else 
         return score
       end
     end
-    Level.generateWidthAndHeight = function()
-      local randWidth, randHeight = 0, 0
-      while randWidth == randHeight do
-        randWidth = love.math.random(Level.MIN_SHAPE_DIMEN, Level.MAX_SHAPE_DIMEN)
-        randHeight = love.math.random(Level.MIN_SHAPE_DIMEN, Level.MAX_SHAPE_DIMEN)
-      end
-      return randWidth, randHeight
-    end
   end
   local pizzacutterOnRemove = function()
     Level.onScore = function(self, score) end
-    Level.modifyScore = function(self, score) 
-        return score
+    Level.modifyScore = function(self, score)
+      return score
     end
-    Level.generateWidthAndHeight = function()
-      local randWidth = love.math.random(Level.MIN_SHAPE_DIMEN, Level.MAX_SHAPE_DIMEN)
-      local randHeight = love.math.random(Level.MIN_SHAPE_DIMEN, Level.MAX_SHAPE_DIMEN)
-      return randWidth, randHeight
-    end
+
   end
   local pizzacutterDescription = "Pizza Cutter"
-  local pizzacutterPros = "+ Triple shape and combo gains for triangles (up to 600, +1.5x)" 
-  local pizzacutterCons = "- Shapes cannot be the same width and length" 
+  local pizzacutterPros = "+ Cutting a good triangle doubles point gains for the next 3 shapes" 
+  local pizzacutterCons = "- Cutting a bad triangle doubles point losses for the next 3 shapes" 
   local pizzacutterEffect = Effect(pizzacutterOnApply, pizzacutterOnRemove, pizzacutterDescription, pizzacutterPros, pizzacutterCons)
 
   local gardenshearsOnApply = function()
@@ -62,19 +62,72 @@ function loadEffects()
     Cursor.static.FRAME1 = love.graphics.newQuad(0, 0, 94, 48, Cursor.SPRITESHEET:getDimensions())
     Cursor.static.FRAME2 = love.graphics.newQuad(0, 48, 94, 48, Cursor.SPRITESHEET:getDimensions())
     Cursor.static.OFFSET = {x = 32, y = 25}
-    Shape.static.CORRECT_THRESHOLD = 0.45
-    Level.static.MIN_SHAPE_DIMEN = 2
-    Level.static.MAX_SHAPE_DIMEN = 5
-    
+    Shape.transformSuccessPercentage = function(self, successPercentage)
+      local transformedPercentage = successPercentage - Shape.CORRECT_THRESHOLD
+      transformedPercentage = 16 * (transformedPercentage ^ 3)
+      
+      local score = transformedPercentage * self.maxScore
+      if score > self.maxScore then score = self.maxScore end
+      
+      return math.ceil(score)
+    end
+    Level.generateProblem = function(self)
+      local randWidth, randHeight = self:generateWidthAndHeight()
+      local shape = self.shapes[love.math.random(1, #self.shapes)]
+
+      if shape == "Rectangle" then
+        self.problem = Rectangle(randWidth, randHeight, Level.MAX_SCORE * 0.75)
+      elseif shape == "Oval" then
+        self.problem = Oval(randWidth, randHeight, Level.MAX_SCORE)
+      elseif shape == "Triangle" then
+        self.problem = Triangle(randWidth, randHeight, Level.MAX_SCORE * 0.75)
+      elseif shape == "Diamond" then
+        self.problem = Diamond(randWidth, randHeight, Level.MAX_SCORE * 0.75)
+      end
+      
+      if self.tutorial then 
+        self.problem.displayAnswer = true 
+        self.speech = Speech(("Cut out this %iW x %iL %s!"):format(randWidth, randHeight, shape))
+      else
+        self.speech = Speech(("I need a %iW x %iL %s!"):format(randWidth, randHeight, shape))
+      end
+    end
   end
   local gardenshearsOnRemove = function()
-    Shape.static.CORRECT_THRESHOLD = 0.5
-    Level.static.MIN_SHAPE_DIMEN = 1
-    Level.static.MAX_SHAPE_DIMEN = 6
+    Shape.transformSuccessPercentage = function(self, successPercentage)
+      local transformedPercentage = successPercentage - Shape.CORRECT_THRESHOLD
+      transformedPercentage = 2 * transformedPercentage
+      
+      local score = transformedPercentage * self.maxScore
+      if score > self.maxScore then score = self.maxScore end
+      
+      return math.floor(score)
+    end    
+    Level.generateProblem = function(self)
+      local randWidth, randHeight = self:generateWidthAndHeight()
+      local shape = self.shapes[love.math.random(1, #self.shapes)]
+
+      if shape == "Rectangle" then
+        self.problem = Rectangle(randWidth, randHeight, Level.MAX_SCORE)
+      elseif shape == "Oval" then
+        self.problem = Oval(randWidth, randHeight, Level.MAX_SCORE)
+      elseif shape == "Triangle" then
+        self.problem = Triangle(randWidth, randHeight, Level.MAX_SCORE)
+      elseif shape == "Diamond" then
+        self.problem = Diamond(randWidth, randHeight, Level.MAX_SCORE)
+      end
+      
+      if self.tutorial then 
+        self.problem.displayAnswer = true 
+        self.speech = Speech(("Cut out this %iW x %iL %s!"):format(randWidth, randHeight, shape))
+      else
+        self.speech = Speech(("I need a %iW x %iL %s!"):format(randWidth, randHeight, shape))
+      end
+    end  
   end
   local gardenshearsDescription = "Garden Shears"
-  local gardenshearsPros = "+ 5% less accuracy required to gain points and continue combos"
-  local gardenshearsCons = "- Shapes cannot be of size 1 or 6"
+  local gardenshearsPros = "+ Point gain and loss is exponential"
+  local gardenshearsCons = "- Straight edged shapes are worth less points (down to 150)"
   local gardenshearsEffect = Effect(gardenshearsOnApply, gardenshearsOnRemove, gardenshearsDescription, gardenshearsPros, gardenshearsCons)
   
   local utilityknifeOnApply = function()
@@ -112,9 +165,9 @@ function loadEffects()
     Cursor.static.FRAME1 = love.graphics.newQuad(0, 0, 80, 41, Cursor.SPRITESHEET:getDimensions())
     Cursor.static.FRAME2 = love.graphics.newQuad(0, 42, 80, 42, Cursor.SPRITESHEET:getDimensions())
     Cursor.static.OFFSET = {x = 24, y = 25}
-    Level.onScore = function(self, score, successPercentage)
+    Level.onScore = function(self, score, problem, successPercentage)
       if successPercentage > 0 then
-        local timeGain = successPercentage * 15
+        local timeGain = math.floor(successPercentage * 10)
         if self.timer.time + timeGain < 0 then 
           self.timer.time = 0 
         else
@@ -131,13 +184,13 @@ function loadEffects()
   local crocodileOnRemove = function()
     Level.onScore = function(self, score)
     end
-    function Timer:resetTimer()
+    Timer.resetTimer = function(self)
       self.time = Timer.RESET_TIME
     end
   end
   local crocodileDescription = "Crocodile"
   local crocodilePros = "+ Gain time based on points         (up to 5s)"
-  local crocodileCons = "- No longer reset time on Target Up"
+  local crocodileCons = "- Time does not reset on Target Up"
   local crocodileEffect = Effect(crocodileOnApply, crocodileOnRemove, crocodileDescription, crocodilePros, crocodileCons) 
 
   local chainsawOnApply = function()
@@ -146,21 +199,20 @@ function loadEffects()
     Cursor.static.FRAME2 = love.graphics.newQuad(0, 44, 90, 40, Cursor.SPRITESHEET:getDimensions())
     Cursor.static.OFFSET = {x = 5, y = 33}
     Cursor.static.EXTRA_ROT = -(math.pi / 6)
-    Combo.static.INCREASE = 0.25
+    Combo.static.INCREASE = 2
     Game.static.OSCILLATION_OFFSET = 0
-    Combo.INCREASE = 2
     Game.getDrawPoint = function()
       local mouseCoord = scale:getWorldMouseCoordinates()
       local offset_y = -5 * math.cos(Game.OSCILLATION_OFFSET)
       local offset_x = -5 * math.cos(Game.OSCILLATION_OFFSET)
       mouseCoord.y = mouseCoord.y + offset_y
       mouseCoord.x = mouseCoord.x + offset_x
-      Game.static.OSCILLATION_OFFSET = (Game.static.OSCILLATION_OFFSET + (2 * math.pi / 20)) % (2 * math.pi)
+      Game.static.OSCILLATION_OFFSET = (love.math.random(0, (2 * math.pi)))
       return mouseCoord
     end
   end
   local chainsawOnRemove = function()
-    Combo.INCREASE = 0.5
+    Combo.static.INCREASE = 0.5
     Game.getDrawPoint = function()
       local mouseCoord = scale:getWorldMouseCoordinates()
       return mouseCoord
@@ -173,10 +225,10 @@ function loadEffects()
   
   local laserOnApply = function()
     Cursor.static.SPRITESHEET = love.graphics.newImage("assets/graphics/game/player/cursor_laser_shorten.png")
-    Cursor.static.FRAME1 = love.graphics.newQuad(0, 0, 85, 32, Cursor.SPRITESHEET:getDimensions())
-    Cursor.static.FRAME2 = love.graphics.newQuad(0, 38, 85, 32, Cursor.SPRITESHEET:getDimensions())
+    Cursor.static.FRAME1 = love.graphics.newQuad(0, 0, 95, 32, Cursor.SPRITESHEET:getDimensions())
+    Cursor.static.FRAME2 = love.graphics.newQuad(0, 38, 95, 32, Cursor.SPRITESHEET:getDimensions())
     Cursor.static.WAITFRAME = love.graphics.newImage("assets/graphics/game/player/cursor_laser_wait.png")
-    Cursor.static.OFFSET = {x = 57, y = 17}
+    Cursor.static.OFFSET = {x = 67, y = 17}
     Cursor.static.EXTRA_ROT = -(math.pi / 2.5)
     Game.getDrawPoint = function()
       local mouseCoord = scale:getWorldMouseCoordinates()
@@ -199,17 +251,13 @@ function loadEffects()
       local mouse = scale:getWorldMouseCoordinates()
       local frame = self.frame
       
-      if self.lefty then
-        Cursor.static.EXTRA_ROT = Cursor.EXTRA_ROT * -1
-      end
-
       if mode == "wait" then
-        Graphics:drawWithRotationAndOffset(Cursor.WAITFRAME, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, 27, 5, Graphics.NORMAL)
+        Graphics:drawWithRotationAndOffset(Cursor.WAITFRAME, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, 37, 5, Graphics.NORMAL)
         Graphics:drawWithRotationAndOffset(Cursor.NO_CUT, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, Cursor.OFFSET.x, Cursor.OFFSET.y, Graphics.NORMAL)
       elseif mode == "cut" then
         Graphics:drawQWithRotationAndOffset(Cursor.SPRITESHEET, frame, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, Cursor.OFFSET.x, Cursor.OFFSET.y, Graphics.FADED)    
       elseif mode == "ready" or mode == "score" then
-        Graphics:drawWithRotationAndOffset(Cursor.WAITFRAME, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, 27, 5, Graphics.NORMAL) 
+        Graphics:drawWithRotationAndOffset(Cursor.WAITFRAME, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, 37, 5, Graphics.NORMAL) 
       end
     end
     
@@ -227,7 +275,7 @@ function loadEffects()
       end 
     end
     
-    Shape.static.CORRECT_THRESHOLD = 0.6 
+    Shape.static.CORRECT_THRESHOLD = 0.55
   end
   local laserOnRemove = function()
     Game.getDrawPoint = function()
@@ -249,10 +297,6 @@ function loadEffects()
     Cursor.draw = function(self, mode)
       local mouse = scale:getWorldMouseCoordinates()
       local frame = self.frame
-      
-      if self.lefty then
-        Cursor.static.EXTRA_ROT = Cursor.EXTRA_ROT * -1
-      end
 
       if mode == "wait" then
         Graphics:drawQWithRotationAndOffset(Cursor.SPRITESHEET, frame, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, Cursor.OFFSET.x, Cursor.OFFSET.y, Graphics.NORMAL)
@@ -278,7 +322,7 @@ function loadEffects()
   end
   local laserDescription = "Laser"
   local laserPros = "+ Shoots a laser to draw your line"
-  local laserCons = "- 10% more accuracy required to gain points and continue combos"
+  local laserCons = "- 5% more accuracy required to gain points and continue combos"
   local laserEffect = Effect(laserOnApply, laserOnRemove, laserDescription, laserPros, laserCons)
   
   local handOnApply = function()
@@ -288,12 +332,21 @@ function loadEffects()
     Cursor.static.OFFSET = {x = 26, y = 18}
     Level.static.MAX_SCORE = 1000
     Level.modifyScore = function(self, score)
-      if score < 0 then return (self.total / 2) * -1 else return score end
+      if score < 0 then 
+        if self.total > 0 then 
+          return math.floor((self.total / 2) * -1)
+        else 
+          return score
+        end
+      else
+        return score
+      end
     end
   end
   local handOnRemove = function()
     Level.static.MAX_SCORE = 200
     Level.modifyScore = function(self, score)
+      return score
     end
   end
   local handDescription = "Hand"
