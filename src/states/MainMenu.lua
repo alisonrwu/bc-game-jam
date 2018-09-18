@@ -1,6 +1,6 @@
 MainMenu = State:subclass("MainMenu")
 
-function MainMenu:initialize()
+function MainMenu:initialize(continueBGM)
   local start = function() 
     Sound:createAndPlay("assets/audio/sfx/sfx_click.mp3", "click")
     state = Options()
@@ -48,7 +48,10 @@ function MainMenu:initialize()
   self.group:setCentreVerticalScreen()
   self.group:setPosition(Point(self.group.position.x, self.group.position.y - 5))
  
-  Sound:createAndPlay("assets/audio/music/bgm_mainmenu.ogg", "bgm", true, "stream")
+  if not continueBGM then
+    Sound:createAndPlay("assets/audio/music/bgm_mainmenu.ogg", "bgm", true, "stream")
+    Sound:setVolume("bgm", 0.9)
+  end
 end
 
 function MainMenu:update(dt)

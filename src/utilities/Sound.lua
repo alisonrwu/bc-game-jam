@@ -54,7 +54,7 @@ function Sound:stop(tag)
 end  
 
 function Sound:clearAll()
-  for _, sound in ipairs(Sound.sources) do
+  for _, sound in pairs(Sound.sources) do
     sound:stop()
   end
 end
@@ -72,6 +72,14 @@ end
 function Sound:setPitch(tag, pitch)
   if Sound.sources[tag] then
     Sound.sources[tag]:setPitch(pitch)
+  end
+end  
+
+-- Sets a sources pitch by its tag.
+-- @param tag The tag assigned to the source.
+function Sound:setVolume(tag, volume)
+  if Sound.sources[tag] then
+    Sound.sources[tag]:setVolume(volume)
   end
 end  
 

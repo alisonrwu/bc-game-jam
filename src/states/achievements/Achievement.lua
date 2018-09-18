@@ -93,7 +93,11 @@ end
 function Achievement:addPopUp()
   local unlockedPopUp = TextPopUp("Achievement Unlocked!", Graphics.YELLOW, 0.5)
   local titlePopUp = TextPopUp(self.title.text, nil, 0.5)
-  local boxPopUp = ImagePopUp("assets/graphics/achievement_small.png")
+  local boxPopUp = ImagePopUp("assets/graphics/misc/popup_achievement.png")
+  
+  local fade = 1/160
+  local rise = 0.1
+  
   boxPopUp:setCentreHorizontalScreen()
   boxPopUp:setPosition(Point(boxPopUp.position.x, baseRes.height - boxPopUp.dimensions.height - 30))
   unlockedPopUp:setCentreHorizontal(boxPopUp)
@@ -101,16 +105,16 @@ function Achievement:addPopUp()
   unlockedPopUp:setPosition(Point(unlockedPopUp.position.x, unlockedPopUp.position.y - 12))
   titlePopUp:setCentreHorizontal(boxPopUp)
   titlePopUp:setBelow(unlockedPopUp, 5)
-  boxPopUp:setFade(1/120)
-  unlockedPopUp:setFade(1/120)
-  titlePopUp:setFade(1/120)
-  boxPopUp:setRise(0.1)
-  unlockedPopUp:setRise(0.1)
-  titlePopUp:setRise(0.1)
-  user:addPopUp(boxPopUp)
-  user:addPopUp(unlockedPopUp)
-  user:addPopUp(titlePopUp)
-  Sound:createAndPlay("assets/audio/sfx/sfx_achievement_unlocked.wav", "achievement_unlocked")
+  boxPopUp:setFade(fade)
+  unlockedPopUp:setFade(fade)
+  titlePopUp:setFade(fade)
+  boxPopUp:setRise(rise)
+  unlockedPopUp:setRise(rise)
+  titlePopUp:setRise(rise)
+  
+  user:addPopUpToQueue(boxPopUp)
+  user:addPopUpToQueue(unlockedPopUp)
+  user:addPopUpToQueue(titlePopUp)
 end
 
 function Achievement:__tostring()

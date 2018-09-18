@@ -9,7 +9,7 @@ function loadEffects()
   local baseScissorsDescription = "Scissors"
   local baseScissorsPros = "+ Zero negative effects"
   local baseScissorsCons = "- Zero positive effects"
-  local baseScissorsEffect = Effect(baseScissorsOnApply, baseScissorsOnRemove, baseScissorsDescription, baseScissorsPros, baseScissorsCons)
+  local baseScissorsEffect = Effect(baseScissorsOnApply, baseScissorsOnRemove, baseScissorsDescription, baseScissorsPros, baseScissorsCons, "Scissors")
   
   local pizzacutterOnApply = function()
     Cursor.static.SPRITESHEET = love.graphics.newImage("assets/graphics/game/player/cursor_pizzacutter.png")
@@ -20,12 +20,12 @@ function loadEffects()
     local buffImg = love.graphics.newImage('assets/graphics/game/player/buff_pizza.png')
     local debuffImg = love.graphics.newImage('assets/graphics/game/player/debuff_pizza.png')
     
-    psystem = love.graphics.newParticleSystem(buffImg, 32)
-    psystem:setParticleLifetime(1, 1.5) -- Particles live at least 2s and at most 5s.
+    local psystem = love.graphics.newParticleSystem(buffImg, 32)
+    psystem:setParticleLifetime(1, 1.5)
     psystem:setEmissionRate(6)
     psystem:setSizeVariation(1)
-    psystem:setLinearAcceleration(-15, -200, 10, -200) -- Random movement in all directions.
-    psystem:setColors(255, 255, 255, 255, 255, 255, 255, 0) -- Fade to transparency.
+    psystem:setLinearAcceleration(-15, -200, 10, -200)
+    psystem:setColors(255, 255, 255, 255, 255, 255, 255, 0)
     psystem:setEmissionArea("borderrectangle", 25, 8, 0, false)
     psystem:setRelativeRotation(true)
     psystem:setSpread(math.pi / 2)
@@ -35,21 +35,21 @@ function loadEffects()
     psystem:setSizes(0.76, 0.7, 0.8, 0.65, 0.86, 1)
     
     pizzaBuff = function(score)
-      if score > 0 then return score * 2 end
+      if score > 0 then return score * 2 else return score end
     end
     
     pizzaDebuff = function(score)
-      if score < 0 then return score * 2 end
+      if score < 0 then return score * 2 else return score end
     end
     
     Level.onScore = function(self, score, problem, successPercentage)
       if problem == "Triangle" then
         if score > 0 then
           psystem:setTexture(buffImg)
-          self.currentStatus = Status(psystem, 3, pizzaBuff)
+          self.currentStatus = Status(psystem, 3, pizzaBuff, "PIZZA_BUFF")
         else
           psystem:setTexture(debuffImg)
-          self.currentStatus = Status(psystem, 3, pizzaDebuff)
+          self.currentStatus = Status(psystem, 3, pizzaDebuff, "PIZZA_DEBUFF")
         end
       end
     end
@@ -58,9 +58,9 @@ function loadEffects()
     Level.onScore = function(self, score) end
   end
   local pizzacutterDescription = "Pizza Cutter"
-  local pizzacutterPros = "+ Cutting a good triangle doubles point gains for the next 3 shapes" 
-  local pizzacutterCons = "- Cutting a bad triangle doubles point losses for the next 3 shapes" 
-  local pizzacutterEffect = Effect(pizzacutterOnApply, pizzacutterOnRemove, pizzacutterDescription, pizzacutterPros, pizzacutterCons)
+  local pizzacutterPros = "+ Cutting a good triangle doubles point gains (lasts 3 shapes)" 
+  local pizzacutterCons = "- Cutting a bad triangle doubles point losses (lasts 3 shapes)" 
+  local pizzacutterEffect = Effect(pizzacutterOnApply, pizzacutterOnRemove, pizzacutterDescription, pizzacutterPros, pizzacutterCons, "Pizza Cutter")
 
   local gardenshearsOnApply = function()
     Cursor.static.SPRITESHEET = love.graphics.newImage("assets/graphics/game/player/cursor_gardenshears.png")
@@ -68,33 +68,31 @@ function loadEffects()
     Cursor.static.FRAME2 = love.graphics.newQuad(0, 48, 94, 48, Cursor.SPRITESHEET:getDimensions())
     Cursor.static.OFFSET = {x = 32, y = 25}
     Shape.transformSuccessPercentage = function(self, successPercentage)
-      local transformedPercentage = successPercentage - Shape.CORRECT_THRESHOLD
-      transformedPercentage = 16 * (transformedPercentage ^ 3)
+      local transformedPercentage = successPercentage - Shape.CORRECT_THRESHOLD      
+      transformedPercentage = 32 * (transformedPercentage ^ 3)
       
       local score = transformedPercentage * self.maxScore
-      if score > self.maxScore then score = self.maxScore end
       
       return math.ceil(score)
     end
-    Level.generateProblem = function(self)
-      local randWidth, randHeight = self:generateWidthAndHeight()
-      local shape = self.shapes[love.math.random(1, #self.shapes)]
-
-      if shape == "Rectangle" then
-        self.problem = Rectangle(randWidth, randHeight, Level.MAX_SCORE * 0.75)
-      elseif shape == "Oval" then
-        self.problem = Oval(randWidth, randHeight, Level.MAX_SCORE)
-      elseif shape == "Triangle" then
-        self.problem = Triangle(randWidth, randHeight, Level.MAX_SCORE * 0.75)
-      elseif shape == "Diamond" then
-        self.problem = Diamond(randWidth, randHeight, Level.MAX_SCORE * 0.75)
-      end
-      
-      if self.tutorial then 
-        self.problem.displayAnswer = true 
-        self.speech = Speech(("Cut out this %iW x %iL %s!"):format(randWidth, randHeight, shape))
-      else
-        self.speech = Speech(("I need a %iW x %iL %s!"):format(randWidth, randHeight, shape))
+    Level.onScore = function(self, score, problemName, successPercentage)
+      if successPercentage * 100 >= 90 then 
+        local leaf = love.graphics.newImage("assets/graphics/game/player/particle_leaf.png")
+        local leafSystem = love.graphics.newParticleSystem(leaf, 50)
+        leafSystem:setParticleLifetime(1, 1)
+        leafSystem:setEmissionRate(50)
+        leafSystem:setSizeVariation(1)
+        leafSystem:setLinearAcceleration(-1, -1, 1, 1)
+        leafSystem:setSpeed(200, 200)
+        leafSystem:setEmissionArea("borderellipse", 10, 10, 0, true)
+        leafSystem:setSizes(0.75, 1.25, 0.85, 0.65, 0.5, 1, 0.3, 1.5)
+        
+        local leafPopUp = ParticleSystemPopUp(leafSystem, Graphics.NORMAL, 1, false)
+        leafPopUp:setPosition(scale:getWorldMouseCoordinates())
+        leafPopUp:setRise(0)
+        leafPopUp:setFade(1/50)
+        leafPopUp:setTimeBeforeFade(0.25)
+        table.insert(self.popUps, leafPopUp)  
       end
     end
   end
@@ -106,34 +104,15 @@ function loadEffects()
       local score = transformedPercentage * self.maxScore
       if score > self.maxScore then score = self.maxScore end
       
-      return math.floor(score)
+      return math.ceil(score)
     end    
-    Level.generateProblem = function(self)
-      local randWidth, randHeight = self:generateWidthAndHeight()
-      local shape = self.shapes[love.math.random(1, #self.shapes)]
-
-      if shape == "Rectangle" then
-        self.problem = Rectangle(randWidth, randHeight, Level.MAX_SCORE)
-      elseif shape == "Oval" then
-        self.problem = Oval(randWidth, randHeight, Level.MAX_SCORE)
-      elseif shape == "Triangle" then
-        self.problem = Triangle(randWidth, randHeight, Level.MAX_SCORE)
-      elseif shape == "Diamond" then
-        self.problem = Diamond(randWidth, randHeight, Level.MAX_SCORE)
-      end
-      
-      if self.tutorial then 
-        self.problem.displayAnswer = true 
-        self.speech = Speech(("Cut out this %iW x %iL %s!"):format(randWidth, randHeight, shape))
-      else
-        self.speech = Speech(("I need a %iW x %iL %s!"):format(randWidth, randHeight, shape))
-      end
-    end  
+    Level.onScore = function(self, score)
+    end
   end
   local gardenshearsDescription = "Garden Shears"
-  local gardenshearsPros = "+ Point gain and loss is exponential"
-  local gardenshearsCons = "- Straight edged shapes are worth less points (down to 150)"
-  local gardenshearsEffect = Effect(gardenshearsOnApply, gardenshearsOnRemove, gardenshearsDescription, gardenshearsPros, gardenshearsCons)
+  local gardenshearsPros = "+ Gain points exponentially based on accuracy (up to 800)"
+  local gardenshearsCons = "- Lose points exponentially based on accuracy (down to -800)"
+  local gardenshearsEffect = Effect(gardenshearsOnApply, gardenshearsOnRemove, gardenshearsDescription, gardenshearsPros, gardenshearsCons, "Garden Shears")
   
   local utilityknifeOnApply = function()
     Cursor.static.SPRITESHEET = love.graphics.newImage("assets/graphics/game/player/cursor_utilityknife.png")
@@ -161,9 +140,9 @@ function loadEffects()
     end
   end
   local utilityknifeDescription = "Utility Knife"
-  local utilityknifePros = "+ Decrease wait time between shapes     (to 0.5s)"
-  local utilityknifeCons = "- Lose time on bad cuts           (up to 20s)"
-  local utilityknifeEffect = Effect(utilityknifeOnApply, utilityknifeOnRemove, utilityknifeDescription, utilityknifePros, utilityknifeCons)
+  local utilityknifePros = "+ Decrease wait time between shapes (to 0.5s)"
+  local utilityknifeCons = "- Lose time on bad cuts (up to 20s)"
+  local utilityknifeEffect = Effect(utilityknifeOnApply, utilityknifeOnRemove, utilityknifeDescription, utilityknifePros, utilityknifeCons, "Utility Knife")
 
   local crocodileOnApply = function()
     Cursor.static.SPRITESHEET = love.graphics.newImage("assets/graphics/game/player/cursor_crocodile.png")
@@ -171,8 +150,8 @@ function loadEffects()
     Cursor.static.FRAME2 = love.graphics.newQuad(0, 42, 80, 42, Cursor.SPRITESHEET:getDimensions())
     Cursor.static.OFFSET = {x = 24, y = 25}
     Level.onScore = function(self, score, problem, successPercentage)
-      if successPercentage > 0 then
-        local timeGain = math.floor(successPercentage * 10)
+      if successPercentage > Shape.CORRECT_THRESHOLD then
+        local timeGain = math.floor(successPercentage * 7)
         if self.timer.time + timeGain < 0 then 
           self.timer.time = 0 
         else
@@ -194,9 +173,9 @@ function loadEffects()
     end
   end
   local crocodileDescription = "Crocodile"
-  local crocodilePros = "+ Gain time based on points         (up to 5s)"
+  local crocodilePros = "+ Gain time based on points (up to 7s)"
   local crocodileCons = "- Time does not reset on Target Up"
-  local crocodileEffect = Effect(crocodileOnApply, crocodileOnRemove, crocodileDescription, crocodilePros, crocodileCons) 
+  local crocodileEffect = Effect(crocodileOnApply, crocodileOnRemove, crocodileDescription, crocodilePros, crocodileCons, "Crocodile") 
 
   local chainsawOnApply = function()
     Cursor.static.SPRITESHEET = love.graphics.newImage("assets/graphics/game/player/cursor_chainsaw.png")
@@ -224,111 +203,79 @@ function loadEffects()
     end
   end
   local chainsawDescription = "Chainsaw"
-  local chainsawPros = "+ Add 2x combo multiplier on good cuts instead of 0.5x"
+  local chainsawPros = "+ Increase combo multiplier on good cuts (to 2.0x)"
   local chainsawCons = "- Very unstable"
-  local chainsawEffect = Effect(chainsawOnApply, chainsawOnRemove, chainsawDescription, chainsawPros, chainsawCons) 
+  local chainsawEffect = Effect(chainsawOnApply, chainsawOnRemove, chainsawDescription, chainsawPros, chainsawCons, "Chainsaw") 
   
   local laserOnApply = function()
-    Cursor.static.SPRITESHEET = love.graphics.newImage("assets/graphics/game/player/cursor_laser_shorten.png")
+    Cursor.static.SPRITESHEET = love.graphics.newImage("assets/graphics/game/player/cursor_laser.png")
     Cursor.static.FRAME1 = love.graphics.newQuad(0, 0, 95, 32, Cursor.SPRITESHEET:getDimensions())
     Cursor.static.FRAME2 = love.graphics.newQuad(0, 38, 95, 32, Cursor.SPRITESHEET:getDimensions())
     Cursor.static.WAITFRAME = love.graphics.newImage("assets/graphics/game/player/cursor_laser_wait.png")
-    Cursor.static.OFFSET = {x = 67, y = 17}
+    Cursor.static.OFFSET = {x = 5, y = 17}
     Cursor.static.EXTRA_ROT = -(math.pi / 2.5)
-    Game.getDrawPoint = function()
-      local mouseCoord = scale:getWorldMouseCoordinates()
-      local offset_x = Cursor.OFFSET.x * -1 * math.cos(Cursor.EXTRA_ROT)
-      local offset_y = Cursor.OFFSET.x * -1 * math.sin(Cursor.EXTRA_ROT)
-      mouseCoord.x = mouseCoord.x + offset_x
-      mouseCoord.y = mouseCoord.y + offset_y
-      return mouseCoord
-    end
-    Cursor.update = function(self, lines)
-      self.counter = self.counter + 1
-      
-      if self.counter == Cursor.CYCLE then
-        self.counter = 0
-        if self.frame == Cursor.FRAME1 then self.frame = Cursor.FRAME2 else self.frame = Cursor.FRAME1 end
+    
+    Level.static.CHARGE = 0
+    Level.static.MAX_CHARGE = 180 -- runs at around 60fps so it takes around 3 seconds
+    Level.static.CHARGE_BAR_SPRITEMAP = love.graphics.newImage("assets/graphics/game/player/charge_bar_spritemap.png")
+    
+    Game.onHoldCut = function(self)
+      if Level.CHARGE == 0 then 
+        Sound:createAndPlay("assets/audio/sfx/sfx_laser_charge.wav", "laser_charge", false) 
+        Sound:setVolume("laser_charge", 0.15)
+        Sound:setPitch("laser_charge", 0.66)
+        self.playDing = true
+      end
+      if Level.CHARGE == Level.MAX_CHARGE then
+        if self.playDing then
+          Sound:stop("laser_charge")
+          Sound:createAndPlay("assets/audio/sfx/sfx_charge_max.wav", "charge_max", false)
+          Sound:setVolume("charge_max", 0.65)
+        end 
+        self.playDing = false
+      end
+      if Level.CHARGE < Level.MAX_CHARGE then
+        Level.static.CHARGE = Level.CHARGE + 1  
       end
     end
-    
-    Cursor.draw = function(self, mode)
+    Level.drawChargeBar = function(self)
+      local segment = Level.MAX_CHARGE / 8
+      local posOfQuadToDraw = math.floor(Level.CHARGE / segment)
+      local width = 30;
+      local height = 15;
+      
+      local quadToDraw = love.graphics.newQuad(posOfQuadToDraw * width, 0, width, height, Level.CHARGE_BAR_SPRITEMAP:getDimensions())
       local mouse = scale:getWorldMouseCoordinates()
-      local frame = self.frame
-      
-      if mode == "wait" then
-        Graphics:drawWithRotationAndOffset(Cursor.WAITFRAME, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, 37, 5, Graphics.NORMAL)
-        Graphics:drawWithRotationAndOffset(Cursor.NO_CUT, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, Cursor.OFFSET.x, Cursor.OFFSET.y, Graphics.NORMAL)
-      elseif mode == "cut" then
-        Graphics:drawQWithRotationAndOffset(Cursor.SPRITESHEET, frame, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, Cursor.OFFSET.x, Cursor.OFFSET.y, Graphics.FADED)    
-      elseif mode == "ready" or mode == "score" then
-        Graphics:drawWithRotationAndOffset(Cursor.WAITFRAME, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, 37, 5, Graphics.NORMAL) 
+      Graphics:drawQWithRotationAndOffset(Level.CHARGE_BAR_SPRITEMAP, quadToDraw, mouse.x, mouse.y, 0, Cursor.OFFSET.x - 40, Cursor.OFFSET.y + 40, Graphics.NORMAL)
+    end
+    Level.modifyScore = function(self, score)
+      Sound:stop("laser_charge")
+      local percentageOfCharge = Level.CHARGE / Level.MAX_CHARGE
+      local maxScore = 200 -- you can get an extra 200 points
+      local percentageOfScore = percentageOfCharge * maxScore
+      local extraScore = 0
+      Level.static.CHARGE = 0
+      if score >= 0 then 
+        extraScore = score + percentageOfScore
+      else
+        extraScore = score - (percentageOfScore * 2)
       end
+      return math.floor(extraScore)
     end
     
-    Polygon.isMouseAtSamePoint = function(self)
-      if self:isEmpty() then
-        return false
-      else 
-        local mouseCoord = scale:getWorldMouseCoordinates()
-        local offset_x = Cursor.OFFSET.x * -1 * math.cos(Cursor.EXTRA_ROT)
-        local offset_y = Cursor.OFFSET.x * -1 * math.sin(Cursor.EXTRA_ROT)
-        mouseCoord.x = mouseCoord.x + offset_x
-        mouseCoord.y = mouseCoord.y + offset_y
-        local point = self:getLatestPoint()
-        return point.x == mouseCoord.x and point.y == mouseCoord.y
-      end 
-    end
-    
-    Shape.static.CORRECT_THRESHOLD = 0.55
   end
   local laserOnRemove = function()
-    Game.getDrawPoint = function()
-      local mouseCoord = scale:getWorldMouseCoordinates()
-      return mouseCoord
+    Level.static.CHARGE = false
+    Game.onHoldCut = function(self)
     end
-    Cursor.update = function(self, lines)
-      self.counter = self.counter + 1
-      
-      if lines[#lines - 10] ~= nil then 
-        self.angle = Math:calculateAngleOfTwoLines(lines[#lines], lines[#lines - 5]) 
-      end    
-      
-      if self.counter == Cursor.CYCLE then
-        self.counter = 0
-        if self.frame == Cursor.FRAME1 then self.frame = Cursor.FRAME2 else self.frame = Cursor.FRAME1 end
-      end
+    Level.modifyScore = function(self, score)
+      return score
     end
-    Cursor.draw = function(self, mode)
-      local mouse = scale:getWorldMouseCoordinates()
-      local frame = self.frame
-
-      if mode == "wait" then
-        Graphics:drawQWithRotationAndOffset(Cursor.SPRITESHEET, frame, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, Cursor.OFFSET.x, Cursor.OFFSET.y, Graphics.NORMAL)
-        Graphics:drawWithRotationAndOffset(Cursor.NO_CUT, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, Cursor.OFFSET.x, Cursor.OFFSET.y, Graphics.NORMAL)
-      elseif mode == "cut" then
-        Graphics:drawQWithRotationAndOffset(Cursor.SPRITESHEET, frame, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, Cursor.OFFSET.x, Cursor.OFFSET.y, Graphics.FADED)    
-      elseif mode == "ready" or mode == "score" then
-        Graphics:drawQWithRotationAndOffset(Cursor.SPRITESHEET, frame, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, Cursor.OFFSET.x, Cursor.OFFSET.y, Graphics.NORMAL)    
-      end
-    end
-    
-    Polygon.isMouseAtSamePoint = function(self)
-      if self:isEmpty() then
-        return false
-      else 
-        local mouseCoord = scale:getWorldMouseCoordinates()
-        local point = self:getLatestPoint()
-        return point.x == mouseCoord.x and point.y == mouseCoord.y
-      end 
-    end
-    Shape.static.CORRECT_THRESHOLD = 0.5
-    
   end
   local laserDescription = "Laser"
-  local laserPros = "+ Shoots a laser to draw your line"
-  local laserCons = "- 5% more accuracy required to gain points and continue combos"
-  local laserEffect = Effect(laserOnApply, laserOnRemove, laserDescription, laserPros, laserCons)
+  local laserPros = "+ Charge up to gain more points on a good cut (up to +200)"
+  local laserCons = "- Lose double those points on a bad cut (down to -400)"
+  local laserEffect = Effect(laserOnApply, laserOnRemove, laserDescription, laserPros, laserCons, "Laser")
   
   local handOnApply = function()
     Cursor.static.SPRITESHEET = love.graphics.newImage("assets/graphics/game/player/cursor_hand.png")
@@ -338,11 +285,7 @@ function loadEffects()
     Level.static.MAX_SCORE = 1000
     Level.modifyScore = function(self, score)
       if score < 0 then 
-        if self.total > 0 then 
-          return math.floor((self.total / 2) * -1)
-        else 
-          return score
-        end
+        return math.floor((self.total / 2) * -1)
       else
         return score
       end
@@ -355,9 +298,9 @@ function loadEffects()
     end
   end
   local handDescription = "Hand"
-  local handPros = "+ All points gained quintipled"
+  local handPros = "+ Point gains are quintupled"
   local handCons = "- Lose half your points on a bad cut"
-  local handEffect = Effect(handOnApply, handOnRemove, handDescription, handPros, handCons)
-
+  local handEffect = Effect(handOnApply, handOnRemove, handDescription, handPros, handCons, "Hand")
+  
   return {baseScissorsEffect, pizzacutterEffect, gardenshearsEffect, utilityknifeEffect, chainsawEffect, crocodileEffect, laserEffect, handEffect}
 end

@@ -6,15 +6,21 @@ function PopUp:initialize(color, scale, position)
   self.color = color or Graphics.NORMAL
   self.scale = scale or 1
   self.position = position or Point()
+  self.timer = 0
   self.alpha = 1
+  self.timeBeforeFade = 1
 end
 
-function PopUp:update()
+function PopUp:update(dt)
   local oldPosition = self.position.y
   local rise = self.rise and self.rise or PopUp.RISE
   local fade = self.fade and self.fade or PopUp.FADE
   self.position.y = self.position.y - rise
-  self.alpha = self.alpha - fade
+  self.timer = self.timer + dt
+  
+  if self.timer > self.timeBeforeFade then
+    self.alpha = self.alpha - ((math.exp(self.timer) - 0.7) * fade)
+  end
 end
 
 function PopUp:draw()
@@ -27,6 +33,10 @@ end
 
 function PopUp:setRise(rise)
   self.rise = rise
+end
+
+function PopUp:setTimeBeforeFade(timeBeforeFade)
+  self.timeBeforeFade = timeBeforeFade
 end
 
 function PopUp:setFade(fade)
@@ -78,4 +88,21 @@ end
 function ImagePopUp:draw()
   local color = Graphics:modifyColorAlpha(self.color, self.alpha)
   Graphics:drawWithScale(self.image, self.position.x, self.position.y, self.scale, color)
+end
+
+ParticleSystemPopUp = PopUp:subclass("ParticleSystemPopUp")
+
+function ParticleSystemPopUp:initialize(psystem, color, scale, position)
+  PopUp.initialize(self, color, scale, position)
+  self.psystem = psystem or false
+end
+
+function ParticleSystemPopUp:update(dt)
+  PopUp.update(self, dt)
+  self.psystem:update(dt)
+end
+
+function ParticleSystemPopUp:draw()
+  local color = Graphics:modifyColorAlpha(self.color, self.alpha)
+  Graphics:draw(self.psystem, self.position.x, self.position.y, color)
 end

@@ -17,7 +17,7 @@ function Achievements:initialize()
   self.title:setCentreHorizontalScreen()
   self.title.position.y = 10
   local goBack = function()
-    state = MainMenu()
+    state = MainMenu(true)
   end
   self.backButton = ImageButton("assets/graphics/misc/hud_backarrow.png", goBack)
   self.backButton:setLeftOfPoint(Point(baseRes.width, 10), 15)
@@ -42,14 +42,9 @@ function Achievements:draw()
   self.nextButton:draw()
   self.backButton:draw()  
   self.title:draw()
-  --self.descriptionBox:draw()
   local group = self.groups[self.currentPage]
   if group then group:draw() end
   self.extraText:draw()
-
---  for _, placeable in ipairs(group.placeables) do
---    placeable.bounds:draw()
---  end
 end
 
 function Achievements:loadAchievements()
@@ -94,13 +89,8 @@ function Achievements:updateButtonVisibility()
     self.nextButton.color = Graphics.NORMAL
   end
 end
---  for _, placeable in ipairs(group.placeables) do
---    placeable.bounds:draw()
---  end
+
 function Achievements:mouseRelease(x, y, button, isTouch)
-    --  for _, placeable in ipairs(group.placeables) do
---    placeable.bounds:draw()
---  endton, isTouch) 
   self.prevButton:mouseRelease(x, y, button, isTouch)
   self.nextButton:mouseRelease(x, y, button, isTouch)
   self.backButton:mouseRelease(x, y, button, isTouch)
@@ -143,20 +133,7 @@ function Achievements:positionAchievements()
     end
     if botLeft.position == Point(0, 0) then
       botLeft:setBelow(midLeft, 15)
-    end  local a26n = function(self, event, args)
-    if event == Achievements.UNLOCKED_ACHIEVEMENT and self.progress < self.maxProgress then
-      local unlocked_all = args.unlocked_all
-      if unlocked_all then 
-        self.progress = self.progress + 1
-        if self.progress == self.maxProgress then
-          self:setUnlocked(true)
-          self:addPopUp()
-        end
-        user:saveData()
-      end
-    end
-  end
-  local a26 = Achievement("Faithful Fan", "Unlock all the achievements. Thank you for playing.", a26n, 1)
+    end 
     if botRight.position == Point(0, 0) then
       botRight:setBelow(midRight, 15)
       botRight:setRight(botLeft, 20)    
@@ -188,7 +165,7 @@ function Achievements:notify(event, args)
     self.extraText:setText(text)
     self:notifyObservers(Achievements.UNLOCKED_ACHIEVEMENT, {unlockedAchievements = self:getUnlockedAchievements(), maxAchievements = self:getMaxAchievements()}) 
   elseif event == Achievement.LOCKED then
-    local text = ("%s %i/%i"):format(args.description, args.progress, args.maxProgress)
+    local text = ("%s (%i/%i)"):format(args.description, args.progress, args.maxProgress)
     self.extraText:setText(text)
   end
 end

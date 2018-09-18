@@ -62,7 +62,9 @@ require "scripts/load_achievements"
 
 
 function love.load(args)
+  resetData = false
   loadArgs(args)
+  checkGameVersion()
   icon = love.image.newImageData("assets/graphics/icon.png")
   font = love.graphics.newImageFont("assets/graphics/font.png"," abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?-+/():;%&`'*#=[]\"")
   love.window.setIcon(icon)	
@@ -77,7 +79,7 @@ function love.load(args)
   salary = Salary()
   achievements = loadAchievements()
   highScore = HighScore()
-  state = Game()
+  state = MainMenu()
 end  
 
 function love.update(dt)
@@ -109,14 +111,34 @@ function love.keypressed(key, u)
     state.level:addScore(10000)
   end
   
+  if key == "c" then
+    state.level.combo.multiplier = state.level.combo.multiplier + 1
+  end
+  
   if key == "rctrl" then
-    salary:add(99000)
+    salary:add(999999)
   end
   
   if key == "escape" then
     love.event.push('quit')
   end   
 end
+
+function checkGameVersion()
+  local function removeAllData()
+    files = love.filesystem.getDirectoryItems("")
+    for _, file in ipairs(files) do
+      if file:find("data_") then 
+        love.filesystem.remove(file)
+      end
+    end
+  end
+  
+  if resetData == true then
+    removeAllData()
+  end 
+end
+
 
 function loadArgs(args)
   for i = 1, #args do
@@ -145,14 +167,6 @@ function loadArgs(args)
       end
     elseif arg == "printnow" then
       io.stdout:setvbuf("no")
-    elseif arg == "perfectRectangle" then
-      local perfectRectangle = require "PerfectRectangle"
-      state.drawing.points = perfectRectangle
-      state.mode = "score"
-    elseif arg == "testDrawing" then
-      local testDrawing = require "TestDrawing"
-      state.drawing.points = testDrawing   
-      state.mode = "score"
     elseif arg == "runTests" then
       require "src/utilities/UnitTests"
       runAllTests()

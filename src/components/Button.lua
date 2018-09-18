@@ -39,6 +39,10 @@ function Button:updateBounds()
   self.bounds = scale:worldToScreenBounds(self.bounds)
 end
 
+function Button:setOnClick(onClick)
+  self.onClick = onClick
+end
+
 ImageButton = Button:subclass("ImageButton")
 
 function ImageButton:initialize(path, onClick, position, color, name)
@@ -83,3 +87,51 @@ function TextOnImageButton:draw()
   self.text:draw()
 end
 
+GroupButton = Button:subclass("GroupButton")
+local MIN_VALUE = -math.huge
+local MAX_VALUE = math.huge
+
+function GroupButton:initialize(placeables, onClick, position, name, color)
+  Button.initialize(self, onClick, position, name, color)
+  self.placeables = placeables or {}
+  self.bounds = Bounds()
+  for _, placeable in ipairs(self.placeables) do
+    local bounds = Bounds.ofTopLeftAndDimensions(placeable.position, placeable.dimensions)
+    self.bounds = Math:calculateMaximumBounds(bounds, self.bounds)
+  end
+  self.position = Point(self.bounds.minX, self.bounds.minY)
+  self.dimensions = Dimensions.ofBounds(self.bounds)
+end
+
+function GroupButton:setMouseRelease(mouseRelease)
+  self.mouseRelease = mouseRelease
+end
+
+function GroupButton:setPosition(position)
+  local deltaX = position.x - self.position.x
+  local deltaY = position.y - self.position.y
+  self.position = position
+  self:updateBounds()
+  for _, placeable in ipairs(self.placeables) do
+    placeable:setPosition(Point(placeable.position.x + deltaX, placeable.position.y + deltaY))
+  end  
+end
+
+function GroupButton:updateBounds()
+  self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) 
+  for _, placeable in ipairs(self.placeables) do
+    placeable:updateBounds()
+  end
+end
+
+function GroupButton:update(dt)
+  for _, placeable in ipairs(self.placeables) do
+    placeable:update(dt)
+  end
+end
+
+function GroupButton:draw()
+  for _, placeable in ipairs(self.placeables) do
+    placeable:draw()
+  end
+end

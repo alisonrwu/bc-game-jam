@@ -159,6 +159,10 @@ function GroupPlaceable:initialize(placeables, position, scale)
   self.dimensions = Dimensions.ofBounds(self.bounds)
 end
 
+function GroupPlaceable:setMouseRelease(mouseRelease)
+  self.mouseRelease = mouseRelease
+end
+
 function GroupPlaceable:setPosition(position)
   local deltaX = position.x - self.position.x
   local deltaY = position.y - self.position.y

@@ -18,7 +18,9 @@ function Timer:update(dt)
     for _, obs in ipairs(self.observers) do
       obs:notify(Timer.OUT_OF_TIME)
     end
-	elseif self.time <= Timer.DANGER_TIME_LEFT then
+    return
+  end
+	if self.time <= Timer.DANGER_TIME_LEFT then
     self.color = Timer.DANGER_COLOR
     Sound:setPitch("bgm", Timer.DANGER_PITCH)
 	else 

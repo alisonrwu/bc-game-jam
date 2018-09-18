@@ -1,6 +1,6 @@
 Effect = class("Effect")
 
-function Effect:initialize(onApply, onRemove, description, pros, cons)
+function Effect:initialize(onApply, onRemove, description, pros, cons, name)
   self.onApply = onApply or function() end
   self.onRemove = onRemove or function() end
   self.description = description and TextPlaceable(description, nil, "center") or TextPlaceable()
@@ -11,6 +11,7 @@ function Effect:initialize(onApply, onRemove, description, pros, cons)
   self.cons:setColor(Graphics.RED)
   self.cons:setBelow(self.pros)
   self.display = GroupPlaceable({self.description, self.pros, self.cons})
+  self.name = name or ""
 end
 
 function Effect:remove()

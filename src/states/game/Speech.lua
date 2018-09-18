@@ -4,8 +4,10 @@ Speech.static.BUBBLE = ImagePlaceable("assets/graphics/game/hud/hud_speechbubble
 function Speech:initialize(text, color)
   self.text = text or ""
   self.iteratedText = ""
-  Sound:create("assets/audio/sfx/sfx_blipmale_11.wav", "blipmale", false)
-  Sound:create("assets/audio/sfx/sfx_blipfemale_11.wav", "blipfemale", false)
+  Sound:create("assets/audio/sfx/sfx_blipmale.wav", "blipmale", false)
+  Sound:setVolume("blipmale", 0.85)
+  Sound:create("assets/audio/sfx/sfx_blipfemale.wav", "blipfemale", false)
+  Sound:setVolume("blipfemale", 0.85)
   self.iterationIndex = 1
   self.blip = "male"
   self.position = Point(25, 17)

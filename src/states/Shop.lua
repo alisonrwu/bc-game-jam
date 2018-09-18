@@ -13,14 +13,14 @@ function Shop:initialize()
   self.nextButton = ImageButton("assets/graphics/misc/hud_rightarrow.png", nil, nil, nil, "nextButton")
   self.nextButton:setLeftOfPoint(Point(baseRes.width, baseRes.height * 0.5 - self.nextButton.dimensions.height * 0.5), 20 )
   self.nextButton:registerObserver(self)
-  self.title = TextPlaceable(("SHOP (%i/%i)"):format(self:getBoughtItems(), self:getMaxItems()))
+  self.title = TextPlaceable(("SHOP %i/%i"):format(self:getBoughtItems(), self:getMaxItems()))
   self.title:setCentreHorizontalScreen()
   self.title.position.y = 10
   self.extraText = TextPlaceable("Click to buy!")
   self.extraText:setCentreHorizontalScreen()
   self.extraText.position.y = baseRes.height - self.extraText.dimensions.height - 5
   local goBack = function()
-    state = MainMenu()
+    state = MainMenu(true)
   end
   self.backButton = ImageButton("assets/graphics/misc/hud_backarrow.png", goBack)
   self.backButton:setLeftOfPoint(Point(baseRes.width, 10), 15)
@@ -48,7 +48,7 @@ function Shop:loadItems()
       local item = self.items[i]
       if tostring(item) == "Item" then
         local data = itemsData[i]
-        item:setData(data)
+        if data then item:setData(data) end
       end
     end
   end

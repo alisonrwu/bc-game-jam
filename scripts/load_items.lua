@@ -16,6 +16,6 @@ function loadItems()
   local laserItem = Item("assets/graphics/shop/laser_preview.png", 0, 7)
 
   local handItem = Item("assets/graphics/shop/hand_preview.png", 0, 8)
-
+  
   return {baseScissorsItem, pizzaCutterItem, gardenshearsItem, utilityknifeItem, chainsawItem, crocodileItem, laserItem, handItem}
 end

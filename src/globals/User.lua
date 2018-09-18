@@ -4,6 +4,8 @@ function User:initialize()
   self.effectIndex = 1
   self.currentEffect = Effect()
   self.achievements = false
+  self.popUpQueue = {}
+  self.popUps = {}
   self:loadData()
   for _, achievement in ipairs(self.achievements) do
     self:registerObserver(achievement)
@@ -57,6 +59,14 @@ function User:notify(event, args)
   self:notifyObservers(event, args)
 end
 
+function User:getPopUps()
+  if self.popUps then return #self.popUps / 3 else return 0 end
+end
+
+function User:addPopUpToQueue(popUp)
+  table.insert(self.popUpQueue, popUp)
+end
+
 
 function User:addPopUp(popUp)
   if self.popUps == nil then self.popUps = {popUp} else table.insert(self.popUps, popUp) end
@@ -73,9 +83,21 @@ end
 
 function User:updatePopUps(dt)
   if self.popUps ~= nil then
+    if #self.popUps == 0 and #self.popUpQueue ~= 0 then
+      self:addPopUp(self.popUpQueue[1])
+      self:addPopUp(self.popUpQueue[2])
+      self:addPopUp(self.popUpQueue[3])
+      table.remove(self.popUpQueue, 1)
+      table.remove(self.popUpQueue, 1)
+      table.remove(self.popUpQueue, 1)
+      Sound:createAndPlay("assets/audio/sfx/sfx_achievement_unlocked.wav", "achievement_unlocked")
+    end
     for i = 1, #self.popUps do
       local popUp = self.popUps[i]
-      popUp:update(dt)
+      if popUp ~= nil then 
+        popUp:update(dt)
+        if popUp.alpha < 0 then self.popUps[i] = nil end
+      end
     end
   end  
 end

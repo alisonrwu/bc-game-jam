@@ -37,7 +37,16 @@ function Options:initialize()
   self.normalMode:setCentreHorizontal(self.normal)
   self.veteran:setAbove(self.veteranMode)
   self.veteranMode:setCentreHorizontal(self.veteran)
-  self.difficulties = GroupPlaceable({self.babyMode, self.normalMode, self.veteranMode, self.baby, self.normal, self.veteran})
+  
+  self.babyImageAndText = GroupButton({self.baby, self.babyMode})
+  self.normalImageAndText = GroupButton({self.normal, self.normalMode})
+  self.veteranImageAndText = GroupButton({self.veteran, self.veteranMode})
+  
+  self.babyImageAndText:setOnClick(babyOnClick)
+  self.normalImageAndText:setOnClick(normalOnClick)
+  self.veteranImageAndText:setOnClick(veteranOnClick)
+  
+  self.difficulties = GroupPlaceable({self.babyImageAndText, self.normalImageAndText, self.veteranImageAndText})
   self.difficulties:setBelow(self.title, 15)
     
   self.extraText = TextPlaceable("Click on a face to select that difficulty!", nil, nil, nil, 0.5, baseRes.width * 2)
@@ -73,17 +82,23 @@ function Options:initialize()
   self.group:setCentreVerticalScreen()
   
   self:loadData()
+  local goBack = function()
+    state = MainMenu(true)
+  end
+  self.backButton = ImageButton("assets/graphics/misc/hud_backarrow.png", goBack)
+  self.backButton:setLeftOfPoint(Point(baseRes.width, 10), 15)
   
   self.placeables = {self.group}
+  self:setMode(self.data.mode)
 end
 
 function Options:saveData()
-  bitser.dumpLoveFile("options", self.data) 
+  bitser.dumpLoveFile("data_options", self.data) 
 end
 
 function Options:loadData()
-  if love.filesystem.getRealDirectory("options") ~= nil then
-    self.data = bitser.loadLoveFile("options")
+  if love.filesystem.getRealDirectory("data_options") ~= nil then
+    self.data = bitser.loadLoveFile("data_options")
     self:setMode(self.data.mode)
   end
 end
@@ -94,7 +109,7 @@ function Options:setMode(mode)
   self.veteran:setImage("assets/graphics/options/button_veteran.png")
   if mode == "Baby" then
     self.baby:setImage("assets/graphics/options/button_baby_lightup.png")
-    self.extraText:setText("For first time players. Achievements cannot be unlocked in this mode.")
+    self.extraText:setText("For first time players. Achievements cannot be unlocked in this mode!")
     self.extraText:setCentreHorizontalScreen()    
     self.data.mode = "Baby"
     Game.static.MODE = "Baby"
@@ -134,6 +149,7 @@ function Options:draw()
   for _, v in ipairs(self.placeables) do
     v:draw()
   end
+  self.backButton:draw()  
 end
 
 function Options:mousePressed(x, y, button, isTouch)
@@ -142,6 +158,7 @@ end
 function Options:mouseRelease(x, y, button, istouch)
   self:onMouseRelease()
   self.group:mouseRelease(x, y, button, isTouch)
+  self.backButton:mouseRelease(x, y, button, isTouch)
 end    
 
 function Options:__tostring()

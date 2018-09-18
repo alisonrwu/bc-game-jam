@@ -12,7 +12,7 @@ function Details:initialize(item, shop)
   self.effect = effects[item.effectIndex]
   self.effect.display:setBelow(self.display, 10)
   local equip = function()
-    Sound:createAndPlay("assets/audio/sfx/sfx_load.wav", "load")   
+    Sound:createAndPlay("assets/audio/sfx/sfx_equip.wav", "equip")   
     for i = 1, #shop.items do
       local item = shop.items[i]
       if item.equipped then 
@@ -35,8 +35,8 @@ function Details:initialize(item, shop)
   self.equipButton:setCentreHorizontalScreen()
 end
 
-function Details:update()
-  salary:update()
+function Details:update(dt)
+  salary:update(dt)
 end
 
 function Details:draw()

@@ -5,10 +5,8 @@ GameOver.static.PITCH = 0.9
 
 function GameOver:initialize(score)
   Sound:clearAll()
-  local placeables = {}
   local score = score or 0
   love.mouse.setVisible(true)
-  Sound:stop("bgm")
   
   local function gameOverAppear(self, args)
     Sound:createAndPlay("assets/audio/sfx/sfx_deskslam.wav", "damage_1", false)
@@ -49,6 +47,7 @@ function GameOver:initialize(score)
   local placeables = {gameOver, yourScore, retry, menu}
   
   local function highScoreAppear(self, args)
+    salary:add(score)
     self:resetColor()
     Sound:createAndPlay("assets/audio/sfx/sfx_damage2.wav", "damage_2", false)
     screen:setShake(35)
@@ -59,8 +58,6 @@ function GameOver:initialize(score)
     menu:setColor(Graphics.NORMAL)
     Sound:createAndPlay("assets/audio/music/bgm_papercutter.ogg", "bgm", true, "stream")
     Sound:setPitch("bgm", GameOver.PITCH)  
-    table.insert(placeables, salary)
-    salary:add(score)
   end
   
   highScore:replaceTimer("appear", 1, highScoreAppear)

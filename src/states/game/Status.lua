@@ -1,10 +1,11 @@
 Status = class("Status")
 Status.static.COLOR = Graphics.NORMAL
 
-function Status:initialize(psystem, timer, apply)
+function Status:initialize(psystem, timer, apply, name)
   self.psystem = psystem or false
   self.timer = timer or false
   self.apply = apply or false
+  self.name = name or ""
 end
 
 function Status:update(dt)
@@ -16,7 +17,7 @@ function Status:update(dt)
 end
 
 function Status:draw()
-  if self.psystem then Graphics:drawPsystem(psystem, Status.COLOR) end
+  if self.psystem then Graphics:drawPsystem(self.psystem, Status.COLOR) end
 end
 
 function Status:decrementTimer()

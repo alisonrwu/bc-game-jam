@@ -34,10 +34,10 @@ end
 
 Rating = class("Rating")
 
-function Rating:initialize(text, color, sound)
+function Rating:initialize(text, color, soundTag)
   self.text = text or ""
   self.color = color or Graphics.NORMAL
-  self.sound = sound or {}
+  self.soundTag = soundTag
 end
 
 function Rating:__tostring()
@@ -47,7 +47,9 @@ end
 GoodRating = Rating:subclass("GoodRating")
 
 function GoodRating:initialize(text)
-  Rating.initialize(self, text, Graphics.GREEN, {path = "assets/audio/sfx/sfx_goodcut.wav", name = "correct"})
+  Sound:create("assets/audio/sfx/sfx_goodcut.wav", "goodcut", false)
+  Sound:setVolume("goodcut", 0.5)
+  Rating.initialize(self, text, Graphics.GREEN, "goodcut")
 end
 
 function GoodRating:__tostring()
@@ -57,7 +59,9 @@ end
 BadRating = Rating:subclass("BadRating")
 
 function BadRating:initialize(text)
-  Rating.initialize(self, text, Graphics.RED, {path = "assets/audio/sfx/sfx_badcut.wav", name = "wrong"})
+  Sound:create("assets/audio/sfx/sfx_badcut.wav", "badcut", false)
+  Sound:setVolume("badcut", 0.45)
+  Rating.initialize(self, text, Graphics.RED, "badcut")
 end
 
 function BadRating:__tostring()

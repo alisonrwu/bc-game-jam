@@ -21,12 +21,13 @@ end
 function Shape:score(drawing)
   local successPercentage = 0
   
+  self.bounds = Bounds.ofCentreAndDimensions(drawing.centre, self.dimensions)
+  local maxBounds = Math:calculateMaximumBounds(drawing.bounds, self.bounds)
+  
   if drawing.dimensions < self.maxSizeDimensions then
-    self.bounds = Bounds.ofCentreAndDimensions(drawing.centre, self.dimensions)
-    local maxBounds = Math:calculateMaximumBounds(drawing.bounds, self.bounds)
     successPercentage = Math:calculateSuccessPercentageOptimized(drawing.points, self:pointRepresentation(), maxBounds, Shape.REDUCTION_FACTOR)
   end
-
+  
   score = self:transformSuccessPercentage(successPercentage)
   return score, successPercentage
 end
