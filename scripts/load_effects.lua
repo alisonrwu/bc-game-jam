@@ -73,13 +73,16 @@ function loadEffects()
       
       local score = transformedPercentage * self.maxScore
       
-      return math.ceil(score)
+      print("If math ceiled: ", math.ceil(score))
+      print("If math floored: ", math.floor(score))
+      
+      if score > 0 then return math.ceil(score) else return math.floor(score) end
     end
     Level.onScore = function(self, score, problemName, successPercentage)
       if successPercentage * 100 >= 90 then 
         local leaf = love.graphics.newImage("assets/graphics/game/player/particle_leaf.png")
         local leafSystem = love.graphics.newParticleSystem(leaf, 50)
-        leafSystem:setParticleLifetime(1, 1)
+        leafSystem:setParticleLifetime(0.5, 0.5)
         leafSystem:setEmissionRate(50)
         leafSystem:setSizeVariation(1)
         leafSystem:setLinearAcceleration(-1, -1, 1, 1)
@@ -90,8 +93,8 @@ function loadEffects()
         local leafPopUp = ParticleSystemPopUp(leafSystem, Graphics.NORMAL, 1, false)
         leafPopUp:setPosition(scale:getWorldMouseCoordinates())
         leafPopUp:setRise(0)
-        leafPopUp:setFade(1/50)
-        leafPopUp:setTimeBeforeFade(0.25)
+        leafPopUp:setFade(1/40)
+        leafPopUp:setTimeBeforeFade(0.2)
         table.insert(self.popUps, leafPopUp)  
       end
     end
@@ -104,7 +107,7 @@ function loadEffects()
       local score = transformedPercentage * self.maxScore
       if score > self.maxScore then score = self.maxScore end
       
-      return math.ceil(score)
+      if score > 0 then return math.ceil(score) else return math.floor(score) end
     end    
     Level.onScore = function(self, score)
     end
@@ -144,39 +147,6 @@ function loadEffects()
   local utilityknifeCons = "- Lose time on bad cuts (up to 20s)"
   local utilityknifeEffect = Effect(utilityknifeOnApply, utilityknifeOnRemove, utilityknifeDescription, utilityknifePros, utilityknifeCons, "Utility Knife")
 
-  local crocodileOnApply = function()
-    Cursor.static.SPRITESHEET = love.graphics.newImage("assets/graphics/game/player/cursor_crocodile.png")
-    Cursor.static.FRAME1 = love.graphics.newQuad(0, 0, 80, 41, Cursor.SPRITESHEET:getDimensions())
-    Cursor.static.FRAME2 = love.graphics.newQuad(0, 42, 80, 42, Cursor.SPRITESHEET:getDimensions())
-    Cursor.static.OFFSET = {x = 24, y = 25}
-    Level.onScore = function(self, score, problem, successPercentage)
-      if successPercentage > Shape.CORRECT_THRESHOLD then
-        local timeGain = math.floor(successPercentage * 7)
-        if self.timer.time + timeGain < 0 then 
-          self.timer.time = 0 
-        else
-          self.timer.time = self.timer.time + timeGain
-        end
-        local position = Point(self.timer.position.x + 90, self.timer.position.y)
-        local popUp = NumberPopUp(timeGain, Graphics.GREEN, 1, position)
-        table.insert(self.popUps, popUp)
-      end
-    end
-    Timer.resetTimer = function(self)
-    end
-  end
-  local crocodileOnRemove = function()
-    Level.onScore = function(self, score)
-    end
-    Timer.resetTimer = function(self)
-      self.time = Timer.RESET_TIME
-    end
-  end
-  local crocodileDescription = "Crocodile"
-  local crocodilePros = "+ Gain time based on points (up to 7s)"
-  local crocodileCons = "- Time does not reset on Target Up"
-  local crocodileEffect = Effect(crocodileOnApply, crocodileOnRemove, crocodileDescription, crocodilePros, crocodileCons, "Crocodile") 
-
   local chainsawOnApply = function()
     Cursor.static.SPRITESHEET = love.graphics.newImage("assets/graphics/game/player/cursor_chainsaw.png")
     Cursor.static.FRAME1 = love.graphics.newQuad(0, 2, 92, 40, Cursor.SPRITESHEET:getDimensions())
@@ -185,14 +155,21 @@ function loadEffects()
     Cursor.static.EXTRA_ROT = -(math.pi / 6)
     Combo.static.INCREASE = 2
     Game.static.OSCILLATION_OFFSET = 0
+    Game.static.SHAKINESS = 5
     Game.getDrawPoint = function()
       local mouseCoord = scale:getWorldMouseCoordinates()
-      local offset_y = -5 * math.cos(Game.OSCILLATION_OFFSET)
-      local offset_x = -5 * math.cos(Game.OSCILLATION_OFFSET)
+      local offset_y = Game.SHAKINESS * math.cos(Game.OSCILLATION_OFFSET) * -1
+      local offset_x = Game.SHAKINESS * math.sin(Game.OSCILLATION_OFFSET) * 1
       mouseCoord.y = mouseCoord.y + offset_y
       mouseCoord.x = mouseCoord.x + offset_x
       Game.static.OSCILLATION_OFFSET = (love.math.random(0, (2 * math.pi)))
       return mouseCoord
+    end
+    Game.onHoldCut = function(self)
+      Game.static.SHAKINESS = Game.SHAKINESS + 0.2
+    end
+    Game.onScore = function(self)
+      Game.static.SHAKINESS = 5
     end
   end
   local chainsawOnRemove = function()
@@ -201,9 +178,13 @@ function loadEffects()
       local mouseCoord = scale:getWorldMouseCoordinates()
       return mouseCoord
     end
+    Game.onHoldCut = function(self)
+    end
+    Game.onScore = function(self)
+    end
   end
   local chainsawDescription = "Chainsaw"
-  local chainsawPros = "+ Increase combo multiplier on good cuts (to 2.0x)"
+  local chainsawPros = "+ Quadruples combo multiplier on good cuts (to 2.0x)"
   local chainsawCons = "- Very unstable"
   local chainsawEffect = Effect(chainsawOnApply, chainsawOnRemove, chainsawDescription, chainsawPros, chainsawCons, "Chainsaw") 
   
@@ -277,6 +258,39 @@ function loadEffects()
   local laserCons = "- Lose double those points on a bad cut (down to -400)"
   local laserEffect = Effect(laserOnApply, laserOnRemove, laserDescription, laserPros, laserCons, "Laser")
   
+  local crocodileOnApply = function()
+    Cursor.static.SPRITESHEET = love.graphics.newImage("assets/graphics/game/player/cursor_crocodile.png")
+    Cursor.static.FRAME1 = love.graphics.newQuad(0, 0, 80, 41, Cursor.SPRITESHEET:getDimensions())
+    Cursor.static.FRAME2 = love.graphics.newQuad(0, 42, 80, 42, Cursor.SPRITESHEET:getDimensions())
+    Cursor.static.OFFSET = {x = 24, y = 25}
+    Level.onScore = function(self, score, problem, successPercentage)
+      if successPercentage > Shape.CORRECT_THRESHOLD then
+        local timeGain = math.floor(successPercentage * 7)
+        if self.timer.time + timeGain < 0 then 
+          self.timer.time = 0 
+        else
+          self.timer.time = self.timer.time + timeGain
+        end
+        local position = Point(self.timer.position.x + 90, self.timer.position.y)
+        local popUp = NumberPopUp(timeGain, Graphics.GREEN, 1, position)
+        table.insert(self.popUps, popUp)
+      end
+    end
+    Timer.resetTimer = function(self)
+    end
+  end
+  local crocodileOnRemove = function()
+    Level.onScore = function(self, score)
+    end
+    Timer.resetTimer = function(self)
+      self.time = Timer.RESET_TIME
+    end
+  end
+  local crocodileDescription = "Crocodile"
+  local crocodilePros = "+ Gain time based on points (up to 7s)"
+  local crocodileCons = "- Time does not reset on Target Up"
+  local crocodileEffect = Effect(crocodileOnApply, crocodileOnRemove, crocodileDescription, crocodilePros, crocodileCons, "Crocodile") 
+  
   local handOnApply = function()
     Cursor.static.SPRITESHEET = love.graphics.newImage("assets/graphics/game/player/cursor_hand.png")
     Cursor.static.FRAME1 = love.graphics.newQuad(0, 0, 60, 46, Cursor.SPRITESHEET:getDimensions())
@@ -302,5 +316,5 @@ function loadEffects()
   local handCons = "- Lose half your points on a bad cut"
   local handEffect = Effect(handOnApply, handOnRemove, handDescription, handPros, handCons, "Hand")
   
-  return {baseScissorsEffect, pizzacutterEffect, gardenshearsEffect, utilityknifeEffect, chainsawEffect, crocodileEffect, laserEffect, handEffect}
+  return {baseScissorsEffect, pizzacutterEffect, gardenshearsEffect, utilityknifeEffect, chainsawEffect, laserEffect, crocodileEffect, handEffect}
 end

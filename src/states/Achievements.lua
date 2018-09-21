@@ -31,6 +31,9 @@ function Achievements:initialize()
   self.extraText.position.y = self.descriptionBox.position.y + 45
   self.extraText:setLimit(baseRes.width - 50)
   self:registerObserver(user)
+  
+  self.group = GroupPlaceable({self.title, self.descriptionBox, self.extraText})
+  self.group:convertWorldBoundsToScreen()
 end
 
 function Achievements:update(dt)

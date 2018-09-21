@@ -1,5 +1,5 @@
 Combo = class("Combo")
-Combo.static.BASE_MULTIPLIER = 0.5
+Combo.static.BASE_MULTIPLIER = 1
 Combo.static.INCREASE = 0.5
 
 function Combo:initialize()
@@ -16,6 +16,7 @@ function Combo:multiply(score, successPercentage)
 end
 
 function Combo:update(score, successPercentage)
+  print("The success percentage is: ", successPercentage * 100)
   if successPercentage * 100 >= 65 then
     self.multiplier = self.multiplier + Combo.INCREASE
   else

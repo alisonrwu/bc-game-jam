@@ -4,7 +4,7 @@ function Grid:initialize()
   self.columns = baseRes.width / Shape.CONVERSION_FACTOR
   self.rows = baseRes.height / Shape.CONVERSION_FACTOR
   self.offset = Shape.CONVERSION_FACTOR / 2
-  self.alpha = 0.6
+  self.alpha = 0.25
   self.color = {0.5, 0.5, 0.5, self.alpha}
 end
 

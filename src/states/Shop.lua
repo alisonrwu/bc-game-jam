@@ -141,13 +141,11 @@ function Shop:notify(event, args)
     if self.currentPage < 1 then self.currentPage = 1 end  
     self:updateButtonVisibility()
   elseif event == self.nextButton.name then
-    print("next button")
     Sound:createAndPlay("assets/audio/sfx/sfx_menumove.wav", "click")
     self.currentPage = self.currentPage + 1
     if self.currentPage > self.pageLimit then self.currentPage = self.pageLimit end  
     self:updateButtonVisibility()
   elseif event == Item.static.BUY_SUCCESS then
-    print("Buy success")
     Sound:createAndPlay("assets/audio/sfx/sfx_buy.wav", "buy")
     self:setExtraText("Click to equip!", 2.5, Graphics.NORMAL)
     self:saveItems()

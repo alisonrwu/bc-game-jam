@@ -29,6 +29,7 @@ function Game:update(dt)
   if self.mode == "score" then
     Sound:stop("cutting")
     Sound:play("snip")
+    self:onScore()
     self.drawing:updateValues()
     self.level:scoreDrawing(self.drawing) 
     self.mode = "wait"
@@ -40,8 +41,8 @@ function Game:update(dt)
 end
 
 function Game:draw()
-  self.level:draw()
   self.drawing:draw()
+  self.level:draw()
   self.cursor:draw(self.mode)
 end
 
@@ -56,7 +57,6 @@ function Game:initialize()
   self.cursor = Cursor()
   Sound:create("assets/audio/sfx/sfx_cutting.ogg", "cutting", false)
   Sound:create("assets/audio/sfx/sfx_snip.ogg", "snip", false)
-  --Sound:setVolume("snip", 0.5)
   Sound:createAndPlay("assets/audio/music/bgm_papercutter.ogg", "bgm", true, "stream")
   Sound:setVolume("bgm", 0.9)
 end
@@ -78,6 +78,10 @@ function Game:getDrawPoint()
 end
 
 function Game:onHoldCut()
+  
+end
+
+function Game:onScore()
   
 end
 

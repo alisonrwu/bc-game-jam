@@ -20,8 +20,12 @@ function User:saveData()
       local data = {unlocked = achievement.unlocked, progress = achievement.progress}
       achievementData[#achievementData + 1] = data 
     end
-  end
+  end  
   bitser.dumpLoveFile("data_user_achievements", achievementData)
+end
+
+function User:saveVeteranModeData()
+  bitser.dumpLoveFile("data_veteran_mode_locked", Options.VETERAN_MODE_LOCKED)
 end
 
 function User:loadData()
@@ -38,6 +42,9 @@ function User:loadData()
       self.achievements[i]:setUnlocked(unlocked)
       self.achievements[i].progress = progress
     end
+  end
+  if love.filesystem.getRealDirectory("data_veteran_mode_locked") ~= nil then
+    Options.VETERAN_MODE_LOCKED = bitser.loadLoveFile("data_veteran_mode_locked")
   end
 end
 
