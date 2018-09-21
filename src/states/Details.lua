@@ -33,6 +33,9 @@ function Details:initialize(item, shop)
   self.equipButton = TextOnImageButton("assets/graphics/misc/button_thin.png", equip, nil, "Equip", Graphics.NORMAL)
   self.equipButton:setBelow(self.effect.display, 10)
   self.equipButton:setCentreHorizontalScreen()
+  
+  self.group = GroupPlaceable({self.display, self.effect.display, self.equipButton})
+  self.group:convertWorldBoundsToScreen()
 end
 
 function Details:update(dt)

@@ -3,7 +3,7 @@ local screen = require "modules/shack"
 GameOver = State:subclass("GameOver")
 GameOver.static.PITCH = 0.9
 
-function GameOver:initialize(score)
+function GameOver:initialize()
   Sound:clearAll()
   local score = score or 0
   love.mouse.setVisible(true)
@@ -64,6 +64,10 @@ function GameOver:initialize(score)
   
   self.placeables = placeables
   self.buttons = {retry, menu}
+  
+  for _, v in ipairs(self.placeables) do
+    v:convertWorldBoundsToScreen()
+  end
 end
 
 function GameOver:update(dt)

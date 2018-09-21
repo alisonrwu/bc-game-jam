@@ -52,6 +52,8 @@ function MainMenu:initialize(continueBGM)
     Sound:createAndPlay("assets/audio/music/bgm_mainmenu.ogg", "bgm", true, "stream")
     Sound:setVolume("bgm", 0.9)
   end
+  
+  self.group:convertWorldBoundsToScreen()
 end
 
 function MainMenu:update(dt)

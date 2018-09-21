@@ -20,7 +20,11 @@ end
 
 function Placeable:updateBounds()
   self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) 
-  self.bounds = scale:worldToScreenBounds(self.bounds)
+--  self.bounds = scale:worldToScreenBounds(self.bounds)
+end
+
+function Placeable:convertWorldBoundsToScreen()
+  self.bounds = scale:worldToScreenBounds(self.bounds)  
 end
 
 function Placeable:setColor(color)
@@ -37,6 +41,7 @@ function ImagePlaceable:initialize(path, position, scale, color)
   Placeable.initialize(self, position, scale)       
   self.image = path and love.graphics.newImage(path) or false
   self.dimensions = self.image and Dimensions(self.image:getWidth(), self.image:getHeight()) or Dimensions()
+  self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) 
   self.color = color or Graphics.NORMAL
 end
 
@@ -207,5 +212,11 @@ end
 function GroupPlaceable:setColor(color)
   for _, placeable in ipairs(self.placeables) do
     placeable:setColor(color)
+  end   
+end
+
+function GroupPlaceable:convertWorldBoundsToScreen()
+  for _, placeable in ipairs(self.placeables) do
+    placeable:convertWorldBoundsToScreen()
   end   
 end

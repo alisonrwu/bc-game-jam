@@ -1,29 +1,4 @@
 function loadAchievements()
-  -- The Big Slice
-  -- Taking Charge
-  -- Handy Man
-  -- Big Wig
-  -- Hot Shot
-  -- Cold Cuts
-  -- Top Notch
-  -- Chopped
-  -- Snip snip
-  -- Hackin' it
-  -- Meeting the quota
-  -- Paper shredder
-  -- budget
-  -- Piece of the action
-  -- Dont be so square
-  -- Squarin it up
-  -- Squaring off
-  -- Slashing prices
-  -- Salary slashed
-  -- Cut of the profits
-  -- Golf clippings
-  -- Mowing down the competition
-  -- Pruning the budget
-  -- Cutting the cheese
-  -- Its not going to cut itself
   
   local a0n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -38,7 +13,7 @@ function loadAchievements()
       end
     end
   end
-  local a0 = Achievement("First Cut", "Cut your first shape with over 50% accuracy.", a0n, 1)
+  local a0 = Achievement("1st Cut Is The Deepest", "Cut your first shape with over 50% accuracy.", a0n, 1)
   
   local a1n = function(self, event, args)
     if event == Level.UNLOCKED_SHAPE and self.progress < self.maxProgress then
@@ -68,7 +43,7 @@ function loadAchievements()
       end
     end
   end
-  local a2 = Achievement("PRROMOTED AGAIN!", "Unlock triangles.", a2n, 1)
+  local a2 = Achievement("PRRROMOTED AGAIN!", "Unlock triangles.", a2n, 1)
   
   local a3n = function(self, event, args)
     if event == Level.UNLOCKED_SHAPE and self.progress < self.maxProgress then
@@ -76,6 +51,8 @@ function loadAchievements()
       if shape == "Diamond" then 
         self.progress = self.progress + 1
         if self.progress == self.maxProgress then
+          Options.static.VETERAN_MODE_LOCKED = false
+          user:saveVeteranModeData()
           self:setUnlocked(true)
           self:addPopUp()
         end
@@ -105,7 +82,7 @@ function loadAchievements()
       user:saveData()
     end
   end
-  local a4 = Achievement("Meeting The Quota", "Never get a bad rating and get over 8,000 in one session.", a4n, 1)
+  local a4 = Achievement("Clean Cut", "Never get a bad rating and get over 8,000 in one session.", a4n, 1)
 
   local a5n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -121,7 +98,7 @@ function loadAchievements()
       end
     end
   end
-  local a5 = Achievement("Shreddin' Paper", "Get over 5000 points in 60 seconds.", a5n, 1)
+  local a5 = Achievement("Meeting The Quota", "Get over 5000 points in 60 seconds.", a5n, 1)
   
   
   local a6n = function(self, event, args)
@@ -138,7 +115,7 @@ function loadAchievements()
       end
     end
   end
-  local a6 = Achievement("Rectangular Ruler", "Get over 400 rectangles with over 80% accuracy.", a6n, 400)
+  local a6 = Achievement("Get Rect", "Get 400 rectangles with over 80% accuracy.", a6n, 400)
   
   local a7n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -154,7 +131,7 @@ function loadAchievements()
       end
     end
   end
-  local a7 = Achievement("Triangle Tyrant", "Get over 300 triangles with over 80% accuracy.", a7n, 300)
+  local a7 = Achievement("Doritos For Breakfast", "Get 300 triangles with over 80% accuracy.", a7n, 300)
   
   local a8n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -170,7 +147,7 @@ function loadAchievements()
       end
     end
   end
-  local a8 = Achievement("Oval Overseer", "Get over 200 ovals with over 80% accuracy.", a8n, 200)
+  local a8 = Achievement("Winner's Oval", "Get 200 ovals with over 80% accuracy.", a8n, 200)
   
   local a9n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -186,7 +163,7 @@ function loadAchievements()
       end
     end
   end  
-  local a9 = Achievement("Diamond Director", "Get over 100 diamonds with over 80% accuracy.", a9n, 100)
+  local a9 = Achievement("Ice Slice Baby", "Get 100 diamonds with over 80% accuracy.", a9n, 100)
   
   local a10n = function(self, event, args)
      if event == Timer.OUT_OF_TIME and self.progress < self.maxProgress then
@@ -201,7 +178,7 @@ function loadAchievements()
       end
     end   
   end
-  local a10 = Achievement("Dilligent Doge", "Play for over 500 seconds in one session.", a10n, 1)
+  local a10 = Achievement("Workin' Like A Doge", "Play for 500 seconds in one session.", a10n, 1)
   
   local a11n = function(self, event, args)
    if event == Timer.OUT_OF_TIME and self.progress < self.maxProgress then
@@ -216,7 +193,7 @@ function loadAchievements()
       end
     end   
   end
-  local a11 = Achievement("Overworked OL", "Play for over 1000 seconds in one session.", a11n, 1)
+  local a11 = Achievement("I'm Resigning", "Play for 1000 seconds in one session.", a11n, 1)
   
   local a12n = function(self, event, args)
      if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -246,7 +223,7 @@ function loadAchievements()
       end
     end   
   end
-  local a13 = Achievement("1st Degree Cuts", "Get over 10x multiplier in one session.", a13n, 1)
+  local a13 = Achievement("1st Degree Cuts", "Get 10x multiplier in one session.", a13n, 1)
   
   local a14n = function(self, event, args)
      if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -261,7 +238,7 @@ function loadAchievements()
       end
     end   
   end
-  local a14 = Achievement("2nd Degree Cuts", "Get over 20x multiplier in one session.", a14n, 1)
+  local a14 = Achievement("2nd Degree Cuts", "Get 20x multiplier in one session.", a14n, 1)
   
   local a15n = function(self, event, args)
      if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -276,7 +253,7 @@ function loadAchievements()
       end
     end   
   end
-  local a15 = Achievement("3rd Degree Cuts", "Get over 30x multiplier in one session.", a15n, 1)
+  local a15 = Achievement("3rd Degree Cuts", "Get 30x multiplier in one session.", a15n, 1)
 
   local a16n = function(self, event, args)
      if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -307,13 +284,12 @@ function loadAchievements()
       end
     end   
   end
-  local a17 = Achievement("Cut Chimp", "Monkey around over 30 times.", a17n, 30)  
+  local a17 = Achievement("Cut Chimp", "Monkey around 30 times.", a17n, 30)  
   
   local a18n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
       local rating = args.rating
-      local tutorial = args.tutorial
-      if tutorial and (rating == "Stop monkeying around!" or rating == "That's coming out your paycheck." or rating == "My poor paper!")  then
+      if rating == "That's coming out your paycheck." then
         self.progress = self.progress + 1
         if self.progress == self.maxProgress then
           self:setUnlocked(true)
@@ -323,7 +299,7 @@ function loadAchievements()
       end
     end   
   end
-  local a18 = Achievement("Dun Goofed", "Get a bad rating in the tutorial.", a18n, 1) 
+  local a18 = Achievement("Dun Goofed", "Cut 100 shapes that are coming out your paycheck.", a18n, 100) 
   
   local a19n = function(self, event, args)
      if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -339,7 +315,7 @@ function loadAchievements()
       end
     end   
   end
-  local a19 = Achievement("Gotta Go Fast", "Reach 10 Target Ups within 60 seconds.", a19n, 1) 
+  local a19 = Achievement("Ten Too Many Coffees", "Reach 10 Target Ups within 60 seconds.", a19n, 1) 
   
   local a20n = function(self, event, args)
      if event == Salary.MONEY_ADDED and self.progress < self.maxProgress then
@@ -354,7 +330,7 @@ function loadAchievements()
       end
     end   
   end
-  local a20 = Achievement("Gettin' Paid", "Amass over 100,000 dollars.", a20n, 1) 
+  local a20 = Achievement("Gettin' Paid", "Amass 100,000 dollars.", a20n, 1) 
   
   local a21n = function(self, event, args)
      if event == Salary.MONEY_ADDED and self.progress < self.maxProgress then
@@ -369,7 +345,7 @@ function loadAchievements()
       end
     end   
   end
-  local a21 = Achievement("Cut Of The Profits", "Amass over 500,000 dollars.", a21n, 1) 
+  local a21 = Achievement("Cut Of The Profits", "Amass 500,000 dollars.", a21n, 1) 
   
   local a22n = function(self, event, args)
      if event == Salary.MONEY_ADDED and self.progress < self.maxProgress then
@@ -399,7 +375,7 @@ function loadAchievements()
       end
     end
   end
-  local a23 = Achievement("Dice Dice Baby", "Cut over 1000 shapes with over 50% accuracy.", a23n, 1000)
+  local a23 = Achievement("Hackin' It", "Cut 1000 shapes with over 50% accuracy.", a23n, 1000)
   
   local a24n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -414,7 +390,7 @@ function loadAchievements()
       end
     end
   end
-  local a24 = Achievement("Slicing Supervisor", "Cut over 3000 shapes with over 50% accuracy.", a24n, 3000)
+  local a24 = Achievement("Shreddin' Paper", "Cut 3000 shapes with over 50% accuracy.", a24n, 3000)
   
   local a25n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -429,7 +405,7 @@ function loadAchievements()
       end
     end
   end
-  local a25 = Achievement("The Edgelord", "Cut over 5000 shapes with over 50% accuracy.", a25n, 5000)
+  local a25 = Achievement("The Edge Lord", "Cut 5000 shapes with over 50% accuracy.", a25n, 5000)
   
   local a26n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -444,7 +420,7 @@ function loadAchievements()
       end
     end
   end
-  local a26 = Achievement("Don't Fire Me", "Cut over 100 shapes with less than 50% accuracy.", a26n, 100)
+  local a26 = Achievement("Don't Fire Me", "Cut 100 shapes with less than 50% accuracy.", a26n, 100)
   
   local a27n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -459,7 +435,7 @@ function loadAchievements()
       end
     end
   end
-  local a27 = Achievement("My Blade Is Sharp", "Cut over 1000 shapes with over 80% accuracy.", a27n, 1000)
+  local a27 = Achievement("My Blade Is Sharp", "Cut 1000 shapes with over 80% accuracy.", a27n, 1000)
   
   local a28n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -474,7 +450,7 @@ function loadAchievements()
       end
     end
   end
-  local a28 = Achievement("Fine Cutting Fish", "Make a FINE cut over 100 times.", a28n, 100)
+  local a28 = Achievement("It's A Fine Day To Cut", "Make a FINE cut over 100 times.", a28n, 100)
   
   local a29n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -504,7 +480,7 @@ function loadAchievements()
       end
     end
   end
-  local a30 = Achievement("Eggscellent Worker", "Do EXCELLENT WORK over 40 times.", a30n, 40)
+  local a30 = Achievement("Skills: Microsoft Excel", "Do EXCELLENT WORK over 40 times.", a30n, 40)
   
   local a31n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -519,7 +495,7 @@ function loadAchievements()
       end
     end
   end
-  local a31 = Achievement("Cutting Jeniuse", "Be a CUTTING GENIUS over 30 times.", a31n, 30)
+  local a31 = Achievement("420 IQ", "Be a CUTTING GENIUS over 30 times.", a31n, 30)
   
   local a32n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -549,7 +525,7 @@ function loadAchievements()
       end
     end
   end
-  local a33 = Achievement("Numba JUAN", "Be the number one employee over 10 times.", a33n, 10)
+  local a33 = Achievement("We Are Number One", "Be the number one employee over 10 times.", a33n, 10)
   
   local a34n = function(self, event, args)
      if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -579,7 +555,7 @@ function loadAchievements()
       end
     end
   end
-  local a35 = Achievement("Noob Cutter", "Break over 5000 points in a session.", a35n, 1)
+  local a35 = Achievement("New Hire", "Get 5000 points in a session.", a35n, 1)
   
   local a36n = function(self, event, args)
     if event == Timer.OUT_OF_TIME and self.progress < self.maxProgress then
@@ -594,7 +570,7 @@ function loadAchievements()
       end
     end
   end
-  local a36 = Achievement("Decent Cutter", "Break over 10,000 points in a session.", a36n, 1)
+  local a36 = Achievement("Junior Cutter", "Get 10,000 points in a session.", a36n, 1)
   
   local a37n = function(self, event, args)
     if event == Timer.OUT_OF_TIME and self.progress < self.maxProgress then
@@ -609,7 +585,7 @@ function loadAchievements()
       end
     end
   end
-  local a37 = Achievement("Pro Cutter", "Break over 30,000 points in a session.", a37n, 1)
+  local a37 = Achievement("Senior Cutter", "Get 30,000 points in a session.", a37n, 1)
   
   local a38n = function(self, event, args)
     if event == Timer.OUT_OF_TIME and self.progress < self.maxProgress then
@@ -624,7 +600,7 @@ function loadAchievements()
       end
     end
   end
-  local a38 = Achievement("Champion Cutter", "Break over 50,000 points in a session.", a38n, 1)
+  local a38 = Achievement("Director Of Cutting", "Get 50,000 points in a session.", a38n, 1)
   
   local a39n = function(self, event, args)
     if event == Timer.OUT_OF_TIME and self.progress < self.maxProgress then
@@ -639,7 +615,7 @@ function loadAchievements()
       end
     end
   end
-  local a39 = Achievement("Grandmaster Cutter", "Break over 100,000 points in a session.", a39n, 1)
+  local a39 = Achievement("Who's The Boss Now?", "Get 100,000 points in a session.", a39n, 1)
   
   local a40n = function(self, event, args)
     if event == Timer.OUT_OF_TIME and self.progress < self.maxProgress then
@@ -670,7 +646,7 @@ function loadAchievements()
       end
     end
   end
-  local a41 = Achievement("Cubicle Chopper", "Cut over 1500 rectangles with over 50% accuracy.", a41n, 1500)
+  local a41 = Achievement("All Squared Up", "Cut 2000 rectangles with over 50% accuracy.", a41n, 2000)
   
   local a42n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -686,7 +662,7 @@ function loadAchievements()
       end
     end
   end
-  local a42 = Achievement("Ovals Got OWNED", "Cut over 1250 ovals with over 50% accuracy.", a42n, 1250)
+  local a42 = Achievement("Round The Clock", "Cut 2000 ovals with over 50% accuracy.", a42n, 2000)
   
   local a43n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -702,7 +678,7 @@ function loadAchievements()
       end
     end
   end
-  local a43 = Achievement("Tons of Triangles", "Cut over 1250 triangles with over 50% accuracy.", a43n, 1250)
+  local a43 = Achievement("It's A Pyramid Scheme", "Cut 2000 triangles with over 50% accuracy.", a43n, 2000)
   
   local a44n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -718,7 +694,7 @@ function loadAchievements()
       end
     end
   end
-  local a44 = Achievement("Diamonds Don't Stop", "Cut over 1000 diamonds with over 50% accuracy.", a44n, 1000)
+  local a44 = Achievement("Pressure Makes Diamonds", "Cut 2000 diamonds with over 50% accuracy.", a44n, 2000)
   
   local a45n = function(self, event, args)
      if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -734,7 +710,7 @@ function loadAchievements()
       end
     end   
   end
-  local a45 = Achievement("Get Rect", "Get over 95% accuracy on a rectangle.", a45n, 1)
+  local a45 = Achievement("Perfectly Square", "Get over 95% accuracy on a rectangle.", a45n, 1)
   
   local a46n = function(self, event, args)
      if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -766,7 +742,7 @@ function loadAchievements()
       end
     end   
   end
-  local a47 = Achievement("Very Accurate GPS", "Get over 95% accuracy on a triangle.", a47n, 1)
+  local a47 = Achievement("The Right Angle", "Get over 95% accuracy on a triangle.", a47n, 1)
 
   local a48n = function(self, event, args)
      if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -782,7 +758,7 @@ function loadAchievements()
       end
     end   
   end
-  local a48 = Achievement("Diamond Carver", "Get over 95% accuracy on a diamond.", a48n, 1)
+  local a48 = Achievement("A Shining Example", "Get over 95% accuracy on a diamond.", a48n, 1)
   
   local a49n = function(self, event, args)
     if event == Level.START then
@@ -804,7 +780,7 @@ function loadAchievements()
       user:saveData()
     end
   end
-  local a49 = Achievement("Solid Game", "Cut ONLY shapes with over 80% accuracy and score over 10,000 in one session on VETERAN.", a49n, 1)
+  local a49 = Achievement("Tip-Top Shape", "Cut ONLY shapes with over 80% accuracy and score over 10,000 in one session on VETERAN.", a49n, 1)
   
   local a50n = function(self, event, args)
     if event == Level.START then
@@ -826,7 +802,7 @@ function loadAchievements()
       user:saveData()
     end
   end
-  local a50 = Achievement("Perfect Game", "Cut ONLY shapes with over 90% accuracy and score over 20,000 in one session on VETERAN.", a50n, 1)
+  local a50 = Achievement("My Life's Work", "Cut ONLY shapes with over 90% accuracy and score over 20,000 in one session on VETERAN.", a50n, 1)
   
   local a51n = function(self, event, args)
     if event == Level.START then
@@ -900,23 +876,22 @@ function loadAchievements()
   local a54 = Achievement("Shear Power", "Get over 20,000 points in one cut using the Garden Shears.", a54n, 1)  
   
   local a55n = function(self, event, args)
-    if event == Level.START then
-      self.failed = false
-    end
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
       local accuracy = args.accuracy
       local timePlayed = args.timePlayed
-      if accuracy > 50 and timePlayed <= 60 then
+      
+      if accuracy >= 50 and timePlayed <= 60 then
         self.progress = self.progress + 1
-      else
-        self.failed = true
       end
     end  
-    if event == Timer.OUT_OF_TIME and self.progress >= self.maxProgress then
+    
+    if event == Timer.OUT_OF_TIME then
       local scissors = args.scissors
-      if not self.failed and scissors == "Utility Knife" then
+      if scissors == "Utility Knife" and self.progress >= self.maxProgress  then
         self:setUnlocked(true)
         self:addPopUp()
+      else
+        self.progress = 0
       end
       user:saveData()
     end
@@ -937,9 +912,26 @@ function loadAchievements()
       end
     end
   end
-  local a56 = Achievement("All Revved Up", "Reach 100x combo multiplier in one session with the Chainsaw.", a56n, 1)   
+  local a56 = Achievement("Buzzy Bee", "Reach 100x combo multiplier in one session with the Chainsaw.", a56n, 1)   
   
   local a57n = function(self, event, args)
+    if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
+      local charge = args.charge
+      local accuracy = args.accuracy
+      local scissors = args.scissors
+      if accuracy >= 90 and scissors == "Laser" and charge == Level.MAX_CHARGE then
+        self.progress = self.progress + 1
+        if self.progress == self.maxProgress then
+          self:setUnlocked(true)
+          self:addPopUp()
+        end
+        user:saveData()
+      end
+    end
+  end
+  local a57 = Achievement("Takin' Charge", "Cut 200 shapes with over 90% accuracy on a full charge with the Laser.", a57n, 200) 
+  
+  local a58n = function(self, event, args)
    if event == Timer.OUT_OF_TIME and self.progress < self.maxProgress then
       local timePlayed = args.timePlayed
       local scissors = args.scissors
@@ -953,24 +945,7 @@ function loadAchievements()
       end
     end   
   end
-  local a57 = Achievement("My Pet Crocodile", "Play for over 5000 seconds with the Crocodile.", a57n, 5000)
-  
-  local a58n = function(self, event, args)
-    if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
-      local charge = args.charge
-      local accuracy = args.accuracy
-      local scissors = args.scissors
-      if accuracy > 90 and scissors == "Laser" and charge == Level.MAX_CHARGE then
-        self.progress = self.progress + 1
-        if self.progress == self.maxProgress then
-          self:setUnlocked(true)
-          self:addPopUp()
-        end
-        user:saveData()
-      end
-    end
-  end
-  local a58 = Achievement("Takin' Charge", "Cut 200 shapes with over 90% accuracy on a full charge with the Laser.", a58n, 200)    
+  local a58 = Achievement("Crunch Time", "Play for over 5000 seconds with the Crocodile.", a58n, 5000)
   
   local a59n = function(self, event, args)
    if event == Timer.OUT_OF_TIME and self.progress < self.maxProgress then
@@ -1002,7 +977,7 @@ function loadAchievements()
       end
     end
   end
-  local a60 = Achievement("Well Prepared", "Unlock half the \"scissors\".", a60n, 1)
+  local a60 = Achievement("Stocking The Cubicle", "Unlock half the \"scissors\".", a60n, 1)
   
   local a61n = function(self, event, args)
     if event == Shop.BOUGHT_ITEM and self.progress < self.maxProgress then
@@ -1018,7 +993,7 @@ function loadAchievements()
       end
     end
   end
-  local a61 = Achievement("Budget Breaker", "Unlock all the \"scissors\".", a61n, 1)
+  local a61 = Achievement("There Goes My Savings", "Unlock all the \"scissors\".", a61n, 1)
 
   local a62n = function(self, event, args)
     if event == Achievements.UNLOCKED_ACHIEVEMENT and self.progress < self.maxProgress then
@@ -1034,7 +1009,7 @@ function loadAchievements()
       end
     end
   end
-  local a62 = Achievement("Edge of Glory", "Unlock half of the achievements. Thanks for playing!", a62n, 1)
+  local a62 = Achievement("Edge Of Glory", "Unlock half of the achievements. Thanks for playing!", a62n, 1)
   
   local a63n = function(self, event, args)
     if event == Achievements.UNLOCKED_ACHIEVEMENT and self.progress < self.maxProgress then

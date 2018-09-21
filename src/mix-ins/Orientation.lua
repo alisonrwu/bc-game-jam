@@ -7,7 +7,7 @@ function Orientation:setAbove(relative, offset)
   self:setPosition(Graphics:positionRelative("above", self, relative, offset))
   if self.bounds then 
     self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) 
-    self.bounds = scale:worldToScreenBounds(self.bounds)
+--    self.bounds = scale:worldToScreenBounds(self.bounds)
   end
 end
 
@@ -17,7 +17,7 @@ function Orientation:setBelow(relative, offset)
   self:setPosition(Graphics:positionRelative("below", self, relative, offset))
   if self.bounds then 
     self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) 
-    self.bounds = scale:worldToScreenBounds(self.bounds)
+--    self.bounds = scale:worldToScreenBounds(self.bounds)
   end
 end
 
@@ -26,7 +26,7 @@ function Orientation:setLeft(relative, offset)
   self:setPosition(Graphics:positionRelative("left", self, relative, offset))
   if self.bounds then 
     self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) 
-    self.bounds = scale:worldToScreenBounds(self.bounds)
+--    self.bounds = scale:worldToScreenBounds(self.bounds)
   end
 end
 
@@ -35,7 +35,7 @@ function Orientation:setRight(relative, offset)
   self:setPosition(Graphics:positionRelative("right", self, relative, offset)) 
   if self.bounds then 
     self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) 
-    self.bounds = scale:worldToScreenBounds(self.bounds)
+--    self.bounds = scale:worldToScreenBounds(self.bounds)
   end
 end
 
@@ -44,7 +44,7 @@ function Orientation:setAlignLeftHorizontal(relative)
   self:setPosition(relative.position.x, self.position.y)
   if self.bounds then 
     self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) 
-    self.bounds = scale:worldToScreenBounds(self.bounds)
+--    self.bounds = scale:worldToScreenBounds(self.bounds)
   end
 end
 
@@ -53,7 +53,7 @@ function Orientation:setCentreHorizontal(relative)
   self:setPosition(Graphics:centreHorizontalRelative(self, relative))
   if self.bounds then 
     self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) 
-    self.bounds = scale:worldToScreenBounds(self.bounds)
+--    self.bounds = scale:worldToScreenBounds(self.bounds)
   end
 end
 
@@ -62,7 +62,7 @@ function Orientation:setCentreVertical(relative)
   self:setPosition(Graphics:centreVerticalRelative(self, relative))
   if self.bounds then 
     self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) 
-    self.bounds = scale:worldToScreenBounds(self.bounds)
+--    self.bounds = scale:worldToScreenBounds(self.bounds)
   end
 end
 

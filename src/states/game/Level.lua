@@ -20,7 +20,7 @@ function Level:initialize(mode)
     self.tutorial = true
     self.shapes = {"Rectangle"}
     self.nextShape = "Oval"
-    Level.static.TARGET_MULTIPIER = 0.45
+    Level.static.TARGET_MULTIPIER = 0.4
     Level.static.INITIAL_TARGET = 500
   end
   
@@ -59,7 +59,8 @@ function Level:initialize(mode)
   self.scoreCounter:setRight(self.scoreText, 0)
   self.scoreCounter:setPosition(Point(self.scoreCounter.position.x, baseRes.height * 0.8))
   self.targetCounter = TextPlaceable("Target: ", Point(baseRes.width * 0.05, baseRes.height * 0.9), nil, nil, 0.5)
-  self.targetsUntilShape = TextPlaceable(("%i targets until: %s"):format(self.targetsUntil, self.nextShape), nil, nil, nil, 0.5)
+  self.targetCounter:setBelow(self.scoreText, 2)
+  self.targetsUntilShape = TextPlaceable(("In %i targets: %s"):format(self.targetsUntil, self.nextShape), nil, nil, nil, 0.5)
   self.charge = Level.CHARGE
   self:registerObserver(user)
   if self.mode ~= "Baby" then
@@ -71,7 +72,7 @@ function Level:update(dt)
   self.timer:update(dt)
   if self.nextShape == "none" then self.targetsUntilShape:update(dt, "All shapes added.") else 
     if self.targetsUntil > 1 then
-      self.targetsUntilShape:update(dt, ("%i targets until: %s"):format(self.targetsUntil, self.nextShape))
+      self.targetsUntilShape:update(dt, ("%i targets unlocks: %s"):format(self.targetsUntil, self.nextShape))
     else
       self.targetsUntilShape:update(dt, ("Next target unlocks: %s"):format(self.nextShape))     
     end
@@ -131,7 +132,7 @@ end
 function Level:scoreDrawing(drawing)
   local charge = Level.CHARGE -- get charge level of laser before resetting to 0
   local score, successPercentage = self.problem:score(drawing)
-  local comboMultipliedScore = math.floor(self.combo:multiply(score, successPercentage))  
+  local comboMultipliedScore = math.floor(self.combo:multiply(score, successPercentage))
   modifiedScore = self:modifyScore(comboMultipliedScore)
   if self.currentStatus then 
     self.currentStatus:decrementTimer() 
@@ -149,10 +150,11 @@ function Level:scoreDrawing(drawing)
   end
     
   local scorePopUp = NumberPopUp(modifiedScore, rating.color, 1, Point.centreOf(self.problem.bounds, self.problem.dimensions))
+
   local comboPopUp = TextPopUp("x" .. self.combo.multiplier, Graphics.NORMAL, 1, false)
   comboPopUp.position.x = scorePopUp.position.x
   comboPopUp:setAbove(scorePopUp)
-  
+
   if self.combo.multiplier >= 2.5 then
     local fire = love.graphics.newImage("assets/graphics/game/hud/icon_combo.png")
     local fireAmount = self.combo.multiplier * 2.5
@@ -188,7 +190,6 @@ function Level:scoreDrawing(drawing)
     self.timer:resetTimer()
     self:increaseTarget()
     self:increaseDifficulty()
---    if self.grid then self.grid:reduceAlpha(0.08) end
 end
 
   local data = {shape = tostring(self.problem), accuracy = successPercentage * 100, tutorial = self.tutorial, points = modifiedScore, targetUp = self:isTargetAchieved(), timeLeft = self.timer.time, rating = rating.text, timePlayed = self.timer.timePlayed, multiplier = self.combo.multiplier, targetUps = self.difficulty - 1, mode = self.mode, status = self.currentStatus, scissors = user.currentEffect.name, charge = charge, totalScore = self.total}

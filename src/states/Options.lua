@@ -1,11 +1,12 @@
 Options = State:subclass("Options")
+Options.VETERAN_MODE_LOCKED = true
 
 function Options:initialize()
   self.placeables = {}
   self.onMouseRelease = function() end
   self.title = TextPlaceable("SELECT A DIFFICULTY")
   self.title:setCentreHorizontalScreen()
-  self.data = {mode = "Normal", lefty = false}
+  self.data = {mode = "Baby", lefty = false}
   
   babyOnClick = function()
     Sound:createAndPlay("assets/audio/sfx/sfx_menumove.wav", "click")
@@ -18,19 +19,32 @@ function Options:initialize()
   end
   
   veteranOnClick = function()
-    Sound:createAndPlay("assets/audio/sfx/sfx_menumove.wav", "click")
-    self:setMode("Veteran")
+    if not Options.VETERAN_MODE_LOCKED then
+      Sound:createAndPlay("assets/audio/sfx/sfx_menumove.wav", "click")
+      self:setMode("Veteran")
+    else
+      Sound:createAndPlay("assets/audio/sfx/sfx_negative.wav", "negative")   
+      self.extraText:setText("Unlock all the shapes on NORMAL to play this mode!")
+      self.extraText:setColor(Graphics.YELLOW)
+      self.extraText:setCentreHorizontalScreen() 
+    end
   end
   
-  self.baby = ImageButton("assets/graphics/options/button_baby.png", babyOnClick)
-  self.normal = ImageButton("assets/graphics/options/button_normal.png", normalOnClick)
-  self.veteran = ImageButton("assets/graphics/options/button_veteran.png", veteranOnClick)
+  self.baby = ImageButton("assets/graphics/options/button_baby.png", babyOnClick, nil, nil, "babybutton")
+  self.normal = ImageButton("assets/graphics/options/button_normal.png", normalOnClick, nil, nil, "normalbutton")
+  local veteranImage = "assets/graphics/options/button_veteran_dark.png"
+  local veteranTextColor = Graphics.GRAY
+  if not Options.VETERAN_MODE_LOCKED then
+    veteranImage = "assets/graphics/options/button_veteran.png"
+    veteranTextColor = Graphics.NORMAL
+  end
+  self.veteran = ImageButton(veteranImage, veteranOnClick, nil, nil, "veteranbutton")
   self.normal:setCentreHorizontalScreen()
   self.baby:setLeft(self.normal, 160)
   self.veteran:setRight(self.normal, 160)
   self.babyMode = TextPlaceable("Baby")
   self.normalMode = TextPlaceable("Normal")
-  self.veteranMode = TextPlaceable("Veteran")
+  self.veteranMode = TextPlaceable("Veteran", nil, nil, veteranTextColor)
   self.baby:setAbove(self.babyMode)
   self.babyMode:setCentreHorizontal(self.baby)
   self.normal:setAbove(self.normalMode)
@@ -38,9 +52,9 @@ function Options:initialize()
   self.veteran:setAbove(self.veteranMode)
   self.veteranMode:setCentreHorizontal(self.veteran)
   
-  self.babyImageAndText = GroupButton({self.baby, self.babyMode})
-  self.normalImageAndText = GroupButton({self.normal, self.normalMode})
-  self.veteranImageAndText = GroupButton({self.veteran, self.veteranMode})
+  self.babyImageAndText = GroupButton({self.baby, self.babyMode}, nil, nil, "babycombinedbutton")
+  self.normalImageAndText = GroupButton({self.normal, self.normalMode}, nil, nil, "normalcombinedbutton")
+  self.veteranImageAndText = GroupButton({self.veteran, self.veteranMode}, nil, nil, "veterancombinedbutton")
   
   self.babyImageAndText:setOnClick(babyOnClick)
   self.normalImageAndText:setOnClick(normalOnClick)
@@ -53,10 +67,10 @@ function Options:initialize()
   self.extraText:setBelow(self.difficulties, 10)
   self.extraText:setCentreHorizontalScreen()
   
-  checkboxOnClick = function()
-    Sound:createAndPlay("assets/audio/sfx/sfx_menumove.wav", "click") 
-    self:setLefty(not self.data.lefty)
-  end
+--  checkboxOnClick = function()
+--    Sound:createAndPlay("assets/audio/sfx/sfx_menumove.wav", "click") 
+--    self:setLefty(not self.data.lefty)
+--  end
   
 --  self.checkbox = ImageButton("assets/graphics/misc/hud_checkbox_empty.png", checkboxOnClick)
 --  self.leftyMode = TextPlaceable("Lefty Mode")
@@ -90,6 +104,7 @@ function Options:initialize()
   
   self.placeables = {self.group}
   self:setMode(self.data.mode)
+  self.group:convertWorldBoundsToScreen()
 end
 
 function Options:saveData()
@@ -106,23 +121,30 @@ end
 function Options:setMode(mode)
   self.baby:setImage("assets/graphics/options/button_baby.png")
   self.normal:setImage("assets/graphics/options/button_normal.png")
-  self.veteran:setImage("assets/graphics/options/button_veteran.png")
+  local veteranImage = "assets/graphics/options/button_veteran_dark.png"
+  if not Options.VETERAN_MODE_LOCKED then
+    veteranImage = "assets/graphics/options/button_veteran.png"
+  end
+  self.veteran:setImage(veteranImage)
   if mode == "Baby" then
     self.baby:setImage("assets/graphics/options/button_baby_lightup.png")
     self.extraText:setText("For first time players. Achievements cannot be unlocked in this mode!")
-    self.extraText:setCentreHorizontalScreen()    
+    self.extraText:setCentreHorizontalScreen() 
+    self.extraText:setColor(Graphics.NORMAL)
     self.data.mode = "Baby"
     Game.static.MODE = "Baby"
   elseif mode == "Normal" then
     self.normal:setImage("assets/graphics/options/button_normal_lightup.png")
     self.extraText:setText("For players familiar with the game.")
-    self.extraText:setCentreHorizontalScreen()   
+    self.extraText:setCentreHorizontalScreen()  
+    self.extraText:setColor(Graphics.NORMAL)
     self.data.mode = "Normal"
     Game.static.MODE = "Normal"
   else
     self.veteran:setImage("assets/graphics/options/button_veteran_lightup.png")
     self.extraText:setText("For players who want a challenge.")
     self.extraText:setCentreHorizontalScreen()   
+    self.extraText:setColor(Graphics.NORMAL)
     self.data.mode = "Veteran"
     Game.static.MODE = "Veteran"
   end
@@ -140,15 +162,16 @@ function Options:setLefty(yes)
 end
 
 function Options:update(dt)
-  for _, v in ipairs(self.placeables) do
-    v:update()
-  end
+  self.group:update()
 end                            
   
-function Options:draw()  
-  for _, v in ipairs(self.placeables) do
-    v:draw()
-  end
+function Options:draw()
+  self.group:draw()
+--  for _, v in ipairs(self.placeables[1].placeables) do
+--    v:draw()
+--    v.bounds:draw()
+--  end
+  
   self.backButton:draw()  
 end
 

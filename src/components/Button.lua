@@ -31,12 +31,16 @@ end
 function Button:setPosition(pos)
   self.position = pos
   self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions)
-  self.bounds = scale:worldToScreenBounds(self.bounds)
+--  self.bounds = scale:worldToScreenBounds(self.bounds)
 end
 
 function Button:updateBounds()
   self.bounds = Bounds.ofTopLeftAndDimensions(self.position, self.dimensions) 
-  self.bounds = scale:worldToScreenBounds(self.bounds)
+--  self.bounds = scale:worldToScreenBounds(self.bounds)
+end
+
+function Button:convertWorldBoundsToScreen()
+   self.bounds = scale:worldToScreenBounds(self.bounds) 
 end
 
 function Button:setOnClick(onClick)

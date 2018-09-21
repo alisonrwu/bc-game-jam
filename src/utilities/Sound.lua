@@ -57,6 +57,7 @@ function Sound:clearAll()
   for _, sound in pairs(Sound.sources) do
     sound:stop()
   end
+  Sound.sources = {}
 end
 
 -- Pauses a source by its tag.
