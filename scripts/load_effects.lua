@@ -166,10 +166,10 @@ function loadEffects()
       return mouseCoord
     end
     Game.onHoldCut = function(self)
-      Game.static.SHAKINESS = Game.SHAKINESS + 0.2
+      Game.static.SHAKINESS = Game.SHAKINESS + 0.15
     end
     Game.onScore = function(self)
-      Game.static.SHAKINESS = 5
+      Game.static.SHAKINESS = 4
     end
   end
   local chainsawOnRemove = function()
@@ -265,7 +265,7 @@ function loadEffects()
     Cursor.static.OFFSET = {x = 24, y = 25}
     Level.onScore = function(self, score, problem, successPercentage)
       if successPercentage > Shape.CORRECT_THRESHOLD then
-        local timeGain = math.floor(successPercentage * 7)
+        local timeGain = math.floor(successPercentage * 5)
         if self.timer.time + timeGain < 0 then 
           self.timer.time = 0 
         else
@@ -287,7 +287,7 @@ function loadEffects()
     end
   end
   local crocodileDescription = "Crocodile"
-  local crocodilePros = "+ Gain time based on points (up to 7s)"
+  local crocodilePros = "+ Gain time based on points (up to 5s)"
   local crocodileCons = "- Time does not reset on Target Up"
   local crocodileEffect = Effect(crocodileOnApply, crocodileOnRemove, crocodileDescription, crocodilePros, crocodileCons, "Crocodile") 
   

@@ -177,6 +177,8 @@ function Level:scoreDrawing(drawing)
   table.insert(self.popUps, scorePopUp)
 
   self:addScore(modifiedScore)
+  local oldTargetUps = self.difficulty - 1
+  local timeLeft = self.timer.time
   
   if self:isTutorialOver() then 
     self.tutorial = false 
@@ -192,7 +194,7 @@ function Level:scoreDrawing(drawing)
     self:increaseDifficulty()
 end
 
-  local data = {shape = tostring(self.problem), accuracy = successPercentage * 100, tutorial = self.tutorial, points = modifiedScore, targetUp = self:isTargetAchieved(), timeLeft = self.timer.time, rating = rating.text, timePlayed = self.timer.timePlayed, multiplier = self.combo.multiplier, targetUps = self.difficulty - 1, mode = self.mode, status = self.currentStatus, scissors = user.currentEffect.name, charge = charge, totalScore = self.total}
+  local data = {shape = tostring(self.problem), accuracy = successPercentage * 100, tutorial = self.tutorial, points = modifiedScore, targetUpsThisScore = (self.difficulty - 1) - oldTargetUps, timeLeft = timeLeft, rating = rating.text, timePlayed = self.timer.timePlayed, multiplier = self.combo.multiplier, targetUps = self.difficulty - 1, mode = self.mode, status = self.currentStatus, scissors = user.currentEffect.name, charge = charge, totalScore = self.total}
 
   self.problem.displayAnswer = true
   Sound:play(rating.soundTag)

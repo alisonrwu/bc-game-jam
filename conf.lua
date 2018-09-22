@@ -5,7 +5,7 @@ function love.conf(t)
 	t.window.width = 960
 	t.window.height = 600
   t.identity = "paper-cut"
-  t.window.fullscreen = false
+  t.window.fullscreen = true
   t.window.borderless = true
-  t.window.fullscreentype = "exclusive"
+  t.window.fullscreentype = "desktop"
 end

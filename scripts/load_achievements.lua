@@ -67,22 +67,24 @@ function loadAchievements()
       self.failed = false
     end
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
-      local tutorial = args.tutorial
       local rating = args.rating
-      if not tutorial and (rating == "Stop monkeying around!" or rating == "That's coming out your paycheck." or rating == "My poor paper!")  then
+      if rating == "Stop monkeying around!" or rating == "That's coming out your paycheck." or rating == "My poor paper!"  then
         self.failed = true
       end
     end  
     if event == Timer.OUT_OF_TIME and self.progress < self.maxProgress then
       local totalScore = args.totalScore
       if not self.failed and totalScore > 8000 then
+        self.progress = self.progress + 1
+      end
+      if self.progress == self.maxProgress then
         self:setUnlocked(true)
         self:addPopUp()
       end
       user:saveData()
     end
   end
-  local a4 = Achievement("Clean Cut", "Never get a bad rating and get over 8,000 in one session.", a4n, 1)
+  local a4 = Achievement("Clean Cut", "Never get a bad rating and get 8,000 in one session.", a4n, 1)
 
   local a5n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -98,7 +100,7 @@ function loadAchievements()
       end
     end
   end
-  local a5 = Achievement("Meeting The Quota", "Get over 5000 points in 60 seconds.", a5n, 1)
+  local a5 = Achievement("Meeting The Quota", "Get 5000 points in 60 seconds.", a5n, 1)
   
   
   local a6n = function(self, event, args)
@@ -115,7 +117,7 @@ function loadAchievements()
       end
     end
   end
-  local a6 = Achievement("Get Rect", "Get 400 rectangles with over 80% accuracy.", a6n, 400)
+  local a6 = Achievement("Get Rect", "Cut 400 rectangles with over 80% accuracy.", a6n, 400)
   
   local a7n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -131,7 +133,7 @@ function loadAchievements()
       end
     end
   end
-  local a7 = Achievement("Doritos For Breakfast", "Get 300 triangles with over 80% accuracy.", a7n, 300)
+  local a7 = Achievement("Doritos For Breakfast", "Cut 300 triangles with over 80% accuracy.", a7n, 300)
   
   local a8n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -147,7 +149,7 @@ function loadAchievements()
       end
     end
   end
-  local a8 = Achievement("Winner's Oval", "Get 200 ovals with over 80% accuracy.", a8n, 200)
+  local a8 = Achievement("Winner's Oval", "Cut 200 ovals with over 80% accuracy.", a8n, 200)
   
   local a9n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -163,7 +165,7 @@ function loadAchievements()
       end
     end
   end  
-  local a9 = Achievement("Ice Slice Baby", "Get 100 diamonds with over 80% accuracy.", a9n, 100)
+  local a9 = Achievement("Ice Slice Baby", "Cut 100 diamonds with over 80% accuracy.", a9n, 100)
   
   local a10n = function(self, event, args)
      if event == Timer.OUT_OF_TIME and self.progress < self.maxProgress then
@@ -257,10 +259,10 @@ function loadAchievements()
 
   local a16n = function(self, event, args)
      if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
-      local targetUp = args.targetUp
+      local targetUpsThisScore = args.targetUpsThisScore
       local timeLeft = args.timeLeft
-      if targetUp and timeLeft <= 1 then
-        self.progress = self.progress + 1
+      if timeLeft <= 1 then
+        self.progress = self.progress + targetUpsThisScore
         if self.progress == self.maxProgress then
           self:setUnlocked(true)
           self:addPopUp()
@@ -299,7 +301,7 @@ function loadAchievements()
       end
     end   
   end
-  local a18 = Achievement("Dun Goofed", "Cut 100 shapes that are coming out your paycheck.", a18n, 100) 
+  local a18 = Achievement("Dun Goofed", "Cut 30 shapes that are coming out your paycheck.", a18n, 30) 
   
   local a19n = function(self, event, args)
      if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -450,7 +452,7 @@ function loadAchievements()
       end
     end
   end
-  local a28 = Achievement("It's A Fine Day To Cut", "Make a FINE cut over 100 times.", a28n, 100)
+  local a28 = Achievement("It's A Fine Day To Cut", "Make a FINE cut 100 times.", a28n, 100)
   
   local a29n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -465,7 +467,7 @@ function loadAchievements()
       end
     end
   end
-  local a29 = Achievement("The Incredible Cut", "Make an INCREDIBLE cut over 50 times.", a29n, 50)
+  local a29 = Achievement("The Incredible Cut", "Make an INCREDIBLE cut 50 times.", a29n, 50)
   
   local a30n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -480,7 +482,7 @@ function loadAchievements()
       end
     end
   end
-  local a30 = Achievement("Skills: Microsoft Excel", "Do EXCELLENT WORK over 40 times.", a30n, 40)
+  local a30 = Achievement("Skills: Microsoft Excel", "Do EXCELLENT WORK 40 times.", a30n, 40)
   
   local a31n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -495,7 +497,7 @@ function loadAchievements()
       end
     end
   end
-  local a31 = Achievement("420 IQ", "Be a CUTTING GENIUS over 30 times.", a31n, 30)
+  local a31 = Achievement("420 IQ", "Be a CUTTING GENIUS 30 times.", a31n, 30)
   
   local a32n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -510,7 +512,7 @@ function loadAchievements()
       end
     end
   end
-  local a32 = Achievement("MOLY HOLY!", "Get the boss to HOLY MOLY over 20 times.", a32n, 20)
+  local a32 = Achievement("MOLY HOLY!", "Get the boss to HOLY MOLY 20 times.", a32n, 20)
   
   local a33n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -525,7 +527,7 @@ function loadAchievements()
       end
     end
   end
-  local a33 = Achievement("We Are Number One", "Be the number one employee over 10 times.", a33n, 10)
+  local a33 = Achievement("We Are Number One", "Be the number one employee 10 times.", a33n, 10)
   
   local a34n = function(self, event, args)
      if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -841,7 +843,7 @@ function loadAchievements()
       end
     end
   end
-  local a52 = Achievement("The Big Slice", "Get over 50,000 points with the pizza buff using the Pizza Cutter.", a52n, 50000)
+  local a52 = Achievement("The Big Slice", "Get 50,000 points with the pizza buff using the Pizza Cutter.", a52n, 50000)
   
   local a53n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -885,7 +887,7 @@ function loadAchievements()
       end
     end  
     
-    if event == Timer.OUT_OF_TIME then
+    if event == Timer.OUT_OF_TIME and self.progress < self.maxProgress then
       local scissors = args.scissors
       if scissors == "Utility Knife" and self.progress >= self.maxProgress  then
         self:setUnlocked(true)
@@ -896,7 +898,7 @@ function loadAchievements()
       user:saveData()
     end
   end
-  local a55 = Achievement("Cut To The Chase", "Cut 60 shapes with over 50% accuracy in 60 seconds with the Utility Knife.", a55n, 60)
+  local a55 = Achievement("Cut To The Chase", "Cut 20 shapes with over 50% accuracy in 60 seconds with the Utility Knife.", a55n, 20)
   
   local a56n = function(self, event, args)
     if event == Level.SHAPE_COMPLETED and self.progress < self.maxProgress then
@@ -945,7 +947,7 @@ function loadAchievements()
       end
     end   
   end
-  local a58 = Achievement("Crunch Time", "Play for over 5000 seconds with the Crocodile.", a58n, 5000)
+  local a58 = Achievement("Crunch Time", "Play for 5000 seconds with the Crocodile.", a58n, 5000)
   
   local a59n = function(self, event, args)
    if event == Timer.OUT_OF_TIME and self.progress < self.maxProgress then

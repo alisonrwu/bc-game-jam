@@ -62,7 +62,7 @@ require "scripts/load_achievements"
 
 
 function love.load(args)
-  resetData = true
+  resetData = false
   loadArgs(args)
   checkGameVersion()
   icon = love.image.newImageData("assets/graphics/icon.png")
