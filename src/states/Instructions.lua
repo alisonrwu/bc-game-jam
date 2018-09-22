@@ -1,7 +1,6 @@
-Instructions = State:extend("Instructions")
+Instructions = State:subclass("Instructions")
 
-function Instructions:init()
-  self.menuBG = ImagePlaceable("assets/graphics/menu/bg/bg_menu16x9.png")
+function Instructions:initialize()
   self.placeables = {}
   self.onMouseRelease = function() end
   self:setUpScreen1()
@@ -14,45 +13,55 @@ function Instructions:update(dt)
 end                            
   
 function Instructions:draw()  
-  self.menuBG:draw()
   for _, v in ipairs(self.placeables) do
     v:draw()
   end
 end
 
 function Instructions:setUpScreen1()
-  local i1 = TextPlaceable("The boss wants you to cut some paper...", nil, "center", Graphics.NORMAL, 1)
-  i1.position.y = baseRes.height * 0.09
-  
   local speechBubble = ImagePlaceable("assets/graphics/game/hud/hud_speechbubble.png")
-  speechBubble:setCentreHorizontal(self.menuBG)
-  speechBubble:setBelow(i1, 20)
+  local explanation = TextPlaceable("W = width   L = length", nil, "center")
+  local example = TextPlaceable("I want a 3W x 2L Rectangle!", nil, "center")
+  local intro = TextPlaceable("The boss wants you to cut some paper...", nil, "center", Graphics.NORMAL, 1)
+  local press = FlashingTextPlaceable("Press to continue!", nil, "center")
   
-  local example = TextPlaceable("I want a 3W x 2L Rectangle!")
-  example:setCentreHorizontal(self.menuBG)
+  speechBubble:setCentreHorizontalScreen()
+  speechBubble:setBelow(intro, rowHeight)
   example:setCentreVertical(speechBubble)
-  
-  local i2 = TextPlaceable("W = width   L = length", nil, "center")
-  i2:setBelow(example, 20)
-  
-  local i3 = TextPlaceable("The closer you are, the more points you get!", nil, "center")
-  i3:setBelow(i2, 60)
+  explanation:setBelow(speechBubble)
+  press:setBelow(explanation, rowHeight)
 
-  local i4 = TextPlaceable("Collect points to gain more time!", nil, "center")
-  i4:setBelow(i3, 10)
+  local group = GroupPlaceable({speechBubble, explanation, example, intro, press})
+  group:setCentreVerticalScreen()
   
-  local i5 = TextPlaceable("If you run out of time, you're fired!", nil, "center", Graphics.RED)
-  i5:setBelow(i4, 10)
+  local mouseRelease = function()
+    Sound:createAndPlay("assets/audio/sfx/sfx_click.mp3", "click")
+    self:setUpScreen2()
+  end
   
-  local i6 = FlashingTextPlaceable("Click to start!", nil, "center")
-  i6:setBelow(i5, 65)
+  self.placeables = {group}
+  self.onMouseRelease = mouseRelease
+end
+
+function Instructions:setUpScreen2()
+  local closerExplanation = TextPlaceable("The closer you are, the more points you get!", nil, "center")
+  local collectExplanation = TextPlaceable("Reach the target to gain more time!", nil, "center")
+  local noTimeExplanation = TextPlaceable("If you run out of time, you're fired!", nil, "center", Graphics.RED)
+  local press = FlashingTextPlaceable("Press to start!", nil, "center")
+  
+  collectExplanation:setBelow(closerExplanation, rowHeight)
+  noTimeExplanation:setBelow(collectExplanation, rowHeight)
+  press:setBelow(noTimeExplanation, rowHeight)
+  
+  local group = GroupPlaceable({collectExplanation, closerExplanation, noTimeExplanation, press})
+  group:setCentreVerticalScreen()
   
   local mouseRelease = function()
     Sound:createAndPlay("assets/audio/sfx/sfx_click.mp3", "click")
     state = Game()
   end
   
-  self.placeables = {i1, i2, speechBubble, example, i3, i4, i5, i6}
+  self.placeables = {group}
   self.onMouseRelease = mouseRelease
 end
 
@@ -62,3 +71,7 @@ end
 function Instructions:mouseRelease(x, y, button, istouch)
   self:onMouseRelease()
 end    
+
+function Instructions:__tostring()
+  return "Instructions"
+end

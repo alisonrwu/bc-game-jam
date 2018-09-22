@@ -1,42 +1,53 @@
-local static = {}
-static.FRAME0 = love.graphics.newImage("assets/graphics/game/player/cursor_closedscissors.png")
-static.FRAME1 = love.graphics.newImage("assets/graphics/game/player/cursor_openedscissors.png")
-static.NO_CUT = love.graphics.newImage("assets/graphics/game/player/cursor_unabletocut.png")
-static.SCISSORS_FRAME_TABLE = {[0] = static.FRAME0, [1] = static.FRAME1}
-static.CYCLE = 15
-Cursor = class("Cursor", static)
+Cursor = class("Cursor")
+Cursor.static.SPRITESHEET = love.graphics.newImage("assets/graphics/game/player/cursor_scissors.png")
+Cursor.static.FRAME1 = love.graphics.newQuad(0, 0, 96, 44, Cursor.SPRITESHEET:getDimensions())
+Cursor.static.FRAME2 = love.graphics.newQuad(0, 47, 96, 48, Cursor.SPRITESHEET:getDimensions())
+Cursor.static.OFFSET = {x = 35, y = 24}
+Cursor.static.EXTRA_ROT = 0
+Cursor.static.NO_CUT = love.graphics.newImage("assets/graphics/game/player/cursor_unabletocut.png")
+Cursor.static.CYCLE = 14
+Cursor.static.ANGLE = 0
 
-function Cursor:init()
-  self.frame = Cursor.FRAME0
+function Cursor:initialize()
+  self.frame = Cursor.FRAME1
+  self.moving = false
   self.counter = 0
   self.angle = 0
 end
 
-function Cursor:update(lines)
-  self.counter = self.counter + 1
-  
+function Cursor:update(dt, lines, mode)
   if lines[#lines - 10] ~= nil then 
     self.angle = Math:calculateAngleOfTwoLines(lines[#lines], lines[#lines - 5]) 
+    Cursor.static.ANGLE = self.angle
   end    
-  
-  if self.counter == Cursor.CYCLE then
-    self.counter = 0
-    if self.frame == Cursor.FRAME0 then self.frame = Cursor.FRAME1 else self.frame = Cursor.FRAME0 end
+    
+  if mode == "cut" and self.moving then
+    self.counter = self.counter + 1
+    
+    if self.counter == Cursor.CYCLE then
+      self.counter = 0
+      if self.frame == Cursor.FRAME1 then self.frame = Cursor.FRAME2 else self.frame = Cursor.FRAME1 end
+    end   
   end
 end
 
 function Cursor:draw(mode)
-  local mouse = Scale:getWorldMouseCoordinates()
+  local mouse = scale:getWorldMouseCoordinates()
   local frame = self.frame
-  local width = frame:getWidth() * 0.5
-  local height = frame:getHeight() * 0.5
-  
+
   if mode == "wait" then
-    Graphics:drawWithRotationAndOffset(frame, mouse.x, mouse.y, self.angle, width, height, Graphics.NORMAL)
-    Graphics:drawWithRotationAndOffset(Cursor.NO_CUT, mouse.x, mouse.y, self.angle, width, height, Graphics.NORMAL)
+    Graphics:drawQWithRotationAndOffset(Cursor.SPRITESHEET, frame, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, Cursor.OFFSET.x, Cursor.OFFSET.y, Graphics.NORMAL)
+    Graphics:drawWithRotationAndOffset(Cursor.NO_CUT, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, Cursor.OFFSET.x, Cursor.OFFSET.y, Graphics.NORMAL)
+    Status.static.COLOR = Graphics.NORMAL
   elseif mode == "cut" then
-    Graphics:drawWithRotationAndOffset(frame, mouse.x, mouse.y, self.angle, width, height, Graphics.FADED)    
+    Graphics:drawQWithRotationAndOffset(Cursor.SPRITESHEET, frame, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, Cursor.OFFSET.x, Cursor.OFFSET.y, Graphics.FADED)  
+    Status.static.COLOR = Graphics.FADED
   elseif mode == "ready" or mode == "score" then
-    Graphics:drawWithRotationAndOffset(frame, mouse.x, mouse.y, self.angle, width, height, Graphics.NORMAL)    
+    Graphics:drawQWithRotationAndOffset(Cursor.SPRITESHEET, frame, mouse.x, mouse.y, self.angle + Cursor.EXTRA_ROT, Cursor.OFFSET.x, Cursor.OFFSET.y, Graphics.NORMAL)
+    Status.static.COLOR = Graphics.NORMAL
   end
+end
+
+function Cursor:setMoving(boolean)
+  self.moving = boolean
 end

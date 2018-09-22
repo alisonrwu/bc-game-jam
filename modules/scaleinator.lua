@@ -42,7 +42,11 @@ function scaleinator.create()
 				x = nil,
 				y = nil
 			},
-			modes = {}
+			modes = {},
+      unflooredfactor = {
+        w = nil,
+        h = nil
+      }
 		},
 		updateresolution = scaleinator.updateresolution,
                 update = scaleinator.update,
@@ -54,6 +58,7 @@ function scaleinator.create()
 		getfactor = scaleinator.getfactor,
                 getoriginalfactor = scaleinator.getoriginalfactor,
                 getresizefactor = scaleinator.getresizefactor,
+                getunflooredfactor = scaleinator.getunflooredfactor,
 		getbox = scaleinator.getbox,
 		getboxw = scaleinator.getboxw,
 		getboxh = scaleinator.getboxh,
@@ -149,6 +154,10 @@ function scaleinator.process(self)
 	if not (self.prop.screen.w and self.prop.screen.h and self.prop.currentmode and self.prop.currentmode.w and self.prop.currentmode.h and self.prop.yhandling) then
 		error("object not prepared for processing (make sure to add and set a mode, then update the resolution before processing)")
 	end
+  self.prop.unflooredfactor.w = self.prop.screen.w / (self.prop.currentmode.w)
+	self.prop.unflooredfactor.h = self.prop.screen.h / (self.prop.currentmode.h)
+  self.prop.unflooredfactor.w = math.max(self.prop.unflooredfactor.w, self.prop.unflooredfactor.h)
+  
 	self.prop.factor.w = math.floor(self.prop.screen.w / (self.prop.currentmode.w))
 	self.prop.factor.h = math.floor(self.prop.screen.h / (self.prop.currentmode.h))
 	if self.prop.factor.h < self.prop.factor.w then
@@ -175,6 +184,10 @@ end
 function scaleinator.update(self, w, h)
         self:updateresolution(w, h)
         self:process()
+end
+
+function scaleinator.getunflooredfactor(self)
+        return self.prop.unflooredfactor.w
 end
 
 --- Get the scale factor.

@@ -33,6 +33,10 @@ function Sound:create(source, tag, loop, soundType)
   Sound.sources[tag] = src
 end    
 
+function Sound:tagExists(tag)
+  return Sound.sources[tag]
+end
+
 -- Plays a source by its tag.
 -- @param tag The tag assigned to the source.
 function Sound:play(tag)
@@ -49,6 +53,13 @@ function Sound:stop(tag)
   end
 end  
 
+function Sound:clearAll()
+  for _, sound in pairs(Sound.sources) do
+    sound:stop()
+  end
+  Sound.sources = {}
+end
+
 -- Pauses a source by its tag.
 -- @param tag The tag assigned to the source.
 function Sound:pause(tag)
@@ -62,6 +73,14 @@ end
 function Sound:setPitch(tag, pitch)
   if Sound.sources[tag] then
     Sound.sources[tag]:setPitch(pitch)
+  end
+end  
+
+-- Sets a sources pitch by its tag.
+-- @param tag The tag assigned to the source.
+function Sound:setVolume(tag, volume)
+  if Sound.sources[tag] then
+    Sound.sources[tag]:setVolume(volume)
   end
 end  
 

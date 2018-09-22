@@ -1,6 +1,7 @@
-Polygon = class("Polygon", {leeway = 10})
+Polygon = class("Polygon")
+Polygon.static.LEEWAY = 15
 
-function Polygon:init()
+function Polygon:initialize()
   self.points = {}
   self.lines = {} 
   self.bounds = Bounds()
@@ -8,6 +9,8 @@ function Polygon:init()
   self.centre = Point()
   self.closed = false
 end
+
+local myMath = Math
 
 function Polygon:draw() 
   if self.intersection then 
@@ -32,17 +35,28 @@ function Polygon:updateLatestLine()
 end
 
 function Polygon:update()
-  for i = 1, #self.lines - Polygon.leeway do
+  for i = 1, #self.lines - Polygon.LEEWAY do
     local currentLine = self.lines[#self.lines]
     local line = self.lines[i]
-    local intersection = Math:getLineSegsIntersection(currentLine, line)
+    local intersection = myMath:getLineSegsIntersection(currentLine, line)
     if intersection then 
       self:cleanUpIntersection(i)
       self:redrawToIntersection(intersection)
+      self:linesToPoints()
       self.closed = true
       return
     end
   end
+end
+
+function Polygon:linesToPoints()
+  local points = {}
+  for i = 1, #self.lines do
+    local line = self.lines[i]
+    local point = line.p1
+    points[#points + 1] = point
+  end
+  self.points = points
 end
 
 function Polygon:cleanUpIntersection(indexOfIntersectingLine)
@@ -64,16 +78,19 @@ function Polygon:isMouseAtSamePoint()
   if self:isEmpty() then
     return false
   else 
-    local mouseCoord = Scale:getWorldMouseCoordinates()
+    local mouseCoord = scale:getWorldMouseCoordinates()
     local point = self:getLatestPoint()
     return point.x == mouseCoord.x and point.y == mouseCoord.y
   end 
 end
 
 function Polygon:updateValues()
+  self:reducePoints()
   self.bounds = Bounds.ofPoints(self.points)
   self.dimensions = Dimensions.ofBounds(self.bounds)
   self.centre = Point.centreOf(self.bounds, self.dimensions)
+  
+  print(tostring(self.bounds), tostring(self.dimensions), tostring(self.centre))
 end
 
 function Polygon:isEmpty()
@@ -82,4 +99,47 @@ end
 
 function Polygon:getLatestPoint()
   return self.points[#self.points]
+end
+
+function Polygon:getLatestPoint()
+  return self.points[#self.points]
+end
+
+function Polygon:reducePoints()
+  local points = self.points
+  i = 1
+  while i <= #points do
+    local firstIndex = i
+    local secondIndex = (i + 1) % (#points + 1)
+    local thirdIndex = (i + 2) % (#points + 1)
+    if secondIndex == 0 then secondIndex = 1 end
+    if thirdIndex == 0 then thirdIndex = 1 end
+    
+    local firstPt = points[firstIndex]
+    local secondPt = points[secondIndex]
+    local thirdPt = points[thirdIndex]
+    
+    if firstPt == secondPt or secondPt == thirdPt or firstPt == thirdPt then return end
+    
+      local function inBetween(a, b, c)
+        -- we want to check if b is in-between a and c
+        local sqrt = math.sqrt
+        local ab = sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y))
+        local bc = sqrt((b.x - c.x) * (b.x - c.x) + (b.y - c.y) * (b.y - c.y))
+        local ac = sqrt((a.x - c.x) * (a.x - c.x) + (a.y - c.y) * (a.y - c.y))
+        if ab + bc == ac then return true else return false end
+      end
+    
+    if inBetween(firstPt, secondPt, thirdPt, "horizontal") then 
+      table.remove(points, secondIndex) 
+    elseif inBetween(secondPt, thirdPt, firstPt, "horizontal") then
+      table.remove(points, thirdIndex) 
+    elseif inBetween(thirdPt, firstPt, secondPt, "horizontal") then
+      table.remove(points, firstIndex) 
+    else
+      i = i + 1
+    end
+  end
+  
+  return points
 end

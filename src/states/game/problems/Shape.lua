@@ -1,6 +1,10 @@
-Shape = class("Shape", {CONVERSION_FACTOR = 40, REDUCTION_FACTOR = 0.5, MAX_SIZE_FACTOR = 2})
+Shape = class("Shape")
+Shape.static.CONVERSION_FACTOR = 40
+Shape.static.REDUCTION_FACTOR = 0.2
+Shape.static.MAX_SIZE_FACTOR = 2
+Shape.static.CORRECT_THRESHOLD = 0.5
 
-function Shape:init(widthInGameUnits, heightInGameUnits, maxScore)
+function Shape:initialize(widthInGameUnits, heightInGameUnits, maxScore)
   self.maxScore = maxScore 
   self.bounds = Bounds()
   self.dimensionsInGameUnits = Dimensions(widthInGameUnits, heightInGameUnits)
@@ -17,14 +21,15 @@ end
 function Shape:score(drawing)
   local successPercentage = 0
   
+  self.bounds = Bounds.ofCentreAndDimensions(drawing.centre, self.dimensions)
+  local maxBounds = Math:calculateMaximumBounds(drawing.bounds, self.bounds)
+  
   if drawing.dimensions < self.maxSizeDimensions then
-    self.bounds = Bounds.ofCentreAndDimensions(drawing.centre, self.dimensions)
-    local maxBounds = Math:calculateMaximumBounds(drawing.bounds, self.bounds)
     successPercentage = Math:calculateSuccessPercentageOptimized(drawing.points, self:pointRepresentation(), maxBounds, Shape.REDUCTION_FACTOR)
   end
   
   score = self:transformSuccessPercentage(successPercentage)
-  return score
+  return score, successPercentage
 end
 
 function Shape:pointRepresentation()
@@ -32,13 +37,13 @@ function Shape:pointRepresentation()
 end
 
 function Shape:transformSuccessPercentage(successPercentage)
-  local transformedPercentage = successPercentage - 0.5
-  if transformedPercentage >= 0 then transformedPercentage = 2 * transformedPercentage end
-
+  local transformedPercentage = successPercentage - Shape.CORRECT_THRESHOLD
+  transformedPercentage = 2 * transformedPercentage
+  
   local score = transformedPercentage * self.maxScore
   if score > self.maxScore then score = self.maxScore end
   
-  return score
+  if score > 0 then return math.ceil(score) else return math.floor(score) end
 end
 
 function Shape:area()

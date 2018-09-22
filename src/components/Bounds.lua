@@ -1,10 +1,11 @@
 local MIN_VALUE = -math.huge
 local MAX_VALUE = math.huge
 
-local static = {}
-static.ofPoints = function (points)
-           local minX, maxX, minY, maxY = MAX_VALUE, MIN_VALUE, MAX_VALUE, MIN_VALUE
-        for _,point in ipairs(points) do
+Bounds = class("Bounds", static)
+Bounds.static.ofPoints = function (points)
+          local minX, maxX, minY, maxY = MAX_VALUE, MIN_VALUE, MAX_VALUE, MIN_VALUE
+        for i = 1, #points do
+          local point = points[i]
           if point.x < minX then
             minX = point.x
           end
@@ -20,14 +21,14 @@ static.ofPoints = function (points)
         end  
         return Bounds(minX, maxX, minY, maxY) 
 end
-static.ofCentreAndDimensions = function(centre, dimensions)
+Bounds.static.ofCentreAndDimensions = function(centre, dimensions)
   local minX = centre.x - (dimensions.width * 0.5)
   local maxX = centre.x + (dimensions.width * 0.5)
   local minY = centre.y - (dimensions.height * 0.5)
   local maxY = centre.y + (dimensions.height * 0.5)
   return Bounds(minX, maxX, minY, maxY) 
 end
-static.ofTopLeftAndDimensions = function(topLeft, dimensions)
+Bounds.static.ofTopLeftAndDimensions = function(topLeft, dimensions)
   local minX = topLeft.x
   local maxX = topLeft.x + dimensions.width
   local minY = topLeft.y
@@ -35,9 +36,7 @@ static.ofTopLeftAndDimensions = function(topLeft, dimensions)
   return Bounds(minX, maxX, minY, maxY)
 end
 
-Bounds = class("Bounds", static)
-
-function Bounds:init(minX, maxX, minY, maxY)
+function Bounds:initialize(minX, maxX, minY, maxY)
   self.minX, self.maxX = minX or MAX_VALUE, maxX or MIN_VALUE
   self.minY, self.maxY = minY or MAX_VALUE, maxY or MIN_VALUE  
 end
@@ -52,4 +51,8 @@ end
 
 function Bounds.__tostring(b)
   return ("Bounds: minX = %i, maxX = %i, minY = %i, maxY = %i"):format(b.minX, b.maxX, b.minY, b.maxY)
+end
+
+function Bounds:draw()
+  Graphics:drawRect(self.minX, self.minY, self.maxX - self.minX, self.maxY - self.minY)
 end

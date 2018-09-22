@@ -1,6 +1,6 @@
 State = class("State")
 
-function State:init()  
+function State:initialize()  
   error("Cannot initialize an unspecified state!")
 end
 

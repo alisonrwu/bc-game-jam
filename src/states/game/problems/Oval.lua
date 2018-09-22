@@ -1,7 +1,7 @@
-Oval = Shape:extend("Oval")
+Oval = Shape:subclass("Oval")
 
-function Oval:init(widthInGameUnits, heightInGameUnits, maxScore)
-  Oval.super:init(widthInGameUnits, heightInGameUnits, maxScore)
+function Oval:initialize(widthInGameUnits, heightInGameUnits, maxScore)
+  Shape.initialize(self, widthInGameUnits, heightInGameUnits, maxScore)
   self.xRad, self.yRad = self.dimensions.width * 0.5, self.dimensions.height * 0.5
   self.left, self.top, self.right, self.bot = Point(), Point(), Point(), Point()
   local default = Point(baseRes.width * 0.5 - self.dimensions.width * 0.5, baseRes.height * 0.5 - self.dimensions.height * 0.5)
@@ -49,6 +49,6 @@ function Oval:pointRepresentation()
   return rep
 end
 
-function Oval:area()
-  return self.xRad * self.yRad * math.pi
+function Oval:__tostring()
+  return "Oval"
 end
