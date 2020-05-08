@@ -18,7 +18,7 @@ https://play.google.com/store/apps/details?id=com.trevinwong.papercut
 Lua, Love2d, Paint.NET, OpenMPT, Synth1, Android Studio.
 
 ### Made by
-- Trevin Wong (Lead Programmer)
-- Sean Allen (Programmer, Artist, Sound Guy)
-- Alison Wu (Programmer)
-- Ryan Wirth (Programmer)
+- Trevin Wong
+- Sean Allen
+- Alison Wu
+- Ryan Wirth 
